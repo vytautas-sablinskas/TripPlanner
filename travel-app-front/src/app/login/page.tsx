@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useState } from "react";
+import { useQueryLogin } from "@/app/api/useQueryLogin";
 
 export const Login = () => {
   const [formValues, setFormValues] = useState({
     email: "",
     password: ""
   });
+
+  const f = useQueryLogin(formValues);
+  console.log(f);
 
   const handleInputChange = (e : any) => {
     const { id, value } = e.target;
@@ -23,7 +27,7 @@ export const Login = () => {
 
   const handleSubmit = (e : any) => {
     e.preventDefault();
-    
+
     console.log("Form Values: ", formValues);
   };
 

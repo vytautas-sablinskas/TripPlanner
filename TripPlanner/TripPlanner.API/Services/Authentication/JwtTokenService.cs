@@ -91,7 +91,7 @@ public class JwtTokenService : IJwtTokenService
         (
             issuer: _issuer,
             audience: _audience,
-            expires: DateTime.UtcNow.AddMinutes(600),
+            expires: DateTime.UtcNow.AddMinutes(2),
             claims: authClaims,
             signingCredentials: new SigningCredentials(_authSigningKey, SecurityAlgorithms.HmacSha256)
         );

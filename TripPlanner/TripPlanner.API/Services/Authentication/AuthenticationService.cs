@@ -19,7 +19,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<Result<SuccessfulLoginDto>> Login(LoginDto loginDto)
     {
-        var user = await _userManager.FindByNameAsync(loginDto.UserName);
+        var user = await _userManager.FindByEmailAsync(loginDto.Email);
         if (user == null)
             return new Result<SuccessfulLoginDto>(Success: false, Message: "Username or password is invalid", Data: null);
 
@@ -35,14 +35,15 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<Result<UserDto>> Register(RegisterUserDto userDto)
     {
-        var user = await _userManager.FindByNameAsync(userDto.UserName);
+        var user = await _userManager.FindByEmailAsync(userDto.Email);
         if (user != null)
             return new Result<UserDto>(Success: false, Message: "Username is already taken!", Data: null);
 
         var newUser = new AppUser
         {
+            FirstName = userDto.FirstName,
+            LastName = userDto.LastName,
             Email = userDto.Email,
-            UserName = userDto.UserName,
         };
 
         var createdResult = await _userManager.CreateAsync(newUser, userDto.Password);

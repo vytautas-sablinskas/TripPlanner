@@ -60,4 +60,12 @@ public class AuthenticationController : ControllerBase
 
         return Ok(result.Message);
     }
+
+    [HttpGet]
+    [Route("ping")]
+    [Authorize]
+    public IActionResult Ping()
+    {
+        return Ok("Pinged successfully");
+    }
 }

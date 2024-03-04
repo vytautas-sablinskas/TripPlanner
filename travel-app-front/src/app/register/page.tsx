@@ -15,7 +15,6 @@ export const Register = () => {
     password: ""
   });
 
-  // Function to handle input changes and update formValues state
   const handleInputChange = (e : any) => {
     const { id, value } = e.target;
     setFormValues((prevFormValues) => ({

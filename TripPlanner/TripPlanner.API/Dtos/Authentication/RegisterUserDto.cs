@@ -5,7 +5,10 @@ namespace TripPlanner.API.Dtos.Authentication;
 public record RegisterUserDto
 (
     [Required]
-    string UserName,
+    string FirstName,
+
+    [Required]
+    string LastName,
 
     [EmailAddress]
     [Required]

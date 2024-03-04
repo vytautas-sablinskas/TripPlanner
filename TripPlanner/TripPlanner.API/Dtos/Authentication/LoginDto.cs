@@ -5,7 +5,8 @@ namespace TripPlanner.API.Dtos.Authentication;
 public record LoginDto
 (
     [Required]
-    string UserName,
+    [EmailAddress]
+    string Email,
 
     [Required]
     string Password
