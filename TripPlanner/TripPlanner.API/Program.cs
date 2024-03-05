@@ -41,6 +41,7 @@ public static class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+        app.UseCors("AllowReactApp");
 
         var dbSeeder = app.Services.CreateScope().ServiceProvider.GetRequiredService<IAuthenticationSeeder>();
         await dbSeeder.SeedAsync();
@@ -91,6 +92,17 @@ public static class Program
         services.AddAuthorization(options =>
         {
             options.AddPolicy(PolicyNames.ResourceOwner, policy => policy.Requirements.Add(new ResourceOwnerRequirement()));
+        });
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowReactApp",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
         });
 
         services.AddControllers();

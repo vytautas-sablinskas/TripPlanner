@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header/header";
+import QueryProviders from "./providers/tan-stack/query-provider";
+import UserContextProvider from "./providers/user-provider/user-provider";
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,8 +21,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
-        {children}
+        <QueryProviders>
+          <UserContextProvider>
+            <Header />
+            {children}
+            <Toaster position="top-center" richColors/>
+          </UserContextProvider>
+        </QueryProviders>
       </body>
     </html>
   );

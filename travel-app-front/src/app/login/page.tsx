@@ -6,16 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useState } from "react";
-import { useQueryLogin } from "@/app/api/useQueryLogin";
+import { useUser } from "../providers/user-provider/user-context";
+import { LoginData, login } from "../api/fetches/auth/AuthenticationRequests";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+export type SuccessfulLoginData = {
+  accessToken: string;
+  refreshToken: string;
+}
 
 export const Login = () => {
-  const [formValues, setFormValues] = useState({
+  const { changeUserInformationToLoggedIn } = useUser();
+  const router = useRouter();
+
+  const [formValues, setFormValues] = useState<LoginData>({
     email: "",
     password: ""
   });
-
-  const f = useQueryLogin(formValues);
-  console.log(f);
 
   const handleInputChange = (e : any) => {
     const { id, value } = e.target;
@@ -25,11 +33,26 @@ export const Login = () => {
     }));
   };
 
-  const handleSubmit = (e : any) => {
+  const handleSubmit = async (e : any) => {
     e.preventDefault();
 
-    console.log("Form Values: ", formValues);
-  };
+    try {
+      const response = await login(formValues);
+      if (response.status == 200) {
+          const data = await response.json();
+          changeUserInformationToLoggedIn(data.accessToken, data.refreshToken);
+          toast.success('Login successful');
+      } else {
+          console.log(response);
+          const responseError = await response.text();
+          console.error('Login failed', responseError);
+          toast('Fail');
+      }
+    } catch (error) {
+      console.error('Login failed by error', error);
+      toast('Fail');
+    }
+  }
 
   return (
     <div className="mx-auto space-y-6 max-w-[400px]">
