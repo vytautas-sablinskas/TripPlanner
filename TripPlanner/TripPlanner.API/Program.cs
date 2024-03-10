@@ -37,6 +37,7 @@ public static class Program
             app.UseSwaggerUI();
         }
 
+        app.UseCors("AllowReactApp");
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
@@ -91,6 +92,17 @@ public static class Program
         services.AddAuthorization(options =>
         {
             options.AddPolicy(PolicyNames.ResourceOwner, policy => policy.Requirements.Add(new ResourceOwnerRequirement()));
+        });
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowReactApp",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
         });
 
         services.AddControllers();

@@ -396,3 +396,17 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+trip-planner/.vite/deps/react_jsx-dev-runtime.js
+trip-planner/.vite/deps/react_jsx-dev-runtime.js.map
+trip-planner/.vite/deps/react-dom_client.js
+trip-planner/.vite/deps/react-dom_client.js.map
+trip-planner/.vite/deps/react-router-dom.js
+trip-planner/.vite/deps/react-router-dom.js.map
+trip-planner/.vite/deps/_metadata.json
+trip-planner/.vite/deps/chunk-UPDK7Z2H.js
+trip-planner/.vite/deps/chunk-UPDK7Z2H.js.map
+trip-planner/.vite/deps/chunk-UWZXFKA6.js
+trip-planner/.vite/deps/chunk-UWZXFKA6.js.map
+trip-planner/.vite/deps/package.json
+trip-planner/.vite/deps/react.js
+trip-planner/.vite/deps/react.js.map

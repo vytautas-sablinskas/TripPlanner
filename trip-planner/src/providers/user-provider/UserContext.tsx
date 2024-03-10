@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 const UserContext = React.createContext({
     isAuthenticated: false,
     role: 'none',
-    changeUserInformationToLoggedIn: (newAccessToken: string, newRefreshToken: string) => { },
+    changeUserInformationToLoggedIn: (_newAccessToken: string, _newRefreshToken: string) => { },
     changeUserInformationToLoggedOut: () => { },
 });
 

@@ -11,15 +11,14 @@
     font-weight: 500;
 }
 
-a {
+.link {
     color: inherit;
-    text-decoration: none;
     border-bottom: 3px solid transparent;
     padding: 0 0 5px 0;
     transition: 0.2s ease-in;
     font-family: "Inter", sans-serif;
 }
 
-a:hover {
+.link:hover {
     border-color: #f75940
 }
