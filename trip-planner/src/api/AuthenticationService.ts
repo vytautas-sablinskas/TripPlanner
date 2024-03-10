@@ -1,15 +1,19 @@
 import ENDPOINTS from "./Endpoints";
 
 export const login = async (props : any) => {
-    const response = await fetch(ENDPOINTS.AUTHENTICATION.LOGIN, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: props.email, password: props.password })
-    });
-
-    return response;
+    try {
+        const response = await fetch(ENDPOINTS.AUTHENTICATION.LOGIN, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: props.email, password: props.password })
+        });
+    
+        return response;
+    } catch(error) {
+        return error;
+    }
 };
 
 export const register = async (props : any) => {

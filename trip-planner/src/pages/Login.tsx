@@ -85,13 +85,15 @@ const Login = () => {
             return;
         }
 
+        debugger;
+
         setLoading(true);
         const response: any = await login(formValues);
         setLoading(false);
-        const data = await response.json();
+        const data = response ?? await response.json();
 
         if (!response || !response.ok) {
-            const message = data.message || 'Unexpected error. Try again later';
+            const message = data.errorMessage || 'Unexpected error. Try again later';
             toast.error(message, {
                 position: 'top-center'
             });
