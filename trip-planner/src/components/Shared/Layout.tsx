@@ -1,6 +1,8 @@
+import React from "react";
 import UserContextProvider from "../../providers/user-provider/UserContextProvider";
 import Footer from "./Footer";
 import Header from "./Header";
+import { Toaster } from 'sonner'
 
 const Layout = ({ children }: any) => {
     return (
@@ -11,6 +13,7 @@ const Layout = ({ children }: any) => {
                     {children}
                 </main>
                 <Footer />
+                <Toaster richColors/>
             </UserContextProvider>
         </div>
     );

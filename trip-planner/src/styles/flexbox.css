@@ -1,0 +1,26 @@
+.flexbox-container-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flexbox-container-column {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.row-center-vertically {
+    align-items: center;
+}
+
+.row-center-horizontally {
+    justify-content: center;
+}
+
+.column-center-vertically {
+    justify-content: center;
+}
+
+.column-center-horizontally {
+    align-items: center;
+}

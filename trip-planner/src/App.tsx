@@ -1,23 +1,32 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import Layout from './components/Shared/Layout';
-import { useEffect } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material';
 
 const App = () => {
-    useEffect(() => {
-        console.log('here');
-    })
+    const theme = createTheme({
+        typography: {
+            fontFamily: [
+                'Source Sans 3',
+                'Inter',
+                'sans-serif',
+                'Roboto',
+            ].join(','),
+        },
+    });
 
     return (
-        <Router>
-            <Layout>
-                <Routes>
-                    {AppRoutes.map((route: any, index: any) => {
-                        return <Route key={index} path={route.path} element={route.element} />;
-                    })}
-                </Routes>
-            </Layout>
-        </Router>
+        <ThemeProvider theme={theme}>
+            <Router>
+                <Layout>
+                    <Routes>
+                        {AppRoutes.map((route: any, index: any) => {
+                            return <Route key={index} path={route.path} element={route.element} />;
+                        })}
+                    </Routes>
+                </Layout>
+            </Router>
+        </ThemeProvider>
     );
 }
 

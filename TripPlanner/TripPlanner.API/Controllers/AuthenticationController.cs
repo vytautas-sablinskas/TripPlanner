@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TripPlanner.API.Database.Roles;
 using TripPlanner.API.Dtos.Authentication;
 using TripPlanner.API.Services.Authentication;
 
@@ -34,7 +32,7 @@ public class AuthenticationController : ControllerBase
     {
         var result = await _authService.Register(registerDto);
         if (!result.Success)
-            return BadRequest(result.Message);
+            return BadRequest(new { message = result.Message });
 
         return CreatedAtAction(nameof(Register), result.Data);
     }

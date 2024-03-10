@@ -1,6 +1,14 @@
+import React from "react";
+
+import "../styles/flexbox.css";
+
 const Login = () => {
     return (
-        <p>Login page</p>
+        <div className="flexbox-container-column column-center-vertically column-center-horizontally">
+            <section className="login-container">
+                Log in
+            </section>
+        </div>
     )
 }
 

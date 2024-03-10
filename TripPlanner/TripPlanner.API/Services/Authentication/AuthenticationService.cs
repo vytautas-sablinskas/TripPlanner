@@ -35,19 +35,21 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<Result<UserDto>> Register(RegisterUserDto userDto)
     {
-        var user = await _userManager.FindByNameAsync(userDto.UserName);
+        var user = await _userManager.FindByEmailAsync(userDto.Email);
         if (user != null)
-            return new Result<UserDto>(Success: false, Message: "Username is already taken!", Data: null);
+            return new Result<UserDto>(Success: false, Message: "Email is already taken!", Data: null);
 
         var newUser = new AppUser
         {
+            UserName = userDto.Email,
             Email = userDto.Email,
-            UserName = userDto.UserName,
+            Name = userDto.Name,
+            Surname = userDto.Surname,
         };
 
         var createdResult = await _userManager.CreateAsync(newUser, userDto.Password);
         if (!createdResult.Succeeded)
-            return new Result<UserDto>(Success: false, Message: "Could not create a user.", Data: null);
+            return new Result<UserDto>(Success: false, Message: "Unexpected error. Try again later!", Data: null);
 
         await _userManager.AddToRoleAsync(newUser, UserRoles.User);
 
