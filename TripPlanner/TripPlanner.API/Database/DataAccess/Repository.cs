@@ -21,36 +21,36 @@ public class Repository<T> : IRepository<T> where T : class
         =>
         _context.Set<T>().Where(expression);
 
-    public void Create(T entity)
+    public async Task Create(T entity)
     {
         if (entity == null)
         {
             throw new ArgumentNullException("entity");
         }
 
-        this._table.Add(entity);
-        this._context.SaveChanges();
+        await _table.AddAsync(entity);
+        await _context.SaveChangesAsync();
     }
 
-    public void Update(T entity)
+    public async Task Update(T entity)
     {
         if (entity == null)
         {
             throw new ArgumentNullException("entity");
         }
 
-        this._table.Update(entity);
-        this._context.SaveChanges();
+        _table.Update(entity);
+        await _context.SaveChangesAsync();
     }
 
-    public void Delete(T entity)
+    public async Task Delete(T entity)
     {
         if (entity == null)
         {
             throw new ArgumentNullException("entity");
         }
 
-        this._table.Remove(entity);
-        this._context.SaveChanges();
+        _table.Remove(entity);
+        await _context.SaveChangesAsync();
     }
 }

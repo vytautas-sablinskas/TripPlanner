@@ -19,7 +19,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<Result<SuccessfulLoginDto>> Login(LoginDto loginDto)
     {
-        var user = await _userManager.FindByNameAsync(loginDto.UserName);
+        var user = await _userManager.FindByEmailAsync(loginDto.Email);
         if (user == null)
             return new Result<SuccessfulLoginDto>(Success: false, Message: "Username or password is invalid", Data: null);
 

@@ -2,15 +2,15 @@
 
 namespace TripPlanner.API.Database.DataAccess;
 
-public interface IRepository<T>
+public interface IRepository<T> where T : class
 {
     IQueryable<T> FindAll();
 
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
 
-    void Create(T entity);
+    Task Create(T entity);
 
-    void Update(T entity);
+    Task Update(T entity);
 
-    void Delete(T entity);
+    Task Delete(T entity);
 }

@@ -18,7 +18,6 @@ const UserContextProvider = ({ children }: any) => {
     }
 
     const changeUserInformationToLoggedIn = useCallback((newAccessToken: string, newRefreshToken: string) => {
-        debugger;
         const payload = decodeJWT(newAccessToken);
         const userRole = payload ? payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] : 'none';
 
