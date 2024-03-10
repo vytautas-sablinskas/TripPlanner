@@ -103,12 +103,18 @@ const Register = () => {
         if (!response || !response.ok) {
             const data = await response.json();
             const message = data.message || 'Unexpected error. Try again later';
-            toast.error(message);
+            toast.error(message, {
+                position: 'top-center'
+            });
             return;
         }
 
+        
+
         navigate(Paths.HOME);
-        toast.success("Successfully signed up!");
+        toast.success("Successfully signed up!", {
+            position: 'top-center'
+        });
     }
 
     return (
