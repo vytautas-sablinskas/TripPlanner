@@ -6,7 +6,6 @@ import { logout } from '../../api/AuthenticationService';
 
 const Header = () => {
     const { isAuthenticated, changeUserInformationToLoggedOut } = useUser();
-    console.log(isAuthenticated);
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -20,6 +19,9 @@ const Header = () => {
         <header className='header-container'>
             <section className='left-side-header'>
                 <Link to={Paths.HOME} className='link'>Home</Link>
+                { isAuthenticated && (
+                    <Link to={Paths.TRIPS} className='link'>Trips</Link>
+                )}
             </section>
             <section className='right-side-header'>
                 { !isAuthenticated ? (

@@ -90,7 +90,7 @@ const Login = () => {
         setLoading(true);
         const response: any = await login(formValues);
         setLoading(false);
-        const data = response ?? await response.json();
+        const data = response === null ? response : await response.json();
 
         if (!response || !response.ok) {
             const message = data.errorMessage || 'Unexpected error. Try again later';

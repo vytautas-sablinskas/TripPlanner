@@ -21,7 +21,7 @@ public class AuthenticationController : ControllerBase
     {
         var result = await _authService.Login(loginDto);
         if (!result.Success)
-            return BadRequest(new { message = result.Message });
+            return BadRequest(new { errorMessage = result.Message });
 
         return Ok(result.Data);
     }
@@ -32,7 +32,7 @@ public class AuthenticationController : ControllerBase
     {
         var result = await _authService.Register(registerDto);
         if (!result.Success)
-            return BadRequest(new { message = result.Message });
+            return BadRequest(new { errorMessage = result.Message });
 
         return CreatedAtAction(nameof(Register), result.Data);
     }
@@ -43,7 +43,7 @@ public class AuthenticationController : ControllerBase
     {
         var result = _authService.Logout(tokenDto);
         if (!result.Success)
-            return BadRequest(new { message = result.Message });
+            return BadRequest(new { errorMessage = result.Message });
 
         return Ok(result.Message);
     }
@@ -54,7 +54,7 @@ public class AuthenticationController : ControllerBase
     {
         var result = await _authService.RefreshToken(tokenDto);
         if (!result.Success)
-            return BadRequest(new { message = result.Message });
+            return BadRequest(new { errorMessage = result.Message });
 
         return Ok(result.Message);
     }

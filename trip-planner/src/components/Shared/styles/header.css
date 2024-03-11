@@ -6,7 +6,7 @@
     justify-content: space-between;
 }
 
-.left-side-header, .right-side-header > * {
+.left-side-header > *, .right-side-header > * {
     margin-right: 10px;
     font-weight: 500;
 }

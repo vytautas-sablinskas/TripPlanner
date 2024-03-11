@@ -10,6 +10,7 @@ using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Policies;
 using TripPlanner.API.Database.Seeders;
 using TripPlanner.API.Services.Authentication;
+using TripPlanner.API.Services.Trips;
 
 namespace TripPlanner.API;
 
@@ -53,8 +54,10 @@ public static class Program
     {
         services.AddScoped<IRepository<AppUser>, Repository<AppUser>>();
         services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>();
+        services.AddScoped<IRepository<Trip>, Repository<Trip>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<ITripService, TripService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuthenticationSeeder, AuthenticationSeeder>();
         services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();

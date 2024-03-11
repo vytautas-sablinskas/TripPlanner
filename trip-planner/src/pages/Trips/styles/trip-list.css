@@ -1,0 +1,22 @@
+.trip-list-container {
+    width: 100%;
+}
+
+.tabs {
+    padding: 0;
+}
+
+.information-container-side {
+    margin: 24px;
+}
+
+.trip-image-container {
+    border-left: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
