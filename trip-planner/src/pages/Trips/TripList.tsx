@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Paths from "../../routes/Paths";
 import { getTripsList } from "../../api/TripService";
 import { getFormattedDateRange } from "../../utils/date";
-import { Delete, KeyboardArrowDown } from "@mui/icons-material";
+import { AddCircleOutline, AddCircleOutlined, Delete, KeyboardArrowDown } from "@mui/icons-material";
 
 const TripList = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -26,7 +26,7 @@ const TripList = () => {
 
     const [tabSelected, setTabSelected] = useState(0);
     const [page, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(true);
     const [trips, setTrips] = useState([]);
     const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } = useUser();
@@ -97,12 +97,24 @@ const TripList = () => {
                 />
             </Tabs>
             <Divider />
+            <Button className="flexbox-container-row row-center-vertically add-trip-button"
+                sx={{ 
+                    padding: '12px 0px', 
+                    "&.MuiButtonBase-root:hover": {
+                    bgcolor: "transparent"
+                    }
+                }}
+                disableRipple
+                onClick={() => navigate(Paths.CREATE_TRIP)}
+            >
+                <AddCircleOutline />
+                <p style={{ margin: 0 }}>Add a Trip</p>
+            </Button>
             {!loading && trips.map((trip: any) => (
                 <Card key={trip.id}
                     sx={{
                         height: '220px',
                         width: '100%',
-                        marginTop: '20px',
                         borderColor: "rgba(0, 0, 0, 0.3)"
                     }}
                     variant="outlined">
@@ -143,7 +155,6 @@ const TripList = () => {
                                     Delete Trip
                                 </Button>
                             </div>
-                            
                         </div>
                         <div className="trip-image-container">
                             <img src="/default.jpg" alt="photo" />

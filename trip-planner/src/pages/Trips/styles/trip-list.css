@@ -20,3 +20,7 @@
     justify-content: flex-end;
     align-items: flex-end;
 }
+
+.add-trip-button {
+    gap: 8px;
+}

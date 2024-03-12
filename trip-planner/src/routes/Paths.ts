@@ -3,6 +3,7 @@ const Paths = {
     LOGIN: '/login',
     REGISTER: '/register',
     TRIPS: '/trips',
+    CREATE_TRIP: '/trips/create',
 }
 
 export default Paths
