@@ -7,12 +7,8 @@
 }
 
 .information-container-side {
-    margin: 24px;
+    padding: 24px;
     height: 100%;
-}
-
-.trip-image-container {
-    border-left: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .pagination {
