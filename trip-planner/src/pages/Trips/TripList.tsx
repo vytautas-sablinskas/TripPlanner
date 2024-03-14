@@ -10,7 +10,8 @@ import { useNavigate } from "react-router-dom";
 import Paths from "../../routes/Paths";
 import { getTripsList } from "../../api/TripService";
 import { getFormattedDateRange } from "../../utils/date";
-import { AddCircleOutline, AddCircleOutlined, Delete, KeyboardArrowDown } from "@mui/icons-material";
+import { AddCircleOutline, AddCircleOutlined, Delete, Height, KeyboardArrowDown } from "@mui/icons-material";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const TripList = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -110,58 +111,69 @@ const TripList = () => {
                 <AddCircleOutline />
                 <p style={{ margin: 0 }}>Add a Trip</p>
             </Button>
-            {!loading && trips.map((trip: any) => (
-                <Card key={trip.id}
-                    sx={{
-                        height: '220px',
-                        width: '100%',
-                        borderColor: "rgba(0, 0, 0, 0.3)"
-                    }}
-                    variant="outlined">
-                    <CardContent className="flexbox-container-row"
+            { loading ? (
+                <>
+                    <Skeleton style={{ width: '100%', height: '220px', marginBottom: '16px' }} />
+                    <Skeleton style={{ width: '100%', height: '220px', marginBottom: '16px' }} />
+                    <Skeleton style={{ width: '100%', height: '220px', marginBottom: '16px' }} />
+                    <Skeleton style={{ width: '100%', height: '220px', marginBottom: '16px' }} />
+                    <Skeleton style={{ width: '100%', height: '220px', marginBottom: '16px' }} />
+                </>
+            ) : (
+                trips.map((trip: any) => (
+                    <Card key={trip.id}
                         sx={{
-                            justifyContent: "space-between",
-                            height: "100%",
-                            padding: 0
+                            height: '220px',
+                            width: '100%',
+                            marginBottom: '16px',
+                            borderColor: "rgba(0, 0, 0, 0.3)"
                         }}
-                    >
-                        <div className="information-container-side">
-                            <p>{trip.title}</p>
-                            <p>{trip.destinationCountry}</p>
-                            <p>{getFormattedDateRange(trip.startDate, trip.endDate)}</p>
-                            <div>
-                                <span>
-                                    <Button variant="outlined" endIcon={<KeyboardArrowDown />} onClick={handleClick}>
-                                        Manage Trip
+                        variant="outlined">
+                        <CardContent className="flexbox-container-row"
+                            sx={{
+                                justifyContent: "space-between",
+                                height: "100%",
+                            }}
+                            style = {{ padding: 0 }}
+                        >
+                            <div className="information-container-side">
+                                <p style={{ fontSize: '24px'}}>{trip.title}</p>
+                                <p style={{ marginTop: '4px', fontSize: '16px', color: 'rgba(0, 0, 0, 0.87)'}}>{trip.destinationCountry}</p>
+                                <p style={{ marginTop: '4px', fontSize: '16px', color: 'rgb(102, 102, 102)'}}>{getFormattedDateRange(trip.startDate, trip.endDate)}</p>
+                                <div style={{ marginTop: '16px' }}>
+                                    <span>
+                                        <Button variant="outlined" endIcon={<KeyboardArrowDown />} onClick={handleClick}>
+                                            Manage Trip
+                                        </Button>
+                                        <Menu
+                                            anchorEl={anchorEl}
+                                            open={openEditMenu}
+                                            onClose={handleClose}
+                                            disableScrollLock={true}
+                                        >
+                                            <MenuItem>
+                                                Edit Trip Information
+                                            </MenuItem>
+                                            <MenuItem>
+                                                Manage Trip Budgets
+                                            </MenuItem>
+                                            <MenuItem>
+                                                Manage Travellers
+                                            </MenuItem>
+                                        </Menu>
+                                    </span>
+                                    <Button variant="outlined" endIcon={<Delete />} sx={{ marginLeft: '8px' }}>
+                                        Delete Trip
                                     </Button>
-                                    <Menu
-                                        anchorEl={anchorEl}
-                                        open={openEditMenu}
-                                        onClose={handleClose}
-                                        disableScrollLock={true}
-                                    >
-                                        <MenuItem>
-                                            Edit Trip Information
-                                        </MenuItem>
-                                        <MenuItem>
-                                            Manage Trip Budgets
-                                        </MenuItem>
-                                        <MenuItem>
-                                            Manage Travellers
-                                        </MenuItem>
-                                    </Menu>
-                                </span>
-                                <Button variant="outlined" endIcon={<Delete />} sx={{ marginLeft: '8px' }}>
-                                    Delete Trip
-                                </Button>
+                                </div>
                             </div>
-                        </div>
-                        <div className="trip-image-container">
-                            <img src="/default.jpg" alt="photo" />
-                        </div>
-                    </CardContent> 
-                </Card>
-            ))}
+                            <div className="trip-image-container">
+                                <img src="/default.jpg" alt="photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                            </div>
+                        </CardContent> 
+                    </Card>
+                ))
+            )}
             <div className="pagination">
                 <Pagination 
                     count={totalPages} 
