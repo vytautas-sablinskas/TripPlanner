@@ -3,7 +3,7 @@ import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, Menu, MenuItem } from "@mui/material";
 import { Delete } from "lucide-react";
-import "./styles/trip-list.css";
+import "../styles/trip-list.css";
 import { getFormattedDateRange } from "@/utils/date";
 import { KeyboardArrowDown } from "@mui/icons-material";
 

@@ -19,7 +19,7 @@ import {
   AddCircleOutline,
 } from "@mui/icons-material";
 import { Skeleton } from "@/components/ui/skeleton";
-import TripCard from "./TripCard";
+import TripCard from "./components/TripCard";
 
 const TripList = () => {
   const [tabSelected, setTabSelected] = useState(0);
