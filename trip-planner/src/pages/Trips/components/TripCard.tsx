@@ -80,7 +80,7 @@ const TripCard = ({ trip }: any) => {
           <img
             src="/default.jpg"
             alt="photo"
-            style={{ width: "100%", height: "225px", objectFit: "cover" }}
+            style={{ width: "100%", height: "225px", objectFit: "cover", borderTopRightRadius: '7px', borderBottomRightRadius: '7px' }}
           />
         </div>
       </CardContent>

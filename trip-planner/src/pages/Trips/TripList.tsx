@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import "./styles/trip-list.css";
 import "../../styles/flexbox.css";
-import {
-  Button,
-  Divider,
-  Pagination,
-  Tab,
-  Tabs,
-} from "@mui/material";
+import { Button, Divider, Pagination, Tab, Tabs } from "@mui/material";
 import { checkTokenValidity } from "../../utils/jwtUtils";
 import { toast } from "sonner";
 import { useUser } from "../../providers/user-provider/UserContext";
@@ -15,9 +9,7 @@ import { refreshAccessToken } from "../../api/AuthenticationService";
 import { useNavigate } from "react-router-dom";
 import Paths from "../../routes/Paths";
 import { getTripsList } from "../../api/TripService";
-import {
-  AddCircleOutline,
-} from "@mui/icons-material";
+import { AddCircleOutline } from "@mui/icons-material";
 import { Skeleton } from "@/components/ui/skeleton";
 import TripCard from "./components/TripCard";
 
@@ -26,50 +18,59 @@ const TripList = () => {
   const [page, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [resetTab, setResetTab] = useState(false);
   const [trips, setTrips] = useState([]);
-  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } = useUser();
+  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } =
+    useUser();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const tryFetchingTrips = async () => {
-      const accessToken = localStorage.getItem("accessToken");
-      setLoading(true);
+  const tryFetchingTrips = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    setLoading(true);
 
-      if (!checkTokenValidity(accessToken || "")) {
-        const result = await refreshAccessToken();
-        if (!result.success) {
-          toast.error("Session has expired. Login again!", {
-            position: "top-center",
-          });
-
-          changeUserInformationToLoggedOut();
-          navigate(Paths.LOGIN);
-          return;
-        }
-
-        changeUserInformationToLoggedIn(
-          result.data.accessToken,
-          result.data.refreshToken
-        );
-      }
-
-      const response = await getTripsList(tabSelected, page);
-      if (!response || !response.ok) {
-        toast.error("Unexpected error. Try again later", {
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
           position: "top-center",
         });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
         return;
       }
 
-      const data = await response.json();
-      setTrips(data.trips);
-      console.log(data);
-      setTotalPages(Math.ceil(data.totalTripCount / 5));
-      setLoading(false);
-    };
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
+      );
+    }
 
+    const response = await getTripsList(tabSelected, page);
+    if (!response || !response.ok) {
+      toast.error("Unexpected error. Try again later", {
+        position: "top-center",
+      });
+      return;
+    }
+
+    const data = await response.json();
+    setTrips(data.trips);
+    console.log(data);
+    setTotalPages(Math.ceil(data.totalTripCount / 5));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
     tryFetchingTrips();
-  }, [tabSelected, page]);
+  }, [tabSelected]);
+
+  useEffect(() => {
+    tryFetchingTrips();
+  }, [page]);
+
+  console.log(page);
 
   return (
     <div className="trip-list-container">
@@ -131,18 +132,18 @@ const TripList = () => {
           />
         </>
       ) : (
-        trips.map((trip: any) => (
-          <TripCard trip={trip} />
-        ))
+        trips.map((trip: any) => <TripCard trip={trip} />)
       )}
-      <div className="pagination">
+      {!loading && (
+        <div className="pagination">
           <Pagination
             count={totalPages}
+            page={page}
             shape="rounded"
-            variant="outlined"
             onChange={(_, value) => setCurrentPage(value)}
           />
         </div>
+      )}
     </div>
   );
 };
