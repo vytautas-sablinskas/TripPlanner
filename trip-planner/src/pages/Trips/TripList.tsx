@@ -18,7 +18,6 @@ const TripList = () => {
   const [page, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [resetTab, setResetTab] = useState(false);
   const [trips, setTrips] = useState([]);
   const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } =
     useUser();

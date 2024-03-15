@@ -1,15 +1,14 @@
 import ENDPOINTS from "./Endpoints";
 
-export const addTrip = async (title: string, description: string, destinationCountry: string, photoUri: string, startDate: string, endDate: string) => {
+export const addTrip = async (formData: FormData) => {
     const token = localStorage.getItem('accessToken');
     const response = await fetch(ENDPOINTS.TRIPS.CREATE_TRIP,
         {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ title, description, destinationCountry, photoUri, startDate, endDate })
+            body: formData
         });
 
     return response

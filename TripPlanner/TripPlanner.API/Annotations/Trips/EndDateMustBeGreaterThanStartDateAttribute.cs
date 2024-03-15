@@ -9,7 +9,7 @@ public class EndDateMustBeGreaterThanStartDateAttribute : ValidationAttribute
     {
         var dto = (CreateTripDto)validationContext.ObjectInstance;
 
-        if (dto.EndDate <= dto.StartDate)
+        if (dto.EndDate.Date < dto.StartDate.Date)
         {
             return new ValidationResult("End date has to be higher than start date!");
         }

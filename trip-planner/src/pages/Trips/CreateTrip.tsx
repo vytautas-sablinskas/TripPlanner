@@ -17,6 +17,12 @@ import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import "./styles/create-trip.css";
 import { toast } from "sonner";
+import { addTrip } from "@/api/TripService";
+import { getUtcTime } from "@/utils/date";
+import { checkTokenValidity } from "@/utils/jwtUtils";
+import { refreshAccessToken } from "@/api/AuthenticationService";
+import { useUser } from "@/providers/user-provider/UserContext";
+import { CreateEditLoadingButton } from "./components/CreateEditLoadingButton";
 
 const MAX_FILE_SIZE = 2000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -39,7 +45,7 @@ const formSchema = z.object({
       to: z.date().nullable(),
     })
     .refine((date) => {
-        return date.from && date.to
+      return date.from && date.to;
     }, "Please select a date range.")
     .refine((date) => {
       if (!date.from || !date.to) return false;
@@ -54,7 +60,10 @@ const formSchema = z.object({
 
 const CreateTrip = () => {
   const navigate = useNavigate();
-  const [uploadedImage, setUploadedImage] = useState<any>('/default.jpg');
+  const [uploadedImage, setUploadedImage] = useState<any>("/default.jpg");
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+    useUser();
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,27 +81,80 @@ const CreateTrip = () => {
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     if (!file) {
-        return;
+      return;
     }
 
-    console.log(uploadedImage);
-
     if (file.size > MAX_FILE_SIZE) {
-        toast.error("File is too large! 2MB Max.", { position: "bottom-right" });
-        return;
+      toast.error("File is too large! 2MB Max.", { position: "bottom-right" });
+      return;
     }
 
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-        toast.error("Invalid file type!", { position: "bottom-right" })
-        return;
+      toast.error("Invalid file type!", { position: "bottom-right" });
+      return;
     }
-        
+
     form.setValue("image", file);
     setUploadedImage(URL.createObjectURL(file));
-  }
+  };
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: any) => {
+    setLoading(true);
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
+          position: "top-center",
+        });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
+      );
+    }
+
+    const formData = new FormData();
+
+    const fromDate = new Date(data.date.from);
+    const toDate = new Date(data.date.to);
+    fromDate.setHours(0, 0, 0, 0);
+    toDate.setHours(23, 59, 59, 999);
+    const dates = {
+      from: getUtcTime(fromDate),
+      to: getUtcTime(toDate),
+    };
+
+    formData.append("title", data.tripTitle);
+    formData.append("description", "f");
+    formData.append("image", data.image || null);
+    formData.append("destinationCountry", data.destinationCountry);
+    formData.append("startDate", dates.from || "");
+    formData.append("endDate", dates.to || "");
+
+    try {
+      const response = await addTrip(formData);
+      if (response.ok) {
+        const id = await response.json();
+        navigate(Paths.TRIP_DETAILS.replace(":id", id));
+      } else {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
+        });
+      }
+    } catch (error) {
+      toast.error("Unexpected error. Try again later", {
+        position: "top-center",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -140,7 +202,6 @@ const CreateTrip = () => {
                     <DatePickerWithRange
                       field={field}
                       className="text-left font-normal"
-                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -175,8 +236,8 @@ const CreateTrip = () => {
           </div>
         </div>
         <div className="submit-buttons-container">
-          <Button onClick={() => navigate(Paths.TRIPS)}>Cancel</Button>
-          <Button type="submit">Submit</Button>
+          <Button disabled={loading} onClick={() => navigate(Paths.TRIPS)}>Cancel</Button>
+          <CreateEditLoadingButton loading={loading} text="Submit"/>
         </div>
       </form>
     </Form>

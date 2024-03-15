@@ -1,8 +1,11 @@
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using TripPlanner.API.Database.DataAccess;
@@ -10,6 +13,7 @@ using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Policies;
 using TripPlanner.API.Database.Seeders;
 using TripPlanner.API.Services.Authentication;
+using TripPlanner.API.Services.AzureBlobStorage;
 using TripPlanner.API.Services.Trips;
 
 namespace TripPlanner.API;
@@ -52,6 +56,10 @@ public static class Program
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
+        var blobServiceClient = new BlobServiceClient(configuration["AzureBlobStorage:BlobStorageConnectionString"]);
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(configuration["AzureBlobStorage:BlobStorageContainerName"]);
+        services.AddScoped(provider => blobContainerClient);
+
         services.AddScoped<IRepository<AppUser>, Repository<AppUser>>();
         services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>();
         services.AddScoped<IRepository<Trip>, Repository<Trip>>();
@@ -61,6 +69,7 @@ public static class Program
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuthenticationSeeder, AuthenticationSeeder>();
         services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
+        services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
 
         services.AddAutoMapper(typeof(Program));
 
@@ -110,6 +119,27 @@ public static class Program
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            var securityScheme = new OpenApiSecurityScheme
+            {
+                Name = "JWT Authentication",
+                Description = "Enter JWT Bearer token **_only_**",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+            options.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {securityScheme, new string[] { }}
+    });
+        });
     }
 }

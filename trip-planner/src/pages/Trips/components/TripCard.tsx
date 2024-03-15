@@ -78,9 +78,9 @@ const TripCard = ({ trip }: any) => {
         </div>
         <div className="trip-image-container">
           <img
-            src="/default.jpg"
+            src={trip.photoUri}
             alt="photo"
-            style={{ width: "100%", height: "225px", objectFit: "cover", borderTopRightRadius: '7px', borderBottomRightRadius: '7px' }}
+            style={{ width: "225px", height: "225px", objectFit: "cover", borderTopRightRadius: '7px', borderBottomRightRadius: '7px' }}
           />
         </div>
       </CardContent>
