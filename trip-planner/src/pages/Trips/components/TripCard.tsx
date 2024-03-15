@@ -47,7 +47,7 @@ const TripCard = ({ trip }: any) => {
               {getFormattedDateRange(trip.startDate, trip.endDate)}
             </p>
           </div>
-          <div className="mt-4">
+          <div>
             <span>
               <Button
                 variant="outlined"

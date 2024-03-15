@@ -56,7 +56,6 @@ const TripList = () => {
 
     const data = await response.json();
     setTrips(data.trips);
-    console.log(data);
     setTotalPages(Math.ceil(data.totalTripCount / 5));
     setLoading(false);
   };
@@ -69,8 +68,6 @@ const TripList = () => {
   useEffect(() => {
     tryFetchingTrips();
   }, [page]);
-
-  console.log(page);
 
   return (
     <div className="trip-list-container">
