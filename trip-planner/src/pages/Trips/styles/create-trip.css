@@ -1,0 +1,61 @@
+.main-form-container {
+  width: 100%;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 24px 0px;
+}
+
+.main-info-container {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+}
+
+@media screen and (max-width: 768px) {
+  .main-info-container {
+    flex-direction: column;
+    gap: 0px;
+  } 
+}
+
+.left-side-container,
+.right-side-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.left-side-container {
+    gap: 24px;
+}
+
+.image {
+    margin-top: 16px;
+    max-height: 200px;
+}
+
+.upload-image-button {
+  width: 225px;
+  margin-top: 16px;
+}
+
+input[type="file"] {
+  color: transparent;
+}
+
+.inputs {
+    width: 100%;
+}
+
+.submit-buttons-container {
+    display: flex;
+    
+}
+
+.submit-buttons-container > * {
+    width: 120px;
+    margin: 16px 16px 0px 0px;
+}

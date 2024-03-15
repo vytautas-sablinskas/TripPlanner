@@ -30,9 +30,9 @@ public class TripController : ControllerBase
     [HttpPost]
     [Route("trips")]
     [Authorize]
-    public IActionResult CreateTrip([FromBody] CreateTripDto tripDto)
+    public async Task<IActionResult> CreateTrip([FromForm] CreateTripDto tripDto)
     {
-        var tripId = _tripService.CreateNewTrip(tripDto, User.GetUserId());
+        var tripId = await _tripService.CreateNewTrip(tripDto, tripDto.Image, User.GetUserId());
 
         return Ok(tripId);
     }

@@ -4,6 +4,7 @@ using TripPlanner.API.Constants;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.Trips;
+using TripPlanner.API.Services.AzureBlobStorage;
 
 namespace TripPlanner.API.Services.Trips;
 
@@ -11,18 +12,23 @@ public class TripService : ITripService
 {
     private readonly IRepository<Trip> _tripRepository;
     private readonly IMapper _mapper;
+    private readonly IAzureBlobStorageService _azureBlobStorageService;
 
-    public TripService(IRepository<Trip> tripRepository, IMapper mapper)
+    public TripService(IRepository<Trip> tripRepository, IMapper mapper, IAzureBlobStorageService azureBlobStorageService)
     {
         _tripRepository = tripRepository;
         _mapper = mapper;
+        _azureBlobStorageService = azureBlobStorageService;
     }
 
-    public Guid CreateNewTrip(CreateTripDto tripDto, string userId)
+    public async Task<Guid> CreateNewTrip(CreateTripDto tripDto, IFormFile image, string userId)
     {
+        var imageUri = await _azureBlobStorageService.UploadImageAsync(image);
+
         var trip = _mapper.Map<Trip>(tripDto);
         trip.Id = Guid.NewGuid();
         trip.GroupAdminId = userId;
+        trip.PhotoUri = imageUri;
 
         _tripRepository.Create(trip);
 

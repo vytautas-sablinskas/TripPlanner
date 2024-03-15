@@ -14,3 +14,7 @@ export const getFormattedDateRange = (startStr: string, endStr: string): string 
 
     return dateString;
 }
+
+export const getUtcTime = (date: any) => {
+    return DateTime.fromJSDate(date).toUTC().toISO();
+}

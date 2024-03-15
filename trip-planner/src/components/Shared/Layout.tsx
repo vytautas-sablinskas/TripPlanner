@@ -2,13 +2,13 @@ import React from "react";
 import Footer from "./Footer";
 import Header from "./Header";
 import { Toaster } from 'sonner'
+import './styles/layout.css';
 
 const Layout = ({ children }: any) => {
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
+        <div className="main-body">
             <Header />
-            <main style={{ flex: 1, display: 'flex' }}>
+            <main style={{ flex: 1, display: 'flex', width: '100%' }}>
                 {children}
             </main>
             <Footer />

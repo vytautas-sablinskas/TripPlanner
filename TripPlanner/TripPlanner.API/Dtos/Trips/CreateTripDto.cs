@@ -11,8 +11,7 @@ public record CreateTripDto (
 
     string DestinationCountry,
 
-    [Required]
-    string PhotoUri,
+    IFormFile? Image,
 
     [Required]
     [DataType(DataType.DateTime)]
