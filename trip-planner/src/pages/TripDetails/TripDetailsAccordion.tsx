@@ -4,7 +4,7 @@ import "./styles/trip-details-accordion.css";
 
 const TripDetailsAccordion = () => {
     return (
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="multiple" className="w-full">
       <AccordionItem value="item-1">
         <AccordionTrigger>Wednesday, December 13th</AccordionTrigger>
         <AccordionContent className="day-container">

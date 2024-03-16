@@ -1,18 +1,18 @@
 .header-container {
     display: flex;
     align-items: center;
-    min-height: 63px;
+    height: 63px;
     width: 100%;
     justify-content: space-between;
 }
 
-.left-side-header > *, .right-side-header > * {
-    margin-right: 10px;
-    font-weight: 500;
+.left-side-header:first-child {
+    margin-left: 15px;
 }
 
-.right-side-header > *:last-child {
-    margin-right: 0;
+.left-side-header > *, .right-side-header > * {
+    margin-right: 15px;
+    font-weight: 500;
 }
 
 .link {
