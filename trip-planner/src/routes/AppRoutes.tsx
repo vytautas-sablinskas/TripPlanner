@@ -6,6 +6,7 @@ import Register from "../pages/Auth/Register";
 import TripList from "../pages/Trips/TripList";
 import Paths from "./Paths";
 import CreateTrip from "../pages/Trips/CreateTrip";
+import EditTrip from "@/pages/Trips/EditTrip";
 
 const AppRoutes = [
   {
@@ -32,6 +33,10 @@ const AppRoutes = [
   {
     path: Paths.CREATE_TRIP,
     element: <CreateTrip />
+  },
+  {
+    path: Paths.EDIT_TRIP,
+    element: <EditTrip />
   }
 ];
 

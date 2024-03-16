@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { DatePickerWithRange } from "@/components/Extra/DatePickerWithRange";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import "./styles/create-edit-trip.css";
 import { toast } from "sonner";
-import { addTrip } from "@/api/TripService";
+import { addTrip, editTrip, getTrip } from "@/api/TripService";
 import { getUtcTime } from "@/utils/date";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
@@ -58,12 +58,14 @@ const formSchema = z.object({
   image: z.any(),
 });
 
-const CreateTrip = () => {
+const EditTrip = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [uploadedImage, setUploadedImage] = useState<any>("/default.jpg");
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
     useUser();
-  const [loading, setLoading] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,6 +79,67 @@ const CreateTrip = () => {
       image: undefined,
     },
   });
+
+  const getTripId = () => {
+    const pathParts = location.pathname.split("/");
+    const idIndex = pathParts.indexOf("trips") + 1;
+    return pathParts[idIndex];
+  }
+
+  useEffect(() => {
+    const tryFetchingTrip = async () => {
+      setLoadingData(true);
+      const accessToken = localStorage.getItem("accessToken");
+
+      if (!checkTokenValidity(accessToken || "")) {
+        const result = await refreshAccessToken();
+        if (!result.success) {
+          toast.error("Session has expired. Login again!", {
+            position: "top-center",
+          });
+
+          changeUserInformationToLoggedOut();
+          navigate(Paths.LOGIN);
+          return;
+        }
+
+        changeUserInformationToLoggedIn(
+          result.data.accessToken,
+          result.data.refreshToken
+        );
+      }
+
+      try {
+        const response = await getTrip(getTripId());
+        if (response.ok) {
+          const data = await response.json();
+          form.reset({
+            tripTitle: data.title,
+            destinationCountry: data.destinationCountry,
+            date: {
+                from: new Date(data.startDate),
+                to: new Date(data.endDate),
+            },
+          })
+          setUploadedImage(data.photoUri);
+        } else {
+          toast.error("Unexpected error. Try again later", {
+            position: "top-center",
+          });
+          navigate(Paths.HOME);
+        }
+      } catch (error) {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
+        });
+        navigate(Paths.HOME);
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    tryFetchingTrip();
+  }, []);
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
@@ -99,7 +162,7 @@ const CreateTrip = () => {
   };
 
   const onSubmit = async (data: any) => {
-    setLoading(true);
+    setLoadingSubmit(true);
     const accessToken = localStorage.getItem("accessToken");
 
     if (!checkTokenValidity(accessToken || "")) {
@@ -139,10 +202,9 @@ const CreateTrip = () => {
     formData.append("endDate", dates.to || "");
 
     try {
-      const response = await addTrip(formData);
+      const response = await editTrip(formData, getTripId());
       if (response.ok) {
-        const id = await response.json();
-        navigate(Paths.TRIP_DETAILS.replace(":id", id));
+        navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()));
       } else {
         toast.error("Unexpected error. Try again later", {
           position: "top-center",
@@ -153,9 +215,13 @@ const CreateTrip = () => {
         position: "top-center",
       });
     } finally {
-      setLoading(false);
+      setLoadingSubmit(false);
     }
   };
+
+  if (loadingData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Form {...form}>
@@ -163,7 +229,7 @@ const CreateTrip = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="main-form-container"
       >
-        <h1 className="page-title">Add New Trip</h1>
+        <h1 className="page-title">Edit Trip Information</h1>
         <div className="main-info-container">
           <div className="left-side-container">
             <FormField
@@ -236,12 +302,17 @@ const CreateTrip = () => {
           </div>
         </div>
         <div className="submit-buttons-container">
-          <Button disabled={loading} onClick={() => navigate(Paths.TRIPS)}>Cancel</Button>
-          <CreateEditLoadingButton loading={loading} text="Submit"/>
+          <Button
+            disabled={loadingSubmit}
+            onClick={() => navigate(Paths.TRIPS)}
+          >
+            Cancel
+          </Button>
+          <CreateEditLoadingButton loading={loadingSubmit} text="Submit" />
         </div>
       </form>
     </Form>
   );
 };
 
-export default CreateTrip;
+export default EditTrip;

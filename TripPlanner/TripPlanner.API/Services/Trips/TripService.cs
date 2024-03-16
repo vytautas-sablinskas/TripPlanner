@@ -21,9 +21,9 @@ public class TripService : ITripService
         _azureBlobStorageService = azureBlobStorageService;
     }
 
-    public async Task<Guid> CreateNewTrip(CreateTripDto tripDto, IFormFile image, string userId)
+    public async Task<Guid> CreateNewTrip(CreateTripDto tripDto, string userId)
     {
-        var imageUri = await _azureBlobStorageService.UploadImageAsync(image);
+        var imageUri = await _azureBlobStorageService.UploadImageAsync(tripDto.Image);
 
         var trip = _mapper.Map<Trip>(tripDto);
         trip.Id = Guid.NewGuid();
@@ -33,6 +33,33 @@ public class TripService : ITripService
         _tripRepository.Create(trip);
 
         return trip.Id;
+    }
+
+    public async Task EditTrip(EditTripDto tripDto, Guid tripId)
+    {
+        var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
+                                  .FirstOrDefault();
+
+        if (tripDto.Image != null)
+        {
+            if (trip.PhotoUri != "/default.jpg")
+            {
+                await _azureBlobStorageService.DeleteImageAsync(trip.PhotoUri);
+            }
+            
+            trip.PhotoUri = await _azureBlobStorageService.UploadImageAsync(tripDto.Image);
+        }
+
+        _mapper.Map(tripDto, trip);
+        await _tripRepository.Update(trip);
+    }
+
+    public TripDto GetTrip(Guid tripId)
+    {
+        var trip = _tripRepository.FindByCondition(t => t.Id == tripId).FirstOrDefault();
+        var tripDto = _mapper.Map<TripDto>(trip);
+
+        return tripDto;
     }
 
     public async Task<TripsDto> GetUserTrips(string userId, TripFilter filter, int page)

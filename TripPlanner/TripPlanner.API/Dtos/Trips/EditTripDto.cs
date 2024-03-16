@@ -3,7 +3,7 @@ using TripPlanner.API.Annotations.Trips;
 
 namespace TripPlanner.API.Dtos.Trips;
 
-public record CreateTripDto (
+public record EditTripDto(
     [Required]
     string Title,
 
@@ -19,6 +19,6 @@ public record CreateTripDto (
 
     [Required]
     [DataType(DataType.DateTime)]
-    [EndDateValidationCreateTrip]
+    [EndDateValidationEditTrip]
     DateTime EndDate
 );
