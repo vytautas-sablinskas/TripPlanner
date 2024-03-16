@@ -1,11 +1,9 @@
 .container-wrapper {
   width: 100%;
-  min-width: 300px;
 }
 
 .main-form-container {
   padding: 24px;
-  width: 100%;
 }
 
 .page-title {
@@ -80,7 +78,6 @@ input[type="file"] {
   }
 
   .main-form-container {
-    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -115,5 +112,9 @@ input[type="file"] {
 
   input[type="file"] {
     min-width: 235px;
+  }
+
+  .page-title {
+    margin: 24px 0;
   }
 }
