@@ -1,11 +1,9 @@
 import { Button } from "@/components/ui/button";
 import "./styles/trip-details.css";
 import { Separator } from "@/components/ui/separator";
-import TripDetailCard from "./TripDetailCard";
+import TripDetailsAccordion from "./TripDetailsAccordion";
 
 const TripDetails = () => {
-
-
     return (
         <div className="main-container">
             <div className="trip-information-container">
@@ -26,7 +24,7 @@ const TripDetails = () => {
                 <Separator className="my-4" />
             </div>
             <div className="events-container">
-                <TripDetailCard />
+                <TripDetailsAccordion />
             </div>
         </div>
 
