@@ -16,5 +16,13 @@ public class TripDetail
 
     public DateTime? StartTime { get; set; }
 
-    public DateTime? EndTime { get; set;}
+    public DateTime? EndTime { get; set; }
+
+    public virtual Trip? Trip { get; set; }
+
+    public Guid? TripId { get; set; }
+
+    public virtual AppUser Creator { get; set; }
+
+    public string CreatorId { get; set; }
 }

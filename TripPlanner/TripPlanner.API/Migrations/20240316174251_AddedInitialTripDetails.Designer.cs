@@ -12,7 +12,7 @@ using TripPlanner.API.Database.DataAccess;
 namespace TripPlanner.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240316173252_AddedInitialTripDetails")]
+    [Migration("20240316174251_AddedInitialTripDetails")]
     partial class AddedInitialTripDetails
     {
         /// <inheritdoc />
@@ -305,6 +305,10 @@ namespace TripPlanner.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CreatorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -321,7 +325,14 @@ namespace TripPlanner.API.Migrations
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("TripId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("TripId");
 
                     b.ToTable("TripDetails");
                 });
@@ -397,6 +408,23 @@ namespace TripPlanner.API.Migrations
                         .IsRequired();
 
                     b.Navigation("GroupAdmin");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripDetail", b =>
+                {
+                    b.HasOne("TripPlanner.API.Database.Entities.AppUser", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TripPlanner.API.Database.Entities.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("TripPlanner.API.Database.Entities.AppUser", b =>

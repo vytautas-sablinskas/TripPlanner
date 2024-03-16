@@ -14,4 +14,15 @@ public class AppDbContext : IdentityDbContext<AppUser>
             : base(options)
     {
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TripDetail>()
+            .HasOne(td => td.Creator)
+            .WithMany()
+            .HasForeignKey(td => td.CreatorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        base.OnModelCreating(modelBuilder);
+    }
 }
