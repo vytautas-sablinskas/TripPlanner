@@ -41,7 +41,7 @@ public class TripController : ControllerBase
     {
         await _tripService.EditTrip(editDto, id);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpDelete("trips/{id}")]
