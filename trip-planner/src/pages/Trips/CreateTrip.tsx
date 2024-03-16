@@ -159,87 +159,91 @@ const CreateTrip = () => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="main-form-container"
-      >
-        <h1 className="page-title">Add New Trip</h1>
-        <div className="main-info-container">
-          <div className="left-side-container">
-            <FormField
-              control={form.control}
-              name="tripTitle"
-              render={({ field }) => (
-                <FormItem className="inputs">
-                  <FormLabel>Trip Name</FormLabel>
-                  <FormControl className="w-full mb-4">
-                    <Input placeholder="Enter trip name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="destinationCountry"
-              render={({ field }) => (
-                <FormItem className="inputs">
-                  <FormLabel>Destination Country</FormLabel>
-                  <FormControl className="w-full mb-4">
-                    <Input placeholder="Enter destination" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="inputs">
-                  <FormLabel>Trip Date Range</FormLabel>
-                  <FormControl className="mb-4">
-                    <DatePickerWithRange
-                      field={field}
-                      className="text-left font-normal"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="right-side-container">
-            <div>
-              <img
-                src={uploadedImage}
-                height={225}
-                className="image"
-                width={225}
+      <div className="container-wrapper">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="main-form-container"
+        >
+          <h1 className="page-title">Add New Trip</h1>
+          <div className="main-info-container">
+            <div className="left-side-container">
+              <FormField
+                control={form.control}
+                name="tripTitle"
+                render={({ field }) => (
+                  <FormItem className="inputs">
+                    <FormLabel>Trip Name</FormLabel>
+                    <FormControl className="w-full mb-4">
+                      <Input placeholder="Enter trip name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
               <FormField
                 control={form.control}
-                name="image"
-                render={() => {
-                  return (
-                    <FormItem className="upload-image-button">
-                      <FormLabel>Change To Upload New Image</FormLabel>
-                      <FormControl>
-                        <Input type="file" onChange={handleFileUpload} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
+                name="destinationCountry"
+                render={({ field }) => (
+                  <FormItem className="inputs">
+                    <FormLabel>Destination Country</FormLabel>
+                    <FormControl className="w-full mb-4">
+                      <Input placeholder="Enter destination" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem className="inputs">
+                    <FormLabel>Trip Date Range</FormLabel>
+                    <FormControl className="mb-4">
+                      <DatePickerWithRange
+                        field={field}
+                        className="text-left font-normal"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
+            <div className="right-side-container">
+              <div>
+                <img
+                  src={uploadedImage}
+                  height={225}
+                  className="image"
+                  width={225}
+                />
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={() => {
+                    return (
+                      <FormItem className="upload-image-button">
+                        <FormLabel>Change To Upload New Image</FormLabel>
+                        <FormControl>
+                          <Input type="file" onChange={handleFileUpload} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="submit-buttons-container">
-          <Button disabled={loading} onClick={() => navigate(Paths.TRIPS)}>Cancel</Button>
-          <CreateEditLoadingButton loading={loading} text="Submit"/>
-        </div>
-      </form>
+          <div className="submit-buttons-container">
+            <Button disabled={loading} onClick={() => navigate(Paths.TRIPS)}>
+              Cancel
+            </Button>
+            <CreateEditLoadingButton loading={loading} text="Submit" />
+          </div>
+        </form>
+      </div>
     </Form>
   );
 };

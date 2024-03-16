@@ -3,6 +3,7 @@ import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, Menu, MenuItem } from "@mui/material";
 import "../styles/trip-list.css";
+import "./styles/trip-card.css"
 import { getFormattedDateRange } from "@/utils/date";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -80,7 +81,7 @@ const TripCard = ({ trip, onDelete }: any) => {
       >
         <div className="flex flex-col flex-grow p-6">
           <div>
-            <p style={{ fontSize: "24px" }}>{trip.title}</p>
+            <p className="trip-title" onClick={() => navigate(Paths.TRIP_DETAILS.replace(":id", trip.id))}>{trip.title}</p>
             <p
               style={{
                 marginTop: "4px",

@@ -1,0 +1,58 @@
+.center {
+    display: flex;
+    flex-direction: column;
+}
+
+.event-image-container {
+    display: flex;
+}
+
+.button-container-wrapper {
+    display: flex;
+}
+
+.activity-image {
+    border: 1px solid rgb(226, 232, 240);
+    border-radius: 50%;
+    min-height: 40px;
+    max-height: 40px;
+    min-width: 40px;
+}
+
+.event-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: rgb(7, 109, 181);
+    border-bottom: 1px solid transparent;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.event-name:hover {
+    border-color: rgb(7, 109, 181);
+}
+
+.content-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.content-buttons > *:last-child {
+    margin-top: 10px;
+}
+
+.content-buttons > * {
+    max-width: 80px;
+    margin-right: 10px;
+}
+
+@media screen and (max-width: 650px) {
+    .event-image-container {
+        display: none
+    }
+
+    .separator-div {
+        display: none;
+    }
+}

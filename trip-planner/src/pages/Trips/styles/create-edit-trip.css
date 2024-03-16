@@ -1,24 +1,26 @@
-.main-form-container {
+.container-wrapper {
   width: 100%;
+}
+
+.main-form-container {
+  padding: 24px;
 }
 
 .page-title {
   font-size: 24px;
   font-weight: 500;
-  margin: 24px 0px;
+  margin: 24px 12px;
 }
 
 .main-info-container {
+  width: 100%;
   display: flex;
   flex-direction: row;
   gap: 32px;
 }
 
-@media screen and (max-width: 768px) {
-  .main-info-container {
-    flex-direction: column;
-    gap: 0px;
-  } 
+.event-container-information {
+  flex: 1;
 }
 
 .left-side-container,
@@ -50,14 +52,69 @@ input[type="file"] {
 
 .inputs {
     width: 100%;
+    padding: 8px 12px;
 }
 
 .submit-buttons-container {
     display: flex;
-    
+    padding: 0px 12px;
 }
 
 .submit-buttons-container > * {
     width: 120px;
-    margin: 16px 16px 0px 0px;
+    margin-top: 16px;
+}
+
+.submit-buttons-container > :first-child {
+  margin-right: 16px;
+}
+
+
+@media screen and (max-width: 768px) {
+  .container-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .main-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .main-info-container {
+    flex-direction: column;
+    gap: 0px;
+  }
+
+  .event-container-information {
+    margin: 0 16px;
+  }
+
+  .inputs {
+    padding: 0px !important;
+    max-width: 235px;
+    min-width: 235px;
+  }
+
+  .image {
+    min-width: 235px;
+  }
+
+  .submit-buttons-container {
+    padding: 0;
+  }
+
+  .submit-buttons-container > * {
+      width: 109.5px;
+  }
+
+  input[type="file"] {
+    min-width: 235px;
+  }
+
+  .page-title {
+    margin: 24px 0;
+  }
 }

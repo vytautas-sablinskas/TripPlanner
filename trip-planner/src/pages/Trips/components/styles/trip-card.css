@@ -1,0 +1,14 @@
+.trip-title {
+    font-size: 28px;
+    font-weight: 500;
+    color: rgb(7, 109, 181);
+    transition: 0.2s ease-in;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 5px;
+    border-bottom: 1px solid transparent;
+}
+
+.trip-title:hover {
+    border-color: rgb(7, 109, 181);
+}
