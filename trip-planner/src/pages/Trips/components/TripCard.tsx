@@ -6,6 +6,8 @@ import { Delete } from "lucide-react";
 import "../styles/trip-list.css";
 import { getFormattedDateRange } from "@/utils/date";
 import { KeyboardArrowDown } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import Paths from "@/routes/Paths";
 
 const TripCard = ({ trip }: any) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -18,6 +20,7 @@ const TripCard = ({ trip }: any) => {
     event.stopPropagation();
     setAnchorEl(null);
   };
+  const navigate = useNavigate();
 
   return (
     <Card key={trip.id} className="h-225 w-full mb-6 border border-gray-300">
@@ -62,7 +65,7 @@ const TripCard = ({ trip }: any) => {
                 onClose={handleClose}
                 disableScrollLock={true}
               >
-                <MenuItem>Edit Trip Information</MenuItem>
+                <MenuItem onClick={() => navigate(Paths.EDIT_TRIP.replace(":id", trip.id))}>Edit Trip Information</MenuItem>
                 <MenuItem>Manage Trip Budgets</MenuItem>
                 <MenuItem>Manage Travellers</MenuItem>
               </Menu>

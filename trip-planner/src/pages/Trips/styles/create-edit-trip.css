@@ -34,7 +34,8 @@
 
 .image {
     margin-top: 16px;
-    max-height: 200px;
+    max-height: 220px;
+    min-height: 220px;
 }
 
 .upload-image-button {

@@ -29,3 +29,18 @@ export const getTripsList = async (filter: any, page: any) => {
 
     return response;
 }
+
+export const getTrip = async (id : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIPS.GET_TRIP
+        .replace(":id", id),
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response;
+}

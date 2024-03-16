@@ -4,6 +4,7 @@ const Paths = {
     REGISTER: '/register',
     TRIPS: '/trips',
     CREATE_TRIP: '/trips/create',
+    EDIT_TRIP: '/trips/:id/edit',
     TRIP_DETAILS: '/trips/:id',
 }
 
