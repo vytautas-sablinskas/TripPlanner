@@ -8,6 +8,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
 {
     public DbSet<Trip> Trips { get; set; }
 
+    public DbSet<TripDetail> TripDetails { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
     {
