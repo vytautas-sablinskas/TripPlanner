@@ -22,6 +22,8 @@
 
 .trip-information-image {
     margin: 24px;
+    min-width: 232px;
+    min-height: 232px;
 }
 
 .trip-information-time {

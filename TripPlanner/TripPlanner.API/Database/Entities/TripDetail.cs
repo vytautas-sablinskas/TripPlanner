@@ -12,7 +12,7 @@ public class TripDetail
 
     public TripDetailTypes EventType { get; set; }
 
-    public string? Description { get; set; }
+    public string? Address { get; set; }
 
     public DateTime? StartTime { get; set; }
 

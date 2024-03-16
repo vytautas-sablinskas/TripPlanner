@@ -139,7 +139,7 @@ const TripList = () => {
           />
         </>
       ) : (
-        trips.map((trip: any) => <TripCard trip={trip} onDelete={onDelete}/>)
+        trips.map((trip: any) => <TripCard trip={trip} key={trip.id} onDelete={onDelete}/>)
       )}
       {!loading && (
         <div className="pagination">

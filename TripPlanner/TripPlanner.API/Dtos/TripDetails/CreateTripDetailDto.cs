@@ -10,7 +10,7 @@ public record CreateTripDetailDto(
     [Required]
     TripDetailTypes EventType,
 
-    string? Description,
+    string? Address,
 
     DateTime? StartTime,
 

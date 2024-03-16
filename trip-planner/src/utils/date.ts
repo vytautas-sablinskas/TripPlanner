@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import { DateTime, DateTimeFormatOptions } from "luxon";
 
 export const getFormattedDateRange = (startStr: string, endStr: string): string => {
     const startDate = DateTime.fromISO(startStr, { zone: 'utc' });
@@ -17,4 +17,9 @@ export const getFormattedDateRange = (startStr: string, endStr: string): string 
 
 export const getUtcTime = (date: any) => {
     return DateTime.fromJSDate(date).toUTC().toISO();
+}
+
+export const formatDateToString = (dateString : any, options: DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
 }

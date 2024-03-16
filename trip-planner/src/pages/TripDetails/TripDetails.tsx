@@ -10,10 +10,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
 import { getTripDetails } from "@/api/TripDetailService";
+import { getFormattedDateRange } from "@/utils/date";
 
 const TripDetails = () => {
-  const [tripDetails, setTripDetails] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [tripDetails, setTripDetails] = useState<any>();
+  const [isLoading, setIsLoading] = useState(true);
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
     useUser();
   const navigate = useNavigate();
@@ -53,7 +54,40 @@ const TripDetails = () => {
         }
 
         const data = await response.json();
-        setTripDetails(data);
+
+        function generateDaysWithEmptyArrays(startDate : any, endDate : any) {
+            const tripDetailsByDay : any = {};
+            let currentDate = new Date(startDate);
+        
+            while (currentDate <= endDate) {
+                tripDetailsByDay[currentDate.toISOString().split('T')[0]] = [];
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            return tripDetailsByDay;
+        }
+        
+        function organizeTripDetails(data : any) {
+            const tripInformation = data.tripInformation;
+            const tripDetails = data.tripDetails;
+        
+            const startDate = new Date(tripInformation.startDate);
+            const endDate = new Date(tripInformation.endDate);
+        
+            const tripDetailsByDay = generateDaysWithEmptyArrays(startDate, endDate);
+        
+            tripDetails.forEach((detail : any) => {
+                const startDate = new Date(detail.startTime).toISOString().split('T')[0];
+                tripDetailsByDay[startDate].push(detail);
+            });
+        
+            return {
+                tripInformation: tripInformation,
+                data: tripDetailsByDay
+            };
+        }
+
+        const tripDetails = organizeTripDetails(data);
+        setTripDetails(tripDetails);
     };
 
     tryFetchingTripDetails();
@@ -63,18 +97,18 @@ const TripDetails = () => {
     console.log(tripDetails);
   }, [tripDetails]);
 
-  return isLoading ? (
+  return isLoading && !tripDetails ? (
     <div>Loading</div>
   ) : (
     <div className="main-container">
       <div className="trip-information-container">
         <div className="trip-information-content">
-          <h1 className="trip-information-title">Trip To Paris</h1>
-          <p>Paris, France</p>
-          <p className="trip-information-time">Mar 16 - Mar 19, 2024</p>
+          <h1 className="trip-information-title">{tripDetails.tripInformation.title}</h1>
+          <p>{tripDetails?.tripInformation.destinationCountry}</p>
+          <p className="trip-information-time">{getFormattedDateRange(tripDetails.tripInformation.startDate, tripDetails.tripInformation.endDate)}</p>
         </div>
         <img
-          src="https://via.placeholder.com/232"
+          src={tripDetails.tripInformation.photoUri}
           height={232}
           width={232}
           alt="trip"
@@ -89,7 +123,7 @@ const TripDetails = () => {
         <Separator className="my-4" />
       </div>
       <div className="events-container">
-        <TripDetailsAccordion />
+        <TripDetailsAccordion tripDetails={tripDetails.data}/>
       </div>
     </div>
   );
