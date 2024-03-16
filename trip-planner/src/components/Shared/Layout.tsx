@@ -12,7 +12,7 @@ const Layout = ({ children }: any) => {
                 {children}
             </main>
             <Footer />
-            <Toaster richColors />
+            <Toaster richColors closeButton/>
         </div>
     );
 }

@@ -12,6 +12,7 @@ const ENDPOINTS = {
         GET_TRIPS: `${BASE_URL}/trips?filter=:filterName&page=:page`,
         GET_TRIP: `${BASE_URL}/trips/:id`,
         EDIT_TRIP: `${BASE_URL}/trips/:id`,
+        DELETE_TRIP: `${BASE_URL}/trips/:id`,
     }
 };
 

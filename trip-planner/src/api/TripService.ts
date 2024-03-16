@@ -29,6 +29,20 @@ export const editTrip = async (formData: FormData, id: any) => {
     return response
 };
 
+export const deleteTrip = async (id: any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIPS.EDIT_TRIP
+        .replace(":id", id),
+        {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response
+};
+
 export const getTripsList = async (filter: any, page: any) => {
     const token = localStorage.getItem('accessToken');
     const response = await fetch(ENDPOINTS.TRIPS.GET_TRIPS

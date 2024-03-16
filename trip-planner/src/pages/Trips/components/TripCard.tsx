@@ -2,14 +2,19 @@ import * as React from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, Menu, MenuItem } from "@mui/material";
-import { Delete } from "lucide-react";
 import "../styles/trip-list.css";
 import { getFormattedDateRange } from "@/utils/date";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
+import { DeleteDialog } from "@/components/Extra/DeleteDialog";
+import { checkTokenValidity } from "@/utils/jwtUtils";
+import { refreshAccessToken } from "@/api/AuthenticationService";
+import { toast } from "sonner";
+import { useUser } from "@/providers/user-provider/UserContext";
+import { deleteTrip } from "@/api/TripService";
 
-const TripCard = ({ trip }: any) => {
+const TripCard = ({ trip, onDelete }: any) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openEditMenu = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -21,6 +26,51 @@ const TripCard = ({ trip }: any) => {
     setAnchorEl(null);
   };
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false);
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+
+  const handleDelete = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    setLoading(true);
+
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
+          position: "top-center",
+        });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
+      );
+    }
+    
+    try {
+      const response = await deleteTrip(trip.id);
+
+      if (response.ok) {
+        toast.success("Trip deleted successfully", { position: "top-center" });
+      } else {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
+        });
+      }
+    } catch (error) {
+      toast.error("Unexpected error. Try again later", {
+        position: "top-center",
+      });
+    } finally {
+      setLoading(false);
+    }
+
+    onDelete();
+  }
 
   return (
     <Card key={trip.id} className="h-225 w-full mb-6 border border-gray-300">
@@ -70,13 +120,14 @@ const TripCard = ({ trip }: any) => {
                 <MenuItem>Manage Travellers</MenuItem>
               </Menu>
             </span>
-            <Button
-              variant="outlined"
-              endIcon={<Delete />}
-              sx={{ marginLeft: "8px" }}
-            >
-              Delete Trip
-            </Button>
+            <DeleteDialog 
+              buttonText="Delete Trip"
+              title="Delete Trip"
+              description="Are you sure you want to delete this trip? This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans."
+              dialogButtonText="Delete"
+              onDelete={handleDelete}
+              loading={loading}
+            />
           </div>
         </div>
         <div className="trip-image-container">

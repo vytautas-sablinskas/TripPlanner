@@ -42,7 +42,7 @@ public class TripService : ITripService
 
         if (tripDto.Image != null)
         {
-            if (trip.PhotoUri != "/default.jpg")
+            if (!trip.PhotoUri.StartsWith("/default"))
             {
                 await _azureBlobStorageService.DeleteImageAsync(trip.PhotoUri);
             }
@@ -52,6 +52,19 @@ public class TripService : ITripService
 
         _mapper.Map(tripDto, trip);
         await _tripRepository.Update(trip);
+    }
+
+    public async Task DeleteTrip(Guid tripId)
+    {
+        var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
+                                  .FirstOrDefault();
+
+        if (!trip.PhotoUri.StartsWith("/default"))
+        {
+            await _azureBlobStorageService.DeleteImageAsync(trip.PhotoUri);
+        }
+
+        await _tripRepository.Delete(trip);
     }
 
     public TripDto GetTrip(Guid tripId)
