@@ -9,6 +9,7 @@ public class TripsProfile : Profile
     public TripsProfile()
     {
         CreateMap<CreateTripDto, Trip>();
+        CreateMap<EditTripDto, Trip>();
         CreateMap<Trip, TripDto>();
     }
 }

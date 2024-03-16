@@ -17,8 +17,7 @@ public class TripController : ControllerBase
         _tripService = tripService;
     }
 
-    [HttpGet]
-    [Route("trips")]
+    [HttpGet("trips")]
     [Authorize]
     public async Task<IActionResult> GetTrips([FromQuery] TripFilter filter, [FromQuery] int page)
     {
@@ -36,8 +35,18 @@ public class TripController : ControllerBase
         return Ok(tripDto);
     }
 
+    [HttpPut("trips/{id}")]
+    [Authorize]
+    public async Task<IActionResult> EditTrip(Guid id, [FromForm] EditTripDto editDto)
+    {
+        await _tripService.EditTrip(editDto, id);
+
+        return Ok();
+    }
+
     [HttpPost]
-    [Route("trips")]
+
+    [HttpPost("trips")]
     [Authorize]
     public async Task<IActionResult> CreateTrip([FromForm] CreateTripDto tripDto)
     {

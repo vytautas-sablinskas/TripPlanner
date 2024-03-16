@@ -17,13 +17,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import "./styles/create-edit-trip.css";
 import { toast } from "sonner";
-import { addTrip, getTrip } from "@/api/TripService";
+import { addTrip, editTrip, getTrip } from "@/api/TripService";
 import { getUtcTime } from "@/utils/date";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { CreateEditLoadingButton } from "./components/CreateEditLoadingButton";
-import { set } from "date-fns";
 
 const MAX_FILE_SIZE = 2000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -81,6 +80,12 @@ const EditTrip = () => {
     },
   });
 
+  const getTripId = () => {
+    const pathParts = location.pathname.split("/");
+    const idIndex = pathParts.indexOf("trips") + 1;
+    return pathParts[idIndex];
+  }
+
   useEffect(() => {
     const tryFetchingTrip = async () => {
       setLoadingData(true);
@@ -105,13 +110,9 @@ const EditTrip = () => {
       }
 
       try {
-        const pathParts = location.pathname.split("/");
-        const idIndex = pathParts.indexOf("trips") + 1;
-        console.log(pathParts[idIndex]);
-        const response = await getTrip(pathParts[idIndex]);
+        const response = await getTrip(getTripId());
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
           form.reset({
             tripTitle: data.title,
             destinationCountry: data.destinationCountry,
@@ -125,11 +126,13 @@ const EditTrip = () => {
           toast.error("Unexpected error. Try again later", {
             position: "top-center",
           });
+          navigate(Paths.HOME);
         }
       } catch (error) {
         toast.error("Unexpected error. Try again later", {
           position: "top-center",
         });
+        navigate(Paths.HOME);
       } finally {
         setLoadingData(false);
       }
@@ -199,10 +202,9 @@ const EditTrip = () => {
     formData.append("endDate", dates.to || "");
 
     try {
-      const response = await addTrip(formData);
+      const response = await editTrip(formData, getTripId());
       if (response.ok) {
-        const id = await response.json();
-        navigate(Paths.TRIP_DETAILS.replace(":id", id));
+        navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()));
       } else {
         toast.error("Unexpected error. Try again later", {
           position: "top-center",

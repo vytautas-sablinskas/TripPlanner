@@ -20,22 +20,39 @@ public class AzureBlobStorageService : IAzureBlobStorageService
             return "/default.jpg";
 
         var uniqueImageBlobName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
-        var blobClient = _blobContainerClient.GetBlobClient(uniqueImageBlobName);
-
-        using (var stream = image.OpenReadStream())
+        
+        try
         {
-            await blobClient.UploadAsync(stream);
+            var blobClient = _blobContainerClient.GetBlobClient(uniqueImageBlobName);
 
-            var permissions = BlobContainerSasPermissions.Read;
-            var expiresOn = DateTimeOffset.MaxValue;
-            var sasUri = _blobContainerClient.GenerateSasUri(permissions, expiresOn);
-            var fullUriWithSas = new UriBuilder(sasUri)
+            using (var stream = image.OpenReadStream())
             {
-                Scheme = "https",
-                Path = $"{_blobContainerClient.Name}/{uniqueImageBlobName}"
-            }.Uri;
+                await blobClient.UploadAsync(stream);
 
-            return fullUriWithSas.ToString();
+                var permissions = BlobContainerSasPermissions.Read;
+                var expiresOn = DateTimeOffset.MaxValue;
+                var sasUri = _blobContainerClient.GenerateSasUri(permissions, expiresOn);
+                var fullUriWithSas = new UriBuilder(sasUri)
+                {
+                    Scheme = "https",
+                    Path = $"{_blobContainerClient.Name}/{uniqueImageBlobName}"
+                }.Uri;
+
+                return fullUriWithSas.ToString();
+            }
+        } catch
+        {
+            return "/default.jpg";
         }
+    }
+
+    public async Task DeleteImageAsync(string uri)
+    {
+        try
+        {
+            var blobWithSasName = uri.Substring(uri.LastIndexOf('/') + 1);
+            var blobName = blobWithSasName.Split('?')[0];
+            await _blobContainerClient.DeleteBlobAsync(blobName);
+        } catch {}
     }
 }

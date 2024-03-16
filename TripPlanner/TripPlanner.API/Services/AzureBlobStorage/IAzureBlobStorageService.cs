@@ -3,4 +3,6 @@
 public interface IAzureBlobStorageService
 {
     Task<string> UploadImageAsync(IFormFile? image);
+
+    Task DeleteImageAsync(string uri);
 }

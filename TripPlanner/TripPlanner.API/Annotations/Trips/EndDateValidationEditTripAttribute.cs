@@ -3,11 +3,11 @@ using TripPlanner.API.Dtos.Trips;
 
 namespace TripPlanner.API.Annotations.Trips;
 
-public class EndDateMustBeGreaterThanStartDateAttribute : ValidationAttribute
+public class EndDateValidationEditTripAttribute : ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        var dto = (CreateTripDto)validationContext.ObjectInstance;
+        var dto = (EditTripDto)validationContext.ObjectInstance;
 
         if (dto.EndDate.Date < dto.StartDate.Date)
         {

@@ -19,6 +19,6 @@ public record CreateTripDto (
 
     [Required]
     [DataType(DataType.DateTime)]
-    [EndDateMustBeGreaterThanStartDate]
+    [EndDateValidationCreateTrip]
     DateTime EndDate
 );

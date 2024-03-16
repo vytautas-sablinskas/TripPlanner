@@ -35,6 +35,25 @@ public class TripService : ITripService
         return trip.Id;
     }
 
+    public async Task EditTrip(EditTripDto tripDto, Guid tripId)
+    {
+        var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
+                                  .FirstOrDefault();
+
+        if (tripDto.Image != null)
+        {
+            if (trip.PhotoUri != "/default.jpg")
+            {
+                await _azureBlobStorageService.DeleteImageAsync(trip.PhotoUri);
+            }
+            
+            trip.PhotoUri = await _azureBlobStorageService.UploadImageAsync(tripDto.Image);
+        }
+
+        _mapper.Map(tripDto, trip);
+        await _tripRepository.Update(trip);
+    }
+
     public TripDto GetTrip(Guid tripId)
     {
         var trip = _tripRepository.FindByCondition(t => t.Id == tripId).FirstOrDefault();
