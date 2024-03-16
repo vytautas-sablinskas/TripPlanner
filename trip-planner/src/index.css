@@ -77,18 +77,13 @@
 
 html, body {
   margin: 0;
-  padding: 0;
-  width: 100vw;
+  padding: 0px;
+  min-width: 100vw;
   overflow-y: auto;
 }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 #root {
+  margin: 0 5px;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -36,6 +36,7 @@
     margin-top: 16px;
     max-height: 220px;
     min-height: 220px;
+    border: 1px solid rgb(226, 232, 240);
 }
 
 .upload-image-button {

@@ -41,10 +41,17 @@ public class TripController : ControllerBase
     {
         await _tripService.EditTrip(editDto, id);
 
-        return Ok();
+        return NoContent();
     }
 
-    [HttpPost]
+    [HttpDelete("trips/{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteTrip(Guid id)
+    {
+        await _tripService.DeleteTrip(id);
+
+        return NoContent();
+    }
 
     [HttpPost("trips")]
     [Authorize]

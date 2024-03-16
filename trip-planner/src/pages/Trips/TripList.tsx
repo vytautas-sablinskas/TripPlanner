@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./styles/trip-list.css";
 import "../../styles/flexbox.css";
 import { Button, Divider, Pagination, Tab, Tabs } from "@mui/material";
@@ -17,6 +17,7 @@ const TripList = () => {
   const [tabSelected, setTabSelected] = useState(0);
   const [page, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const totalTripsCount = useRef(0);
   const [loading, setLoading] = useState(true);
   const [trips, setTrips] = useState([]);
   const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } =
@@ -56,8 +57,18 @@ const TripList = () => {
     const data = await response.json();
     setTrips(data.trips);
     setTotalPages(Math.ceil(data.totalTripCount / 5));
+    totalTripsCount.current = data.totalTripCount;
     setLoading(false);
   };
+
+  const onDelete = async () => {
+    totalTripsCount.current -= 1;
+    if (totalTripsCount.current % 5 === 0 && page !== 1) {
+      setCurrentPage(page - 1);
+    } else {
+      await tryFetchingTrips();
+    }
+  }
 
   useEffect(() => {
     setCurrentPage(1);
@@ -128,7 +139,7 @@ const TripList = () => {
           />
         </>
       ) : (
-        trips.map((trip: any) => <TripCard trip={trip} />)
+        trips.map((trip: any) => <TripCard trip={trip} onDelete={onDelete}/>)
       )}
       {!loading && (
         <div className="pagination">
