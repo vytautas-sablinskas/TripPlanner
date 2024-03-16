@@ -22,7 +22,7 @@ const TripDetailCard = () => {
           />
           <Separator orientation="vertical" className="mx-5" />
         </span>
-        <div className="mx-4">
+        <div className="event-container-information">
           <p className="event-name">Event name</p>
           <p className="text-xs">
             Kings College London, Stamford St, London SE1 9NQ, UK

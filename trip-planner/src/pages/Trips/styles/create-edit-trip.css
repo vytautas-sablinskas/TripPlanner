@@ -21,6 +21,10 @@
   gap: 32px;
 }
 
+.event-container-information {
+  flex: 1;
+}
+
 .left-side-container,
 .right-side-container {
   display: flex;
@@ -85,6 +89,10 @@ input[type="file"] {
   .main-info-container {
     flex-direction: column;
     gap: 0px;
+  }
+
+  .event-container-information {
+    margin: 0 16px;
   }
 
   .inputs {
