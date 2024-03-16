@@ -23,10 +23,6 @@
     font-family: "Inter", sans-serif;
 }
 
-.link:last-child {
-    padding: 0;
-}
-
 .link:hover {
     border-color: #f75940
 }
