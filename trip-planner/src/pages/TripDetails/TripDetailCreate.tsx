@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { getTripTime } from "@/api/TripService";
 import { addTripDetails } from "@/api/TripDetailService";
+import { CreateEditLoadingButton } from "../Trips/components/CreateEditLoadingButton";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -303,12 +304,12 @@ const CreateTrip = () => {
             </div>
             <div className="create-trip-details-submit-buttons">
               <Button
-                disabled={isLoading}
+                disabled={isDataSubmitting}
                 onClick={() => navigate(Paths.TRIPS)}
               >
                 Cancel
               </Button>
-              <Button type="submit">Submit</Button>
+              <CreateEditLoadingButton loading={isDataSubmitting} text="Create Plan" />
             </div>
           </div>
         </form>
