@@ -307,7 +307,7 @@ const TripDetailCreate = () => {
             <div className="create-trip-details-submit-buttons">
               <Button
                 disabled={isDataSubmitting}
-                onClick={() => navigate(Paths.TRIPS)}
+                onClick={() => navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()))}
               >
                 Cancel
               </Button>
