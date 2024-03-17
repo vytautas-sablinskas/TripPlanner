@@ -77,6 +77,7 @@ const TripList = () => {
 
   useEffect(() => {
     tryFetchingTrips();
+    window.scrollTo(0,0);
   }, [page]);
 
   return (

@@ -9,6 +9,6 @@ public class TripDetailsProfile : Profile
     public TripDetailsProfile()
     {
         CreateMap<CreateTripDetailDto, TripDetail>();
-        CreateMap<TripDetail, TripDetailDto>();
+        CreateMap<TripDetail, TripDetailMinimalDto>();
     }
 }

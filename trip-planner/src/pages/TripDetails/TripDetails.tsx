@@ -20,6 +20,11 @@ const TripDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const getTripId = () => {
+    const paths = location.pathname.split("/");
+    return paths[paths.length - 1];
+  }
+
   useEffect(() => {
     const tryFetchingTripDetails = async () => {
       setIsLoading(true);
@@ -43,51 +48,36 @@ const TripDetails = () => {
         );
       }
 
-      const paths = location.pathname.split("/");
+      const response = await getTripDetails(getTripId());
+      if (!response || !response.ok) {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
+        });
+        return;
+      }
 
-      const response = await getTripDetails(paths[paths.length - 1]);
-        if (!response || !response.ok) {
-            toast.error("Unexpected error. Try again later", {
-                position: "top-center",
-            });
-            return;
-        }
+      const data = await response.json();
 
-        const data = await response.json();
+      const tripDetailsByDay = data.tripDetails.reduce(
+        (acc: any, detail: any) => {
+          const startDate = new Date(detail.startTime)
+            .toISOString()
+            .split("T")[0];
+          if (!acc[startDate]) {
+            acc[startDate] = [];
+          }
+          acc[startDate].push(detail);
+          return acc;
+        },
+        {}
+      );
 
-        function generateDaysWithEmptyArrays(startDate : any, endDate : any) {
-            const tripDetailsByDay : any = {};
-            let currentDate = new Date(startDate);
-        
-            while (currentDate <= endDate) {
-                tripDetailsByDay[currentDate.toISOString().split('T')[0]] = [];
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-            return tripDetailsByDay;
-        }
-        
-        function organizeTripDetails(data : any) {
-            const tripInformation = data.tripInformation;
-            const tripDetails = data.tripDetails;
-        
-            const startDate = new Date(tripInformation.startDate);
-            const endDate = new Date(tripInformation.endDate);
-        
-            const tripDetailsByDay = generateDaysWithEmptyArrays(startDate, endDate);
-        
-            tripDetails.forEach((detail : any) => {
-                const startDate = new Date(detail.startTime).toISOString().split('T')[0];
-                tripDetailsByDay[startDate].push(detail);
-            });
-        
-            return {
-                tripInformation: tripInformation,
-                data: tripDetailsByDay
-            };
-        }
+      const tripDetails = {
+        tripInformation: data.tripInformation,
+        data: tripDetailsByDay,
+      };
 
-        const tripDetails = organizeTripDetails(data);
-        setTripDetails(tripDetails);
+      setTripDetails(tripDetails);
     };
 
     tryFetchingTripDetails();
@@ -103,9 +93,16 @@ const TripDetails = () => {
     <div className="main-container">
       <div className="trip-information-container">
         <div className="trip-information-content">
-          <h1 className="trip-information-title">{tripDetails.tripInformation.title}</h1>
+          <h1 className="trip-information-title">
+            {tripDetails.tripInformation.title}
+          </h1>
           <p>{tripDetails?.tripInformation.destinationCountry}</p>
-          <p className="trip-information-time">{getFormattedDateRange(tripDetails.tripInformation.startDate, tripDetails.tripInformation.endDate)}</p>
+          <p className="trip-information-time">
+            {getFormattedDateRange(
+              tripDetails.tripInformation.startDate,
+              tripDetails.tripInformation.endDate
+            )}
+          </p>
         </div>
         <img
           src={tripDetails.tripInformation.photoUri}
@@ -118,12 +115,12 @@ const TripDetails = () => {
       <div className="trip-details-main-container">
         <div className="trip-details-information">
           <p className="trip-details-itinerary">Itinerary</p>
-          <Button>Add New Plan</Button>
+          <Button onClick={() => navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))}>Add New Plan</Button>
         </div>
         <Separator className="my-4" />
       </div>
       <div className="events-container">
-        <TripDetailsAccordion tripDetails={tripDetails.data}/>
+        <TripDetailsAccordion tripDetails={tripDetails.data} />
       </div>
     </div>
   );

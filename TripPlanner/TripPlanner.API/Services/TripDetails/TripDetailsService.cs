@@ -35,7 +35,7 @@ public class TripDetailsService : ITripDetailsService
         var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
             .FirstOrDefault();
 
-        var detailsDto = details.Select(_mapper.Map<TripDetailDto>);
+        var detailsDto = details.Select(_mapper.Map<TripDetailMinimalDto>);
         var tripDto = _mapper.Map<TripDto>(trip);
 
         return new TripDetailsDto(detailsDto, tripDto);

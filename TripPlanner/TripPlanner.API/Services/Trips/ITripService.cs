@@ -12,5 +12,7 @@ public interface ITripService
 
     TripDto GetTrip(Guid tripId);
 
+    TripTimeDto GetTripTime(Guid tripId);
+
     Task<TripsDto> GetUserTrips(string userId, TripFilter filter, int page);
 }

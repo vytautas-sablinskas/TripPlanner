@@ -8,6 +8,7 @@ import Paths from "./Paths";
 import CreateTrip from "../pages/Trips/CreateTrip";
 import EditTrip from "@/pages/Trips/EditTrip";
 import TripDetails from "@/pages/TripDetails/TripDetails";
+import TripDetailCreate from "@/pages/TripDetails/TripDetailCreate";
 
 const AppRoutes = [
   {
@@ -42,6 +43,10 @@ const AppRoutes = [
   {
     path: Paths.TRIP_DETAILS,
     element: <TripDetails />
+  }, 
+  {
+    path: Paths.TRIP_DETAILS_CREATE,
+    element: <TripDetailCreate />
   }
 ];
 

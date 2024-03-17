@@ -75,6 +75,14 @@ public class TripService : ITripService
         return tripDto;
     }
 
+    public TripTimeDto GetTripTime(Guid tripId)
+    {
+        var trip = _tripRepository.FindByCondition(t => t.Id == tripId).FirstOrDefault();
+        var tripTimeDto = _mapper.Map<TripTimeDto>(trip);
+
+        return tripTimeDto;
+    }
+
     public async Task<TripsDto> GetUserTrips(string userId, TripFilter filter, int page)
     {
         var tripsQuery = _tripRepository.FindAll()
@@ -114,6 +122,8 @@ public class TripService : ITripService
                                    .Count();
 
         var trips = await tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
+                         .Skip((page - 1) * FetchSizes.DEFAULT_SIZE)
+                         .Take(FetchSizes.DEFAULT_SIZE)
                          .ToListAsync();
 
         var mappedTrips = trips.Select(_mapper.Map<TripDto>);

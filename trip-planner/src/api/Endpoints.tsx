@@ -11,11 +11,13 @@ const ENDPOINTS = {
         CREATE_TRIP: `${BASE_URL}/trips`,
         GET_TRIPS: `${BASE_URL}/trips?filter=:filterName&page=:page`,
         GET_TRIP: `${BASE_URL}/trips/:id`,
+        GET_TRIP_TIME: `${BASE_URL}/trips/:id/time`,
         EDIT_TRIP: `${BASE_URL}/trips/:id`,
         DELETE_TRIP: `${BASE_URL}/trips/:id`,
     },
     TRIP_DETAILS: {
         GET_ALL_TRIP_DETAILS: `${BASE_URL}/tripDetails/:id/`,
+        CREATE_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
     }
 };
 

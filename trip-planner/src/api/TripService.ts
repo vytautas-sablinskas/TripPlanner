@@ -73,3 +73,18 @@ export const getTrip = async (id : any) => {
 
     return response;
 }
+
+export const getTripTime = async (id : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIPS.GET_TRIP_TIME
+        .replace(":id", id),
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response;
+}

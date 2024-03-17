@@ -35,6 +35,15 @@ public class TripController : ControllerBase
         return Ok(tripDto);
     }
 
+    [HttpGet("trips/{id}/time")]
+    [Authorize]
+    public IActionResult GetTripTime(Guid id)
+    {
+        var timeDto = _tripService.GetTripTime(id);
+
+        return Ok(timeDto);
+    }
+
     [HttpPut("trips/{id}")]
     [Authorize]
     public async Task<IActionResult> EditTrip(Guid id, [FromForm] EditTripDto editDto)

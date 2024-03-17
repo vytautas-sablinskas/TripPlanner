@@ -5,7 +5,6 @@ import "./styles/trip-detail-card.css";
 
 const TripDetailCard = ({ detail } : any) => {
   const startTime = detail.startTime ? new Date(detail.startTime) : null;
-  const endTime = detail.endTime ? new Date(detail.endTime) : null;
 
   function formatTime(time : any) {
     const options = { hour: 'numeric', minute: '2-digit', hour12: true };

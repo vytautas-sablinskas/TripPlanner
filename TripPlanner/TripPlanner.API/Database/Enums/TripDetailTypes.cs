@@ -4,7 +4,7 @@ public enum TripDetailTypes
 {
     Activity,
     Travel,
+    Food,
     Shopping,
-    Sightseeing,
-    Dining,
+    Other,
 }

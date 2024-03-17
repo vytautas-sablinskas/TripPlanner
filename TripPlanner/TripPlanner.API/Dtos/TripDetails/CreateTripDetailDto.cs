@@ -12,7 +12,9 @@ public record CreateTripDetailDto(
 
     string? Address,
 
-    DateTime? StartTime,
+    string? Notes,
+
+    DateTime StartTime,
 
     DateTime? EndTime,
 
