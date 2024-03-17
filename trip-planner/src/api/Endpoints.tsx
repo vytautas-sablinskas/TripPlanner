@@ -20,6 +20,7 @@ const ENDPOINTS = {
         GET_TRIP_DETAILS_BY_ID: `${BASE_URL}/trips/:tripId/tripDetails/:detailId`,
         CREATE_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
         EDIT_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
+        DELETE_TRIP_DETAILS: `${BASE_URL}/tripDetails/:id`,
     }
 };
 

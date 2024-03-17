@@ -60,3 +60,18 @@ export const editTripDetails = async (data : any) => {
 
     return response
 };
+
+export const deleteTripDetail = async (id : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIP_DETAILS.DELETE_TRIP_DETAILS
+        .replace(":id", id),
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response
+};

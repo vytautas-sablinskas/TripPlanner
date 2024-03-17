@@ -102,7 +102,7 @@ const TripDetailEdit = () => {
 
       const data = await response.json();
       const startDate = new Date(data.startTime + 'Z');
-      const endDate = new Date(data.endTime + 'Z');
+      const endDate = data.endTime ? new Date(data.endTime + 'Z') : undefined;
       form.reset({
         name: data.name,
         eventType: data.eventType.toString(),

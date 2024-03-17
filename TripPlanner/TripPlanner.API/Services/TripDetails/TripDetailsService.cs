@@ -37,6 +37,14 @@ public class TripDetailsService : ITripDetailsService
         await _tripDetailsRepository.Update(trip);
     }
 
+    public async Task DeleteTripDetail(Guid id)
+    {
+        var tripDetail = _tripDetailsRepository.FindByCondition(t => t.Id == id)
+            .FirstOrDefault();
+
+        await _tripDetailsRepository.Delete(tripDetail);
+    }
+
     public async Task<TripDetailsDto> GetTripDetails(Guid tripId)
     {
         var details = await _tripDetailsRepository.FindByCondition(t => t.TripId == tripId)

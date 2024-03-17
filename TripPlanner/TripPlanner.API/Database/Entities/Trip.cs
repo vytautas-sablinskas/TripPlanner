@@ -23,4 +23,6 @@ public class Trip
 
     [Required]
     public string GroupAdminId { get; set; }
+
+    public virtual IEnumerable<TripDetail> TripDetails { get; set; }
 }

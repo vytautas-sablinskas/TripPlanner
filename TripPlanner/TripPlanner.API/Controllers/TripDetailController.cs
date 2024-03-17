@@ -51,4 +51,13 @@ public class TripDetailController : ControllerBase
 
         return Ok();
     }
+
+    [HttpDelete("tripDetails/{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteTripDetail(Guid id)
+    {
+        await _tripDetailsService.DeleteTripDetail(id);
+
+        return NoContent();
+    }
 }

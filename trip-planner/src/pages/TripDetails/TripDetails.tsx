@@ -25,69 +25,70 @@ const TripDetails = () => {
     return paths[paths.length - 1];
   }
 
-  useEffect(() => {
-    const tryFetchingTripDetails = async () => {
-      setIsLoading(true);
-      const accessToken = localStorage.getItem("accessToken");
+  const tryFetchingTripDetails = async () => {
+    setIsLoading(true);
+    const accessToken = localStorage.getItem("accessToken");
 
-      if (!checkTokenValidity(accessToken || "")) {
-        const result = await refreshAccessToken();
-        if (!result.success) {
-          toast.error("Session has expired. Login again!", {
-            position: "top-center",
-          });
-
-          changeUserInformationToLoggedOut();
-          navigate(Paths.LOGIN);
-          return;
-        }
-
-        changeUserInformationToLoggedIn(
-          result.data.accessToken,
-          result.data.refreshToken
-        );
-      }
-
-      const response = await getTripDetails(getTripId());
-      if (!response || !response.ok) {
-        toast.error("Unexpected error. Try again later", {
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
           position: "top-center",
         });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
         return;
       }
 
-      const data = await response.json();
-
-      const tripDetailsByDay = data.tripDetails.reduce(
-        (acc: any, detail: any) => {
-          const startDate = new Date(detail.startTime + "Z")
-            .toISOString()
-            .split("T")[0];
-          if (!acc[startDate]) {
-            acc[startDate] = [];
-          }
-          acc[startDate].push(detail);
-          return acc;
-        },
-        {}
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
       );
+    }
 
-      const tripDetails = {
-        tripInformation: data.tripInformation,
-        data: tripDetailsByDay,
-      };
+    const response = await getTripDetails(getTripId());
+    if (!response || !response.ok) {
+      toast.error("Unexpected error. Try again later", {
+        position: "top-center",
+      });
+      return;
+    }
 
-      setTripDetails(tripDetails);
+    const data = await response.json();
+
+    const tripDetailsByDay = data.tripDetails.reduce(
+      (acc: any, detail: any) => {
+        const startDate = new Date(detail.startTime + "Z")
+          .toISOString()
+          .split("T")[0];
+        if (!acc[startDate]) {
+          acc[startDate] = [];
+        }
+        acc[startDate].push(detail);
+        return acc;
+      },
+      {}
+    );
+
+    const tripDetails = {
+      tripInformation: data.tripInformation,
+      data: tripDetailsByDay,
     };
 
+    setIsLoading(false);
+    setTripDetails(tripDetails);
+  };
+
+  useEffect(() => {
     tryFetchingTripDetails();
   }, []);
 
-  useEffect(() => {
-    console.log(tripDetails);
-  }, [tripDetails]);
+  const handleDelete = async () => {
+    await tryFetchingTripDetails();
+  }
 
-  return isLoading && !tripDetails ? (
+  return isLoading ? (
     <div>Loading</div>
   ) : (
     <div className="main-container">
@@ -115,12 +116,21 @@ const TripDetails = () => {
       <div className="trip-details-main-container">
         <div className="trip-details-information">
           <p className="trip-details-itinerary">Itinerary</p>
-          <Button onClick={() => navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))}>Add New Plan</Button>
+          <Button
+            onClick={() =>
+              navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))
+            }
+          >
+            Add New Plan
+          </Button>
         </div>
         <Separator className="my-4" />
       </div>
       <div className="events-container">
-        <TripDetailsAccordion tripDetails={tripDetails.data} />
+        <TripDetailsAccordion
+          tripDetails={tripDetails.data}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );
