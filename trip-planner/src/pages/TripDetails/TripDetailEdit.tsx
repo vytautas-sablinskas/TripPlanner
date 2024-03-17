@@ -23,8 +23,7 @@ import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { getTripTime } from "@/api/TripService";
-import { addTripDetails } from "@/api/TripDetailService";
+import { editTripDetails, getTripDetailById } from "@/api/TripDetailService";
 import { CreateEditLoadingButton } from "../Trips/components/CreateEditLoadingButton";
 
 const formSchema = z.object({
@@ -52,18 +51,23 @@ const formSchema = z.object({
   notes: z.string().optional(),
 });
 
-const TripDetailCreate = () => {
+const TripDetailEdit = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isDataSubmitting, setIsDataSubmitting] = useState(false);
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
     useUser();
   const location = useLocation();
-  const [tripTime, setTripTime] = useState<any>(null);
+  const [tripTime, setTripTime] = useState<any>();
+
+  const getTripDetailsId = () => {
+    const path = location.pathname.split("/");
+    return path[path.length - 1];
+  }
 
   const getTripId = () => {
     const path = location.pathname.split("/");
-    return path[path.length - 2];
+    return path[path.length - 3];
   }
 
   useEffect(() => {
@@ -88,7 +92,7 @@ const TripDetailCreate = () => {
         );
       }
 
-      const response = await getTripTime(getTripId());
+      const response = await getTripDetailById(getTripDetailsId(), getTripId());
       if (!response || !response.ok) {
         toast.error("Unexpected error. Try again later", {
           position: "top-center",
@@ -97,7 +101,21 @@ const TripDetailCreate = () => {
       }
 
       const data = await response.json();
-      setTripTime(data);
+      const startDate = new Date(data.startTime + 'Z');
+      const endDate = new Date(data.endTime + 'Z');
+      form.reset({
+        name: data.name,
+        eventType: data.eventType.toString(),
+        address: data.address,
+        dates: {
+          startDate: startDate,
+          endDate: endDate,
+        },
+        notes: data.notes || "",
+      });
+
+      console.log(data);
+      setTripTime({ startDate: data.tripStartTime, endDate: data.tripEndTime });
       setIsLoading(false);
     };
 
@@ -118,10 +136,10 @@ const TripDetailCreate = () => {
   });
 
   const isValidDates = (data: any) => {
-    const startDateIso = new Date(data.dates.startDate).toISOString();
     let isError = false;
 
-    if (startDateIso < tripTime.startDate || startDateIso > tripTime.endDate) {
+    const startTimeISO = data.dates.startDate.toISOString();
+    if (startTimeISO < tripTime.startDate || startTimeISO > tripTime.endDate) {
       form.setError("dates.startDate", {
         message: "Start date can't exceed set trip times.",
       });
@@ -129,9 +147,8 @@ const TripDetailCreate = () => {
     }
 
     if (data.dates.endDate !== undefined) {
-      const endDateIso = new Date(data.dates.endDate).toISOString();
-
-      if (endDateIso < startDateIso) {
+      const endTimeISO = data.dates.endDate.toISOString();
+      if (endTimeISO < startTimeISO) {
         form.setError("dates.endDate", {
           type: "manual",
           message: "End date must be after start date.",
@@ -139,7 +156,7 @@ const TripDetailCreate = () => {
         isError = true;
       }
 
-      if (endDateIso > tripTime.endDate || endDateIso < tripTime.startDate) {
+      if (endTimeISO > tripTime.endDate || endTimeISO < tripTime.startDate) {
         form.setError("dates.endDate", {
           type: "manual",
           message: "End date can't exceed set trip times.",
@@ -152,12 +169,11 @@ const TripDetailCreate = () => {
   };
 
   const onSubmit = async (data: any) => {
-    const validDates = isValidDates(data);
-    if (!validDates) {
+    const areDatesValid = isValidDates(data);
+    if (!areDatesValid) {
       return;
     }
 
-    setIsLoading(true);
     const accessToken = localStorage.getItem("accessToken");
     setIsDataSubmitting(true);
     if (!checkTokenValidity(accessToken || "")) {
@@ -178,16 +194,14 @@ const TripDetailCreate = () => {
       );
     }
 
-    console.log(data);
-    const tripId = getTripId();
-    const response = await addTripDetails({
+    const response = await editTripDetails({
       name: data.name,
       eventType: Number(data.eventType),
-      address: data.address,
-      notes: data.notes,
+      address: data.address || "",
+      notes: data.notes || "",
       startTime: data.dates.startDate,
       endTime: data.dates.endDate,
-      tripId,
+      id: getTripDetailsId(),
     });
     if (!response || !response.ok) {
       toast.error("Unexpected error. Try again later", {
@@ -197,7 +211,7 @@ const TripDetailCreate = () => {
       return;
     }
 
-    navigate(Paths.TRIP_DETAILS.replace(":id", tripId));
+    navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()));
   };
 
   return (
@@ -209,7 +223,7 @@ const TripDetailCreate = () => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="trip-details-container-wrapper">
             <div className="edit-trip-details-main-container">
-              <h1 className="trip-details-title">Add Plan</h1>
+              <h1 className="trip-details-title">Edit Plan</h1>
               <FormField
                 control={form.control}
                 name="name"
@@ -311,7 +325,7 @@ const TripDetailCreate = () => {
               >
                 Cancel
               </Button>
-              <CreateEditLoadingButton loading={isDataSubmitting} text="Create Plan" />
+              <CreateEditLoadingButton loading={isDataSubmitting} text="Edit Plan" />
             </div>
           </div>
         </form>
@@ -320,4 +334,4 @@ const TripDetailCreate = () => {
   ));
 };
 
-export default TripDetailCreate;
+export default TripDetailEdit;

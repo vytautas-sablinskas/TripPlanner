@@ -19,6 +19,11 @@ export const getUtcTime = (date: any) => {
     return DateTime.fromJSDate(date).toUTC().toISO();
 }
 
+export const getLocalTime = (date: any) => {
+    const localDateTime = DateTime.fromISO(date).toUTC();
+    return localDateTime.toJSDate().toISOString();
+}
+
 export const formatDateToString = (dateString : any, options: DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', options);

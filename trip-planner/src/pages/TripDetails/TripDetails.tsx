@@ -60,7 +60,7 @@ const TripDetails = () => {
 
       const tripDetailsByDay = data.tripDetails.reduce(
         (acc: any, detail: any) => {
-          const startDate = new Date(detail.startTime)
+          const startDate = new Date(detail.startTime + "Z")
             .toISOString()
             .split("T")[0];
           if (!acc[startDate]) {

@@ -17,13 +17,22 @@ public class TripDetailController : ControllerBase
         _tripDetailsService = tripDetailsService;
     }
 
-    [HttpGet("tripDetails/{tripId}")]
+    [HttpGet("trips/{tripId}/tripDetails")]
     [Authorize]
     public async Task<IActionResult> GetTripDetails(Guid tripId)
     {
         var details = await _tripDetailsService.GetTripDetails(tripId);
 
         return Ok(details);
+    }
+
+    [HttpGet("trips/{tripId}/tripDetails/{detailId}")]
+    [Authorize]
+    public IActionResult GetTripDetailById(Guid tripId, Guid detailId)
+    {
+        var detailById = _tripDetailsService.GetTripDetailById(tripId, detailId);
+
+        return Ok(detailById);
     }
 
     [HttpPost("tripDetails")]
@@ -33,5 +42,13 @@ public class TripDetailController : ControllerBase
         _tripDetailsService.CreateTripDetail(dto, User.GetUserId());
 
         return Ok();
-    }   
+    }
+
+    [HttpPut("tripDetails")]
+    public async Task<IActionResult> UpdateTripDetail([FromBody] EditTripDetailDto detailDto) 
+    {
+        await _tripDetailsService.EditTripDetail(detailDto);
+
+        return Ok();
+    }
 }

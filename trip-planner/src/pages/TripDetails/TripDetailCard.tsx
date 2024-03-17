@@ -2,9 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import "./styles/trip-detail-card.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import Paths from "@/routes/Paths";
 
 const TripDetailCard = ({ detail } : any) => {
-  const startTime = detail.startTime ? new Date(detail.startTime) : null;
+  const startTime = detail.startTime ? new Date(detail.startTime + "Z") : null;
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getTripId = () => {
+    return location.pathname.split("/").pop() || "";
+  }
 
   function formatTime(time : any) {
     const options = { hour: 'numeric', minute: '2-digit', hour12: true };
@@ -46,7 +54,12 @@ const TripDetailCard = ({ detail } : any) => {
         </div>
         <div className="content-buttons">
             <Button>View Plan</Button>
-            <Button>Edit Plan</Button>
+            <Button onClick={() => navigate(Paths.TRIP_DETAILS_EDIT
+                .replace(":tripId", getTripId())
+                .replace(":planId", detail.id)
+            )}>
+              Edit Plan
+            </Button>
         </div>
       </CardContent>
     </Card>

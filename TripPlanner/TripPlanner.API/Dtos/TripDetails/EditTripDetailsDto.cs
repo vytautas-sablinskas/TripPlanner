@@ -3,7 +3,7 @@ using TripPlanner.API.Database.Enums;
 
 namespace TripPlanner.API.Dtos.TripDetails;
 
-public record TripDetailMinimalDto (
+public record EditTripDetailDto(
     Guid Id,
 
     [Required]
@@ -14,7 +14,9 @@ public record TripDetailMinimalDto (
 
     string? Address,
 
-    DateTime? StartTime,
+    string? Notes,
+
+    DateTime StartTime,
 
     DateTime? EndTime
 );
