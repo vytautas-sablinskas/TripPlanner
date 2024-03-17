@@ -14,7 +14,9 @@ public class TripDetail
 
     public string? Address { get; set; }
 
-    public DateTime? StartTime { get; set; }
+    public string? Notes { get; set; }
+
+    public DateTime StartTime { get; set; }
 
     public DateTime? EndTime { get; set; }
 

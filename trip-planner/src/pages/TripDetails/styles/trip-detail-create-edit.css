@@ -1,0 +1,27 @@
+.trip-details-container-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-trip-details-main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 70%;
+}
+
+.trip-details-title {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.create-trip-details-submit-buttons {
+    display: flex;
+    justify-content: flex-start;
+    width: 70%;
+    margin-top: 16px;
+    gap: 12px;
+}

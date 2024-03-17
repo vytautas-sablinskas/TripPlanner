@@ -20,6 +20,11 @@ const TripDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const getTripId = () => {
+    const paths = location.pathname.split("/");
+    return paths[paths.length - 1];
+  }
+
   useEffect(() => {
     const tryFetchingTripDetails = async () => {
       setIsLoading(true);
@@ -43,9 +48,9 @@ const TripDetails = () => {
         );
       }
 
-      const paths = location.pathname.split("/");
+      
 
-      const response = await getTripDetails(paths[paths.length - 1]);
+      const response = await getTripDetails(getTripId());
       if (!response || !response.ok) {
         toast.error("Unexpected error. Try again later", {
           position: "top-center",
@@ -115,7 +120,7 @@ const TripDetails = () => {
       <div className="trip-details-main-container">
         <div className="trip-details-information">
           <p className="trip-details-itinerary">Itinerary</p>
-          <Button>Add New Plan</Button>
+          <Button onClick={() => navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))}>Add New Plan</Button>
         </div>
         <Separator className="my-4" />
       </div>

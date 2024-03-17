@@ -11,5 +11,6 @@ public class TripsProfile : Profile
         CreateMap<CreateTripDto, Trip>();
         CreateMap<EditTripDto, Trip>();
         CreateMap<Trip, TripDto>();
+        CreateMap<Trip, TripTimeDto>();
     }
 }
