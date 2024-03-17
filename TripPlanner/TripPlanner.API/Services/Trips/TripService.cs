@@ -122,6 +122,8 @@ public class TripService : ITripService
                                    .Count();
 
         var trips = await tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
+                         .Skip((page - 1) * FetchSizes.DEFAULT_SIZE)
+                         .Take(FetchSizes.DEFAULT_SIZE)
                          .ToListAsync();
 
         var mappedTrips = trips.Select(_mapper.Map<TripDto>);

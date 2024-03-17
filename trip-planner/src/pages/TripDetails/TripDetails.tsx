@@ -48,8 +48,6 @@ const TripDetails = () => {
         );
       }
 
-      
-
       const response = await getTripDetails(getTripId());
       if (!response || !response.ok) {
         toast.error("Unexpected error. Try again later", {
@@ -59,9 +57,6 @@ const TripDetails = () => {
       }
 
       const data = await response.json();
-
-      console.log(data);
-
 
       const tripDetailsByDay = data.tripDetails.reduce(
         (acc: any, detail: any) => {
