@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TripPlanner.API.Dtos.TripDetails;
 using TripPlanner.API.Extensions;
 using TripPlanner.API.Services.TripDetails;
@@ -17,6 +18,7 @@ public class TripDetailController : ControllerBase
     }
 
     [HttpGet("tripDetails/{tripId}")]
+    [Authorize]
     public async Task<IActionResult> GetTripDetails(Guid tripId)
     {
         var details = await _tripDetailsService.GetTripDetails(tripId);
@@ -25,6 +27,7 @@ public class TripDetailController : ControllerBase
     }
 
     [HttpPost("tripDetails")]
+    [Authorize]
     public IActionResult CreateTripDetail([FromBody] CreateTripDetailDto dto)
     {
         _tripDetailsService.CreateTripDetail(dto, User.GetUserId());

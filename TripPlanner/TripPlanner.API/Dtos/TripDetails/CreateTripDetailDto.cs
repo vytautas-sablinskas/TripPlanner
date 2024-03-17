@@ -16,7 +16,7 @@ public record CreateTripDetailDto(
 
     DateTime StartTime,
 
-    DateTime EndTime,
+    DateTime? EndTime,
 
     Guid? TripId
 );

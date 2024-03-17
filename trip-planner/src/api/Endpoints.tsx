@@ -17,6 +17,7 @@ const ENDPOINTS = {
     },
     TRIP_DETAILS: {
         GET_ALL_TRIP_DETAILS: `${BASE_URL}/tripDetails/:id/`,
+        CREATE_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
     }
 };
 

@@ -24,32 +24,46 @@ import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { getTripTime } from "@/api/TripService";
+import { addTripDetails } from "@/api/TripDetailService";
 
 const formSchema = z.object({
-    name: z.string().min(1, {
-        message: "Plan name is required.",
-    }),
-    eventType: z.string().min(1, {
-        message: "Event type is required.",
-    }),
-    address: z.string().optional(),
-    dates: z.object({
-        startDate: z.date().optional().refine((value) => {
-            return value !== undefined;
-        }, {
-            message: "Start Date is required.",
-        }),
-        endDate: z.date().optional(),
-    }),
-    notes: z.string().optional(),
+  name: z.string().min(1, {
+    message: "Plan name is required.",
+  }),
+  eventType: z.string().min(1, {
+    message: "Event type is required.",
+  }),
+  address: z.string().optional(),
+  dates: z.object({
+    startDate: z
+      .date()
+      .optional()
+      .refine(
+        (value) => {
+          return value !== undefined;
+        },
+        {
+          message: "Start Date is required.",
+        }
+      ),
+    endDate: z.date().optional(),
+  }),
+  notes: z.string().optional(),
 });
 
 const CreateTrip = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+  const [isDataSubmitting, setIsDataSubmitting] = useState(false);
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+    useUser();
   const location = useLocation();
   const [tripTime, setTripTime] = useState<any>(null);
+
+  const getTripId = () => {
+    const path = location.pathname.split("/");
+    return path[path.length - 2];
+  }
 
   useEffect(() => {
     const tryFetchingTripTime = async () => {
@@ -74,8 +88,7 @@ const CreateTrip = () => {
         );
       }
 
-      const path = location.pathname.split("/");
-      const response = await getTripTime(path[path.length - 2]);
+      const response = await getTripTime(getTripId());
       if (!response || !response.ok) {
         toast.error("Unexpected error. Try again later", {
           position: "top-center",
@@ -86,7 +99,7 @@ const CreateTrip = () => {
       const data = await response.json();
       setTripTime(data);
       setIsLoading(false);
-    }
+    };
 
     tryFetchingTripTime();
   }, []);
@@ -104,14 +117,14 @@ const CreateTrip = () => {
     },
   });
 
-  const isValidDates = (data : any) => {
+  const isValidDates = (data: any) => {
     const startDateIso = new Date(data.dates.startDate).toISOString();
     let isError = false;
 
     if (startDateIso < tripTime.startDate || startDateIso > tripTime.endDate) {
       form.setError("dates.startDate", {
-        message: "Start date can't exceed set trip times."
-      })
+        message: "Start date can't exceed set trip times.",
+      });
       isError = true;
     }
 
@@ -121,39 +134,76 @@ const CreateTrip = () => {
       if (endDateIso < startDateIso) {
         form.setError("dates.endDate", {
           type: "manual",
-          message: "End date must be after start date."
-        })
+          message: "End date must be after start date.",
+        });
         isError = true;
       }
 
       if (endDateIso > tripTime.endDate || endDateIso < tripTime.startDate) {
         form.setError("dates.endDate", {
           type: "manual",
-          message: "End date can't exceed set trip times."
-        })
+          message: "End date can't exceed set trip times.",
+        });
         isError = true;
       }
     }
 
     return !isError;
-  }
+  };
 
   const onSubmit = async (data: any) => {
-    debugger;
     const validDates = isValidDates(data);
     if (!validDates) {
       return;
     }
 
+    setIsLoading(true);
+    const accessToken = localStorage.getItem("accessToken");
+    setIsDataSubmitting(true);
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
+          position: "top-center",
+        });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
+      );
+    }
+
     console.log(data);
+    const tripId = getTripId();
+    const response = await addTripDetails({
+      name: data.name,
+      eventType: Number(data.eventType),
+      address: data.address,
+      notes: data.notes,
+      startTime: data.dates.startDate,
+      endTime: data.dates.endDate,
+      tripId,
+    });
+    if (!response || !response.ok) {
+      toast.error("Unexpected error. Try again later", {
+        position: "top-center",
+      });
+      setIsDataSubmitting(false);
+      return;
+    }
+
+    navigate(Paths.TRIP_DETAILS.replace(":id", tripId));
   };
 
   return (
     <Form {...form}>
       <div className="w-full">
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="trip-details-container-wrapper">
             <div className="edit-trip-details-main-container">
               <h1 className="trip-details-title">Add Plan</h1>
@@ -177,12 +227,12 @@ const CreateTrip = () => {
                   <FormItem>
                     <FormLabel required>Event Type</FormLabel>
                     <FormControl className="w-full mb-4">
-                      <ValueSelector 
-                      value={field.value} 
-                      setValue={field.onChange}
-                      placeholder="Select event type"
-                      label="Event Type"
-                      items={ActivityTypes}
+                      <ValueSelector
+                        value={field.value}
+                        setValue={field.onChange}
+                        placeholder="Select event type"
+                        label="Event Type"
+                        items={ActivityTypes}
                       />
                     </FormControl>
                     <FormMessage />
@@ -209,7 +259,10 @@ const CreateTrip = () => {
                   <FormItem>
                     <FormLabel required>Start Date</FormLabel>
                     <FormControl className="w-full mb-4">
-                      <DateTimePicker date={field.value} setDate={field.onChange}/>
+                      <DateTimePicker
+                        date={field.value}
+                        setDate={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -222,7 +275,10 @@ const CreateTrip = () => {
                   <FormItem>
                     <FormLabel>End Date</FormLabel>
                     <FormControl className="w-full mb-4">
-                      <DateTimePicker date={field.value} setDate={field.onChange}/>
+                      <DateTimePicker
+                        date={field.value}
+                        setDate={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -235,7 +291,10 @@ const CreateTrip = () => {
                   <FormItem>
                     <FormLabel>Notes</FormLabel>
                     <FormControl className="w-full mb-4">
-                      <Textarea placeholder="Type your notes here." {...field}/>
+                      <Textarea
+                        placeholder="Type your notes here."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -243,13 +302,15 @@ const CreateTrip = () => {
               />
             </div>
             <div className="create-trip-details-submit-buttons">
-              <Button disabled={isLoading} onClick={() => navigate(Paths.TRIPS)}>
+              <Button
+                disabled={isLoading}
+                onClick={() => navigate(Paths.TRIPS)}
+              >
                 Cancel
               </Button>
               <Button type="submit">Submit</Button>
             </div>
           </div>
-          
         </form>
       </div>
     </Form>
