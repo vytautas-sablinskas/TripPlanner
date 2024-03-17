@@ -8,7 +8,7 @@ import TripDetailCard from "./TripDetailCard";
 import "./styles/trip-details-accordion.css";
 import { formatDateToString } from "@/utils/date";
 
-const TripDetailsAccordion = ({ tripDetails }: any) => {
+const TripDetailsAccordion = ({ tripDetails, onDelete }: any) => {
   const days = Object.keys(tripDetails);
 
   return (
@@ -18,7 +18,7 @@ const TripDetailsAccordion = ({ tripDetails }: any) => {
           <AccordionTrigger>{formatDateToString(day)}</AccordionTrigger>
           <AccordionContent className="day-container">
             {tripDetails[day].map((detail : any, detailIndex : any) => (
-              <TripDetailCard key={detailIndex} detail={detail} />
+              <TripDetailCard key={detailIndex} detail={detail} onDelete={onDelete}/>
             ))}
           </AccordionContent>
         </AccordionItem>

@@ -28,6 +28,23 @@ public class TripDetailsService : ITripDetailsService
         _tripDetailsRepository.Create(trip);
     }
 
+    public async Task EditTripDetail(EditTripDetailDto tripDto)
+    {
+        var trip = _tripDetailsRepository.FindByCondition(c => c.Id == tripDto.Id)
+            .FirstOrDefault();
+        _mapper.Map(tripDto, trip);
+
+        await _tripDetailsRepository.Update(trip);
+    }
+
+    public async Task DeleteTripDetail(Guid id)
+    {
+        var tripDetail = _tripDetailsRepository.FindByCondition(t => t.Id == id)
+            .FirstOrDefault();
+
+        await _tripDetailsRepository.Delete(tripDetail);
+    }
+
     public async Task<TripDetailsDto> GetTripDetails(Guid tripId)
     {
         var details = await _tripDetailsRepository.FindByCondition(t => t.TripId == tripId)
@@ -39,5 +56,20 @@ public class TripDetailsService : ITripDetailsService
         var tripDto = _mapper.Map<TripDto>(trip);
 
         return new TripDetailsDto(detailsDto, tripDto);
+    }
+
+    public GetEditTripDetailsDto GetTripDetailById(Guid tripId, Guid detailId)
+    {
+        var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
+            .FirstOrDefault();
+
+        var detail = _tripDetailsRepository.FindByCondition(t => t.Id == detailId)
+            .FirstOrDefault();
+
+        var editDetailsDto = _mapper.Map<GetEditTripDetailsDto>(detail);
+        editDetailsDto.TripStartTime = trip.StartDate;
+        editDetailsDto.TripEndTime = trip.EndDate;
+
+        return editDetailsDto;
     }
 }

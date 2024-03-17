@@ -18,5 +18,5 @@ public record CreateTripDetailDto(
 
     DateTime? EndTime,
 
-    Guid? TripId
+    Guid TripId
 );

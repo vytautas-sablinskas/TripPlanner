@@ -16,23 +16,36 @@ export function DeleteDialog({
   description,
   dialogButtonText,
   onDelete,
-  loading,
+  isLoading,
 }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">{buttonText}</Button>
+        <Button variant="destructive">{buttonText}</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent
+        className="sm:max-w-[525px]"
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="flex flex-col">
           <DialogClose>
-            <Button className="mt-2">Cancel</Button>
+            <Button className="w-full mb-2" disabled={isLoading}>
+              Cancel
+            </Button>
           </DialogClose>
-          <Button type="submit" className="mt-2" onClick={onDelete}>
+          <Button
+            type="submit"
+            className="mb-2"
+            onClick={onDelete}
+            variant="destructive"
+            disabled={isLoading}
+          >
             {dialogButtonText}
           </Button>
         </DialogFooter>

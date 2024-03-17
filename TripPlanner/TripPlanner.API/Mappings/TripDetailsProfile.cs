@@ -10,5 +10,8 @@ public class TripDetailsProfile : Profile
     {
         CreateMap<CreateTripDetailDto, TripDetail>();
         CreateMap<TripDetail, TripDetailMinimalDto>();
+        CreateMap<TripDetail, TripDetailDto>();
+        CreateMap<EditTripDetailDto, TripDetail>();
+        CreateMap<TripDetail, GetEditTripDetailsDto>();
     }
 }

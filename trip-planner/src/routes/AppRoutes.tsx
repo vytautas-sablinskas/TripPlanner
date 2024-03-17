@@ -9,6 +9,7 @@ import CreateTrip from "../pages/Trips/CreateTrip";
 import EditTrip from "@/pages/Trips/EditTrip";
 import TripDetails from "@/pages/TripDetails/TripDetails";
 import TripDetailCreate from "@/pages/TripDetails/TripDetailCreate";
+import TripDetailEdit from "@/pages/TripDetails/TripDetailEdit";
 
 const AppRoutes = [
   {
@@ -47,6 +48,10 @@ const AppRoutes = [
   {
     path: Paths.TRIP_DETAILS_CREATE,
     element: <TripDetailCreate />
+  },
+  {
+    path: Paths.TRIP_DETAILS_EDIT,
+    element: <TripDetailEdit />
   }
 ];
 

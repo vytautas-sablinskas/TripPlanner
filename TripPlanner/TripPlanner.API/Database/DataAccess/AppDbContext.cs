@@ -23,6 +23,12 @@ public class AppDbContext : IdentityDbContext<AppUser>
             .HasForeignKey(td => td.CreatorId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Trip>()
+            .HasMany(t => t.TripDetails)
+            .WithOne(t => t.Trip)
+            .HasForeignKey(t => t.TripId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         base.OnModelCreating(modelBuilder);
     }
 }
