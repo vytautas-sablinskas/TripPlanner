@@ -19,7 +19,7 @@
 }
 
 .login-container {
-    width: 330px;
+    width: 450px;
     border-radius: 20px;
     display: flex; 
     flex-direction: column;
@@ -43,4 +43,14 @@
 
 .sing-up-text:hover {
     color: #3f52e3;
+}
+
+.wrong-section-text {
+    text-align: center;
+}
+
+@media screen and (max-width: 400px) {
+    .login-container {
+        width: 100%;
+    }
 }
