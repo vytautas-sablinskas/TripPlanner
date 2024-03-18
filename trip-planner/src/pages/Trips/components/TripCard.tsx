@@ -135,7 +135,7 @@ const TripCard = ({ trip, onDelete }: any) => {
           <img
             src={trip.photoUri}
             alt="photo"
-            style={{ width: "225px", height: "225px", objectFit: "cover", borderTopRightRadius: '7px', borderBottomRightRadius: '7px' }}
+            style={{ width: "400px", height: "225px", borderTopRightRadius: '7px', borderBottomRightRadius: '7px' }}
           />
         </div>
       </CardContent>

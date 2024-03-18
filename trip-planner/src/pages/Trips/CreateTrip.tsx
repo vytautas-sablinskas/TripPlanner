@@ -174,7 +174,7 @@ const CreateTrip = () => {
                 name="tripTitle"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel>Trip Name</FormLabel>
+                    <FormLabel required>Trip Name</FormLabel>
                     <FormControl className="w-full mb-4">
                       <Input placeholder="Enter trip name" {...field} />
                     </FormControl>
@@ -187,7 +187,7 @@ const CreateTrip = () => {
                 name="destinationCountry"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel>Destination Country</FormLabel>
+                    <FormLabel required>Destination Country</FormLabel>
                     <FormControl className="w-full mb-4">
                       <Input placeholder="Enter destination" {...field} />
                     </FormControl>
@@ -200,7 +200,7 @@ const CreateTrip = () => {
                 name="date"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel>Trip Date Range</FormLabel>
+                    <FormLabel required>Trip Date Range</FormLabel>
                     <FormControl className="mb-4">
                       <DatePickerWithRange
                         field={field}
@@ -216,9 +216,9 @@ const CreateTrip = () => {
               <div>
                 <img
                   src={uploadedImage}
-                  height={225}
+                  height={300}
                   className="image"
-                  width={225}
+                  width={300}
                 />
                 <FormField
                   control={form.control}
