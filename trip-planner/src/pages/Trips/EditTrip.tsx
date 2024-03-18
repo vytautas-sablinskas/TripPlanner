@@ -230,7 +230,9 @@ const EditTrip = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="main-form-container"
         >
-          <h1 className="page-title">Edit Trip Information</h1>
+          <div className="page-title-wrapper">
+            <h1 className="page-title">Edit Trip Information</h1>
+          </div>
           <div className="main-info-container">
             <div className="left-side-container">
               <FormField
