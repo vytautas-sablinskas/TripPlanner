@@ -1,4 +1,3 @@
-import { timeStamp } from "console";
 import { DateTime, DateTimeFormatOptions } from "luxon";
 
 export const getFormattedDateRange = (startStr: string, endStr: string): string => {
