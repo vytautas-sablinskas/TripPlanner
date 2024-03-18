@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../../styles/flexbox.css";
 import "../../styles/text.css";
-import "../styles/register.css";
+import "./styles/register.css";
 import Card from '@mui/material/Card';
 import { CardContent, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
