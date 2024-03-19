@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,7 +26,8 @@ import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { getTripTime } from "@/api/TripService";
 import { addTripDetails } from "@/api/TripDetailService";
-import { CreateEditLoadingButton } from "../Trips/components/CreateEditLoadingButton";
+import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
+import { getLocalDate, getLocalTimeISOFromDate, getLocalTimeISOFromString, getUtcTime } from "@/utils/date";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -97,7 +99,11 @@ const TripDetailCreate = () => {
       }
 
       const data = await response.json();
-      setTripTime(data);
+      console.log(data);
+      setTripTime({
+        startDate: getLocalTimeISOFromString(data.startDate + "Z"),
+        endDate: getLocalTimeISOFromString(data.endDate + "Z"),
+      });
       setIsLoading(false);
     };
 
@@ -118,9 +124,10 @@ const TripDetailCreate = () => {
   });
 
   const isValidDates = (data: any) => {
-    const startDateIso = new Date(data.dates.startDate).toISOString();
+    const startDateIso = getLocalTimeISOFromDate(data.dates.startDate);
     let isError = false;
 
+    console.log(startDateIso, tripTime.startDate, tripTime.endDate);
     if (startDateIso < tripTime.startDate || startDateIso > tripTime.endDate) {
       form.setError("dates.startDate", {
         message: "Start date can't exceed set trip times.",
@@ -129,7 +136,7 @@ const TripDetailCreate = () => {
     }
 
     if (data.dates.endDate !== undefined) {
-      const endDateIso = new Date(data.dates.endDate).toISOString();
+      const endDateIso = getLocalTimeISOFromDate(data.dates.endDate);
 
       if (endDateIso < startDateIso) {
         form.setError("dates.endDate", {
@@ -178,7 +185,6 @@ const TripDetailCreate = () => {
       );
     }
 
-    console.log(data);
     const tripId = getTripId();
     const response = await addTripDetails({
       name: data.name,
@@ -267,6 +273,7 @@ const TripDetailCreate = () => {
                         setDate={field.onChange}
                       />
                     </FormControl>
+                    <FormDescription>Trip starts at {tripTime.startDate}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -284,6 +291,7 @@ const TripDetailCreate = () => {
                       />
                     </FormControl>
                     <FormMessage />
+                    <FormDescription>Trip ends at {tripTime.endDate}</FormDescription>
                   </FormItem>
                 )}
               />

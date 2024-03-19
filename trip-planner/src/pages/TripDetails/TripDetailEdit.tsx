@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,7 +25,8 @@ import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { editTripDetails, getTripDetailById } from "@/api/TripDetailService";
-import { CreateEditLoadingButton } from "../Trips/components/CreateEditLoadingButton";
+import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
+import { getLocalTimeISOFromDate, getLocalTimeISOFromString } from "@/utils/date";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -101,21 +103,20 @@ const TripDetailEdit = () => {
       }
 
       const data = await response.json();
-      const startDate = new Date(data.startTime + 'Z');
-      const endDate = data.endTime ? new Date(data.endTime + 'Z') : undefined;
+      const startDate = new Date(data.startTime + "Z");
+      const endDate = new Date(data.endTime + "Z");
       form.reset({
         name: data.name,
         eventType: data.eventType.toString(),
         address: data.address,
         dates: {
-          startDate: startDate,
-          endDate: endDate,
+          startDate,
+          endDate,
         },
         notes: data.notes || "",
       });
 
-      console.log(data);
-      setTripTime({ startDate: data.tripStartTime, endDate: data.tripEndTime });
+      setTripTime({ startDate: data.tripStartTime + "Z", endDate: data.tripEndTime + "Z" });
       setIsLoading(false);
     };
 
@@ -138,8 +139,10 @@ const TripDetailEdit = () => {
   const isValidDates = (data: any) => {
     let isError = false;
 
-    const startTimeISO = data.dates.startDate.toISOString();
-    if (startTimeISO < tripTime.startDate || startTimeISO > tripTime.endDate) {
+    const startTimeISO = getLocalTimeISOFromDate(data.dates.startDate);
+    const startTripTimeISO = getLocalTimeISOFromString(tripTime.startDate);
+    const endTripTimeISO = getLocalTimeISOFromString(tripTime.endDate);
+    if (startTimeISO < startTripTimeISO || startTimeISO > endTripTimeISO) {
       form.setError("dates.startDate", {
         message: "Start date can't exceed set trip times.",
       });
@@ -147,7 +150,7 @@ const TripDetailEdit = () => {
     }
 
     if (data.dates.endDate !== undefined) {
-      const endTimeISO = data.dates.endDate.toISOString();
+      const endTimeISO = getLocalTimeISOFromDate(data.dates.endDate);
       if (endTimeISO < startTimeISO) {
         form.setError("dates.endDate", {
           type: "manual",
@@ -156,7 +159,8 @@ const TripDetailEdit = () => {
         isError = true;
       }
 
-      if (endTimeISO > tripTime.endDate || endTimeISO < tripTime.startDate) {
+      console.log(endTimeISO, endTripTimeISO);
+      if (endTimeISO > endTripTimeISO || endTimeISO < startTripTimeISO) {
         form.setError("dates.endDate", {
           type: "manual",
           message: "End date can't exceed set trip times.",
@@ -194,6 +198,7 @@ const TripDetailEdit = () => {
       );
     }
 
+    console.log(getLocalTimeISOFromDate(data.dates.startDate));
     const response = await editTripDetails({
       name: data.name,
       eventType: Number(data.eventType),
@@ -282,6 +287,7 @@ const TripDetailEdit = () => {
                       />
                     </FormControl>
                     <FormMessage />
+                    <FormDescription>Trip starts at {getLocalTimeISOFromString(tripTime.startDate)}</FormDescription>
                   </FormItem>
                 )}
               />
@@ -298,6 +304,7 @@ const TripDetailEdit = () => {
                       />
                     </FormControl>
                     <FormMessage />
+                    <FormDescription>Trip ends at {getLocalTimeISOFromString(tripTime.endDate)}</FormDescription>
                   </FormItem>
                 )}
               />

@@ -1,34 +1,35 @@
 import * as React from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button, Menu, MenuItem } from "@mui/material";
 import "../styles/trip-list.css";
-import "./styles/trip-card.css"
+import "./styles/trip-card.css";
 import { getFormattedDateRange } from "@/utils/date";
-import { KeyboardArrowDown } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
-import { DeleteDialog } from "@/components/Extra/DeleteDialog";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { deleteTrip } from "@/api/TripService";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, CircleEllipsis, CircleX, Pencil, Users, Wallet } from "lucide-react";
+import DeleteDialog from "@/components/Extra/DeleteDialog";
 
 const TripCard = ({ trip, onDelete }: any) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const openEditMenu = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
-    setAnchorEl(null);
-  };
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+    useUser();
 
   const handleDelete = async () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -51,7 +52,7 @@ const TripCard = ({ trip, onDelete }: any) => {
         result.data.refreshToken
       );
     }
-    
+
     try {
       const response = await deleteTrip(trip.id);
 
@@ -71,71 +72,88 @@ const TripCard = ({ trip, onDelete }: any) => {
     }
 
     onDelete();
-  }
+  };
+
+  const onDialogClose = () => {
+    setIsMenuOpen(false);
+    setIsDialogOpen(false);
+  };
 
   return (
-    <Card key={trip.id} className="h-225 w-full mb-6 border border-gray-300">
-      <CardContent
-        className="flex justify-between h-full"
-        style={{ padding: 0 }}
-      >
-        <div className="flex flex-col flex-grow p-6">
+    <Card key={trip.id} className="main-card-container-wrapper">
+      <CardContent className="trip-card-container" style={{ padding: 0 }}>
+        <div className="trip-card-information-container">
           <div>
-            <p className="trip-title" onClick={() => navigate(Paths.TRIP_DETAILS.replace(":id", trip.id))}>{trip.title}</p>
             <p
-              style={{
-                marginTop: "4px",
-                fontSize: "16px",
-                color: "rgba(0, 0, 0, 0.87)",
-              }}
+              className="trip-title"
+              onClick={() =>
+                navigate(Paths.TRIP_DETAILS.replace(":id", trip.id))
+              }
             >
-              {trip.destinationCountry}
+              {trip.title}
             </p>
-            <p
-              style={{
-                marginTop: "4px",
-                fontSize: "16px",
-                color: "rgb(102, 102, 102)",
-              }}
-            >
+            <p className="destination-text">{trip.destinationCountry}</p>
+            <p className="date-range-text">
               {getFormattedDateRange(trip.startDate, trip.endDate)}
             </p>
-          </div>
-          <div>
-            <span>
-              <Button
-                variant="outlined"
-                endIcon={<KeyboardArrowDown />}
-                onClick={handleClick}
-              >
-                Manage Trip
+            <div className="trip-card-buttons">
+              <Button className="trip-card-button" variant="ghost" onClick={() => navigate(Paths.EDIT_TRIP.replace(":id", trip.id))}>
+                <Pencil className="mr-2 h-4 w-4" />
+                <span>Edit Trip Information</span>
               </Button>
-              <Menu
-                anchorEl={anchorEl}
-                open={openEditMenu}
-                onClose={handleClose}
-                disableScrollLock={true}
+              <DropdownMenu
+                open={isMenuOpen}
+                onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
               >
-                <MenuItem onClick={() => navigate(Paths.EDIT_TRIP.replace(":id", trip.id))}>Edit Trip Information</MenuItem>
-                <MenuItem>Manage Trip Budgets</MenuItem>
-                <MenuItem>Manage Travellers</MenuItem>
-              </Menu>
-            </span>
-            <DeleteDialog 
-              buttonText="Delete Trip"
-              title="Delete Trip"
-              description="Are you sure you want to delete this trip? This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans."
-              dialogButtonText="Delete"
-              onDelete={handleDelete}
-              loading={loading}
-            />
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="trip-card-button">
+                    <CircleEllipsis className="mr-2 h-4 w-4" />
+                    More Options
+                    <ChevronDown
+                      className={`ml-2 w-4 h-4 ${isMenuOpen ? "rotate-180" : ""}`}
+                    />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuLabel>Options</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Users className="mr-2 h-4 w-4" />
+                    Manage Trip Participants
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Wallet className="mr-2 h-4 w-4"/>
+                    Manage Trip Budgets
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                    onClick={() => setIsDialogOpen(true)}
+                    className="cursor-pointer"
+                  >
+                    <CircleX className="mr-2 h-4 w-4" />
+                    Delete Trip
+                  </DropdownMenuItem>
+                  <DeleteDialog
+                    title="Delete Trip"
+                    description="Are you sure you want to delete this trip? This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans."
+                    dialogButtonText="Delete"
+                    onDelete={handleDelete}
+                    loading={loading}
+                    onClose={() => onDialogClose()}
+                    open={isDialogOpen}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
         <div className="trip-image-container">
           <img
             src={trip.photoUri}
             alt="photo"
-            style={{ width: "225px", height: "225px", objectFit: "cover", borderTopRightRadius: '7px', borderBottomRightRadius: '7px' }}
+            width={232}
+            height={232}
+            className="trip-card-image"
           />
         </div>
       </CardContent>

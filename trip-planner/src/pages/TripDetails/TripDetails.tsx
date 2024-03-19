@@ -10,7 +10,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
 import { getTripDetails } from "@/api/TripDetailService";
-import { getFormattedDateRange } from "@/utils/date";
+import { getFormattedDateRange, getLocalDate } from "@/utils/date";
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
@@ -59,7 +59,7 @@ const TripDetails = () => {
 
     const tripDetailsByDay = data.tripDetails.reduce(
       (acc: any, detail: any) => {
-        const startDate = new Date(detail.startTime + "Z")
+        const startDate = getLocalDate(detail.startTime + "Z")
           .toISOString()
           .split("T")[0];
         if (!acc[startDate]) {

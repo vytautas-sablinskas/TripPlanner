@@ -1,5 +1,6 @@
 .trip-list-container {
     width: 100%;
+    margin: 0 20px;
 }
 
 .tabs {
@@ -13,11 +14,14 @@
 
 .pagination {
     margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
 }
 
 .add-trip-button {
-    gap: 8px;
+    padding: 0;
+}
+
+.add-trip-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0;
 }

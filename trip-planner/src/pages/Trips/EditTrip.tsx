@@ -22,7 +22,7 @@ import { getUtcTime } from "@/utils/date";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { CreateEditLoadingButton } from "./components/CreateEditLoadingButton";
+import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 
 const MAX_FILE_SIZE = 2000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -230,7 +230,9 @@ const EditTrip = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="main-form-container"
         >
-          <h1 className="page-title">Edit Trip Information</h1>
+          <div className="page-title-wrapper">
+            <h1 className="page-title">Edit Trip Information</h1>
+          </div>
           <div className="main-info-container">
             <div className="left-side-container">
               <FormField
@@ -238,7 +240,7 @@ const EditTrip = () => {
                 name="tripTitle"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel>Trip Name</FormLabel>
+                    <FormLabel required>Trip Name</FormLabel>
                     <FormControl className="w-full mb-4">
                       <Input placeholder="Enter trip name" {...field} />
                     </FormControl>
@@ -251,7 +253,7 @@ const EditTrip = () => {
                 name="destinationCountry"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel>Destination Country</FormLabel>
+                    <FormLabel required>Destination Country</FormLabel>
                     <FormControl className="w-full mb-4">
                       <Input placeholder="Enter destination" {...field} />
                     </FormControl>
@@ -264,7 +266,7 @@ const EditTrip = () => {
                 name="date"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel>Trip Date Range</FormLabel>
+                    <FormLabel required>Trip Date Range</FormLabel>
                     <FormControl className="mb-4">
                       <DatePickerWithRange
                         field={field}
@@ -280,9 +282,9 @@ const EditTrip = () => {
               <div>
                 <img
                   src={uploadedImage}
-                  height={225}
+                  height={300}
                   className="image"
-                  width={225}
+                  width={300}
                 />
                 <FormField
                   control={form.control}

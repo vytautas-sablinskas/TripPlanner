@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import "./styles/trip-detail-card.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
-import { DeleteDialog } from "@/components/Extra/DeleteDialog";
+import { DeleteDialogButton } from "@/components/Extra/DeleteDialogButton";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
@@ -107,7 +107,7 @@ const TripDetailCard = ({ detail, onDelete }: any) => {
           >
             Edit Plan
           </Button>
-          <DeleteDialog
+          <DeleteDialogButton
             buttonText="Delete Plan"
             title="Delete Plan"
             description="Are you sure you want to delete this plan? This will permanently delete the plan."
