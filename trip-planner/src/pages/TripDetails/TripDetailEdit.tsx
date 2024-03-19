@@ -25,7 +25,7 @@ import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { editTripDetails, getTripDetailById } from "@/api/TripDetailService";
-import { CreateEditLoadingButton } from "../Trips/components/CreateEditLoadingButton";
+import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 import { getLocalTimeISOFromDate, getLocalTimeISOFromString } from "@/utils/date";
 
 const formSchema = z.object({

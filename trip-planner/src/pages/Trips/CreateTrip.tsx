@@ -22,7 +22,7 @@ import { getUtcTime } from "@/utils/date";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { CreateEditLoadingButton } from "./components/CreateEditLoadingButton";
+import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 
 const MAX_FILE_SIZE = 2000000;
 const ACCEPTED_IMAGE_TYPES = [

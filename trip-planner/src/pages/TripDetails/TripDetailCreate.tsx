@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { getTripTime } from "@/api/TripService";
 import { addTripDetails } from "@/api/TripDetailService";
-import { CreateEditLoadingButton } from "../Trips/components/CreateEditLoadingButton";
+import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 import { getLocalDate, getLocalTimeISOFromDate, getLocalTimeISOFromString, getUtcTime } from "@/utils/date";
 
 const formSchema = z.object({

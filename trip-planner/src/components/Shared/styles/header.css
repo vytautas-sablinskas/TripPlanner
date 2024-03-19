@@ -4,6 +4,7 @@
     height: 63px;
     width: 100%;
     justify-content: space-between;
+    margin-bottom: 8px;
 }
 
 .left-side-header:first-child {

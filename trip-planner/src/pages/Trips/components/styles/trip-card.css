@@ -1,14 +1,128 @@
 .trip-title {
-    font-size: 28px;
-    font-weight: 500;
+    font-size: 24px;
+    font-weight: 700;
     color: rgb(7, 109, 181);
     transition: 0.2s ease-in;
     cursor: pointer;
     display: inline-block;
-    margin-bottom: 5px;
     border-bottom: 1px solid transparent;
 }
 
 .trip-title:hover {
     border-color: rgb(7, 109, 181);
+}
+
+.trip-card-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 232px;
+}
+
+.main-card-container-wrapper {
+    height: 232px;
+    width: 100%;
+    margin-bottom: 24px;
+    border: 1px solid rgb(226, 232, 240);
+    z-index: 100;
+}
+
+.trip-card-information-container {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+}
+
+.destination-text {
+    font-size: 16px;
+    margin-top: 4px;
+    color: rgb(33, 37, 41);
+}
+
+.date-range-text {
+    font-size: 16px;
+    color: rgb(102, 102, 102);
+    margin-top: 4px;
+}
+
+.trip-card-image {
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    height: calc(100% - 1px);
+    max-width: 232px;
+    border-left: 1px solid rgb(226, 232, 240);
+    z-index: 1;
+}
+
+.trip-card-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.trip-card-button {
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+
+@media screen and (max-width: 1000px) {
+    .trip-title {
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .main-card-container-wrapper {
+        height: 165px;
+    }
+
+    .main-card-container-wrapper {
+        height: 165px;
+        margin: 8px;
+    }
+
+    .trip-card-information-container {
+        flex: 3;
+        padding: 8px;
+    }
+
+    .trip-image-container {
+        height: 165px;
+        flex: 1;
+    }
+
+    .trip-title {
+        font-size: 14px;
+    }
+
+    .destination-text {
+        font-size: 12px;
+    }
+
+    .date-range-text {
+        font-size: 12px;
+    }
+
+    .trip-card-image{
+        width: 165px;
+        height: 165px;
+    }
+
+    .trip-card-button {
+        height: 20px;
+    }
+
+    .trip-card-buttons {
+        margin-top: 8px;
+        gap: 4px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .main-card-container-wrapper {
+        height: 165px;
+        width: 50%;
+    }
+    
 }

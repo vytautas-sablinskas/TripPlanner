@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./styles/trip-list.css";
 import "../../styles/flexbox.css";
-import { Button, Divider, Pagination, Tab, Tabs } from "@mui/material";
 import { checkTokenValidity } from "../../utils/jwtUtils";
 import { toast } from "sonner";
 import { useUser } from "../../providers/user-provider/UserContext";
@@ -9,12 +8,16 @@ import { refreshAccessToken } from "../../api/AuthenticationService";
 import { useNavigate } from "react-router-dom";
 import Paths from "../../routes/Paths";
 import { getTripsList } from "../../api/TripService";
-import { AddCircleOutline } from "@mui/icons-material";
 import { Skeleton } from "@/components/ui/skeleton";
 import TripCard from "./components/TripCard";
+import { PaginationExtension } from "@/components/Extra/PaginationExtension";
+import { CirclePlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TripList = () => {
-  const [tabSelected, setTabSelected] = useState(0);
+  const [tabSelected, setTabSelected] = useState("Upcoming");
   const [page, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const totalTripsCount = useRef(0);
@@ -82,45 +85,23 @@ const TripList = () => {
 
   return (
     <div className="trip-list-container">
-      <Tabs
-        value={tabSelected}
-        onChange={(_, value) => setTabSelected(value)}
-        sx={{ marginTop: "25px" }}
-      >
-        <Tab
-          label="Upcoming Trips"
-          sx={{
-            borderLeft: "1px solid transparent",
-            borderTop: "1px solid transparent",
-            borderRight: "1px solid transparent",
-            ...(tabSelected === 0 && { borderColor: "rgba(0, 0, 0, 0.12)" }),
-          }}
-        />
-        <Tab
-          label="Past Trips"
-          sx={{
-            borderLeft: "1px solid transparent",
-            borderTop: "1px solid transparent",
-            borderRight: "1px solid transparent",
-            ...(tabSelected === 1 && { borderColor: "rgba(0, 0, 0, 0.12)" }),
-          }}
-        />
-      </Tabs>
-      <Divider />
-      <Button
-        className="flexbox-container-row row-center-vertically add-trip-button"
-        sx={{
-          padding: "12px 0px",
-          "&.MuiButtonBase-root:hover": {
-            bgcolor: "transparent",
-          },
-        }}
-        disableRipple
-        onClick={() => navigate(Paths.CREATE_TRIP)}
-      >
-        <AddCircleOutline />
-        <p style={{ margin: 0 }}>Add a Trip</p>
-      </Button>
+      <span className="add-trip-container">
+        <Button
+          className="add-trip-button"
+          variant="ghost"
+          onClick={() => navigate(Paths.CREATE_TRIP)}
+        >
+          <CirclePlus />
+          <p className="ml-2">Add a Trip</p>
+        </Button>
+        <Tabs value={tabSelected} onValueChange={setTabSelected}>
+          <TabsList>
+            <TabsTrigger value="Upcoming">Upcoming Trips</TabsTrigger>
+            <TabsTrigger value="Past">Past Trips</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </span>
+      <Separator />
       {loading ? (
         <>
           <Skeleton
@@ -144,11 +125,10 @@ const TripList = () => {
       )}
       {!loading && (
         <div className="pagination">
-          <Pagination
-            count={totalPages}
+          <PaginationExtension 
             page={page}
-            shape="rounded"
-            onChange={(_, value) => setCurrentPage(value)}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
           />
         </div>
       )}
