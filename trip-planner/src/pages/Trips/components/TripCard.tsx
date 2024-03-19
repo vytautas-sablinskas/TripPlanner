@@ -110,7 +110,7 @@ const TripCard = ({ trip, onDelete }: any) => {
                     <CircleEllipsis className="mr-2 h-4 w-4" />
                     More Options
                     <ChevronDown
-                      className={`ml-2 w-4 h-4 ${isMenuOpen ? "rotate-180" : ""}`}
+                      className={`ml-2 w-4 h-4 transition-transform duration-200 ease-in-out ${isMenuOpen ? "rotate-180" : ""}`}
                     />
                   </Button>
                 </DropdownMenuTrigger>
