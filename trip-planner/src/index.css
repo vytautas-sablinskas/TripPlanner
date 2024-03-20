@@ -83,6 +83,11 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: scroll !important;
+}
+
+html, body, #root {
+  margin: 0 !important;
 }
 
 a {
