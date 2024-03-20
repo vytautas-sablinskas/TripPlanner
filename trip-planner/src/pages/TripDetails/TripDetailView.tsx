@@ -1,4 +1,4 @@
-import { ArrowLeft, CircleX, Globe, MapPin, Pencil, Phone } from "lucide-react";
+import { ArrowLeft, CirclePlus, CircleX, Globe, MapPin, Pencil, Phone } from "lucide-react";
 import "./styles/trip-detail-view.css";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { deleteTripDetail } from "@/api/TripDetailService";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
+import TripDetailViewDocument from "./TripDetailViewDocument";
 
 const TripDetailView = () => {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ const TripDetailView = () => {
       </span>
       <span className="trip-first-row">
         <h1 className="trip-name-title">Plan Name</h1>
-        <span>
+        <span className="change-info-buttons">
             <Button className="mr-3" variant="ghost" onClick={() => navigate(Paths.TRIP_DETAILS_EDIT.replace(":tripId", getTripId()).replace(":planId", getTripDetailId()))}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit Plan
@@ -127,7 +128,18 @@ const TripDetailView = () => {
           </div>
         </CardContent>
       </Card>
-      <Card className="trip-detail-view-documents"></Card>
+      <Card className="trip-detail-view-documents">
+        <span className="documents-information-container">
+          <h2 className="font-bold text-xl">Documents</h2>
+          <CirclePlus className="h-6 w-6 ml-3"/>
+          <p>Add PDF or Photo</p>
+        </span>
+        <div className="documents-document-container">
+          <TripDetailViewDocument />
+          <TripDetailViewDocument />
+          <TripDetailViewDocument />
+        </div>
+      </Card>
     </div>
   );
 };

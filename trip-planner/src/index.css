@@ -76,10 +76,8 @@
 }
 
 html, body {
-  margin: 0;
-  padding: 0px;
-  min-width: 100vw;
   font-family: "Inter", sans-serif;
+  overflow-x: hidden;
 }
 
 #root {
