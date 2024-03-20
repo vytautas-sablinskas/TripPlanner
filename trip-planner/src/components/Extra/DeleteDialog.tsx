@@ -19,8 +19,8 @@ export function DeleteDialog({
     onClose,
     open,
 }: any) {
-    const handleDelete = () => {
-        onDelete();
+    const handleDelete = async () => {
+        await onDelete();
         onClose();
     }
 

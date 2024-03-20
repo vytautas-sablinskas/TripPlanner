@@ -1,0 +1,66 @@
+.trip-view-main-container {
+    margin-left: 20px;
+    width: 100%;
+}
+
+.back-to-trip-summary {
+    margin-top: 16px;
+    display: flex;
+}
+
+.back-to-trip-summary > * {
+    color: rgb(16, 122, 197);
+    cursor: pointer;
+}
+
+.trip-first-row {
+    margin-top: 36px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.trip-name-title {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.trip-detail-view-information-container {
+    margin-top: 24px;
+    width: 100%;
+    border: 1px solid rgb(226, 232, 240);
+}
+
+.trip-detail-view-documents {
+    margin-top: 24px;
+    width: 100%;
+    height: 200px;
+    border: 1px solid rgb(226, 232, 240);
+}
+
+.information-container-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 16px 0;
+}
+
+.trip-detail-view-time-container {
+    display: flex;
+}
+
+.activity-addresses {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.activity-addresses > * {
+    display: flex;
+    color: rgb(16, 122, 197);
+    cursor: pointer;
+    align-items: center;
+}
+
+.notes {
+    margin-top: 32px;
+}

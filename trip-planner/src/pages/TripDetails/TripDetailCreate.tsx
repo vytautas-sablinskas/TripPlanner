@@ -27,14 +27,14 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { getTripTime } from "@/api/TripService";
 import { addTripDetails } from "@/api/TripDetailService";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
-import { getLocalDate, getLocalTimeISOFromDate, getLocalTimeISOFromString, getUtcTime } from "@/utils/date";
+import { getLocalTimeISOFromDate, getLocalTimeISOFromString } from "@/utils/date";
 
 const formSchema = z.object({
   name: z.string().min(1, {
     message: "Plan name is required.",
   }),
   eventType: z.string().min(1, {
-    message: "Event type is required.",
+    message: "Plan type is required.",
   }),
   address: z.string().optional(),
   dates: z.object({
@@ -234,13 +234,13 @@ const TripDetailCreate = () => {
                 name="eventType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel required>Event Type</FormLabel>
+                    <FormLabel required>Plan Type</FormLabel>
                     <FormControl className="w-full mb-4">
                       <ValueSelector
                         value={field.value}
                         setValue={field.onChange}
-                        placeholder="Select event type"
-                        label="Event Type"
+                        placeholder="Select plan type"
+                        label="Plan Type"
                         items={ActivityTypes}
                       />
                     </FormControl>
