@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { deleteTripDetail } from "@/api/TripDetailService";
 import { useState } from "react";
+import { Pencil } from "lucide-react";
 
 const TripDetailCard = ({ detail, onDelete }: any) => {
   const startTime = detail.startTime ? new Date(detail.startTime + "Z") : null;
@@ -108,7 +109,10 @@ const TripDetailCard = ({ detail, onDelete }: any) => {
                 )
               )
             }
+            className="w-full"
+            variant="outline"
           >
+            <Pencil className="w-4 h-4 mr-2" />
             Edit Plan
           </Button>
           <DeleteDialogButton

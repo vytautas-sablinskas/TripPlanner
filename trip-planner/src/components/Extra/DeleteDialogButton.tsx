@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { CircleX } from "lucide-react";
 
 export function DeleteDialogButton({
   buttonText,
@@ -21,7 +22,10 @@ export function DeleteDialogButton({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive">{buttonText}</Button>
+        <Button variant="outline" className="w-full p-0">
+          <CircleX className="mr-2 h-4 w-4" />
+          {buttonText}
+        </Button>
       </DialogTrigger>
       <DialogContent
         className="sm:max-w-[525px]"
