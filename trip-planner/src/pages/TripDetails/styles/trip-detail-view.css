@@ -75,9 +75,10 @@
 }
 
 .documents-document-container {
-    margin: 24px;
+    margin: 24px 0;
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     gap: 64px;
 }
 

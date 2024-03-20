@@ -138,6 +138,7 @@ const TripDetailView = () => {
           <TripDetailViewDocument />
           <TripDetailViewDocument />
           <TripDetailViewDocument />
+          <TripDetailViewDocument />
         </div>
       </Card>
     </div>
