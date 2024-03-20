@@ -79,11 +79,14 @@ html, body {
   font-family: "Inter", sans-serif;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 #root {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: scroll !important;
 }
 
 html, body, #root {
