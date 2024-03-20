@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Pagination,
   PaginationContent,
@@ -12,7 +11,9 @@ import {
 export function PaginationExtension({ totalPages, page, setCurrentPage }: any) {
   const handlePageChange = (event: any, value: any) => {
     setCurrentPage(value);
-  };    
+  };
+
+  console.log(page);
 
   const generatePaginationItems = () => {
     const items = [];
@@ -93,7 +94,7 @@ export function PaginationExtension({ totalPages, page, setCurrentPage }: any) {
           <PaginationPrevious
             href="#"
             className={
-                page === 1 ? "pointer-events-none opacity-50" : undefined
+                page === 1 || totalPages === 0 ? "pointer-events-none opacity-50" : undefined
             }
             onClick={(event) => handlePageChange(event, page - 1)}
           />
@@ -103,7 +104,7 @@ export function PaginationExtension({ totalPages, page, setCurrentPage }: any) {
           <PaginationNext
             href="#"
             className={
-                page === totalPages ? "pointer-events-none opacity-50" : undefined
+                page === totalPages || totalPages === 0 ? "pointer-events-none opacity-50" : undefined
             }
             onClick={(event) => handlePageChange(event, page + 1)}
           />

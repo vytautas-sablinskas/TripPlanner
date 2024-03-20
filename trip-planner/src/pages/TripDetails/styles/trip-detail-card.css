@@ -7,6 +7,10 @@
     display: flex;
 }
 
+.event-container-information {
+    flex: 4;
+}
+
 .button-container-wrapper {
     display: flex;
 }
@@ -35,7 +39,9 @@
 .content-buttons {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
 }
 
 .content-buttons > *:last-child {
@@ -43,8 +49,8 @@
 }
 
 .content-buttons > * {
-    max-width: 80px;
     margin-right: 10px;
+    padding: 0;
 }
 
 @media screen and (max-width: 650px) {

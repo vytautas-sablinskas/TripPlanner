@@ -104,24 +104,25 @@ const TripCard = ({ trip, onDelete }: any) => {
               <DropdownMenu
                 open={isMenuOpen}
                 onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
+                modal={false}
               >
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="trip-card-button">
                     <CircleEllipsis className="mr-2 h-4 w-4" />
                     More Options
                     <ChevronDown
-                      className={`ml-2 w-4 h-4 ${isMenuOpen ? "rotate-180" : ""}`}
+                      className={`ml-2 w-4 h-4 transition-transform duration-200 ease-in-out ${isMenuOpen ? "rotate-180" : ""}`}
                     />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   <DropdownMenuLabel>Options</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <Users className="mr-2 h-4 w-4" />
                     Manage Trip Participants
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <Wallet className="mr-2 h-4 w-4"/>
                     Manage Trip Budgets
                   </DropdownMenuItem>
@@ -138,9 +139,9 @@ const TripCard = ({ trip, onDelete }: any) => {
                     description="Are you sure you want to delete this trip? This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans."
                     dialogButtonText="Delete"
                     onDelete={handleDelete}
-                    loading={loading}
-                    onClose={() => onDialogClose()}
+                    isLoading={loading}
                     open={isDialogOpen}
+                    setOpen={onDialogClose}
                   />
                 </DropdownMenuContent>
               </DropdownMenu>

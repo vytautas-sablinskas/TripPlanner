@@ -8,7 +8,6 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { useEffect } from "react";
 
 export function DeleteDialog({
     title,
@@ -16,20 +15,15 @@ export function DeleteDialog({
     dialogButtonText,
     onDelete,
     isLoading,
-    onClose,
+    setOpen,
     open,
 }: any) {
-    const handleDelete = () => {
-        onDelete();
-        onClose();
+    const handleDelete = async () => {
+        await onDelete();
     }
 
-    useEffect(() => {
-        console.log(open);
-    }, [open])
-
     return (
-        <Dialog open={open}>
+        <Dialog open={open} onOpenChange={() => !isLoading && setOpen(!open)}>
             <DialogContent
                 className="sm:max-w-[525px]"
                 onInteractOutside={(e) => {
@@ -42,7 +36,7 @@ export function DeleteDialog({
                 </DialogHeader>
                 <DialogFooter className="flex flex-col">
                     <DialogClose>
-                        <Button className="w-full mb-2" disabled={isLoading} onClick={onClose}>
+                        <Button className="w-full mb-2" disabled={isLoading}>
                             Cancel
                         </Button>
                     </DialogClose>

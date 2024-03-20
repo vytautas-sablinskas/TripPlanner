@@ -66,6 +66,7 @@ const TripList = () => {
 
   const onDelete = async () => {
     totalTripsCount.current -= 1;
+
     if (totalTripsCount.current % 5 === 0 && page !== 1) {
       setCurrentPage(page - 1);
     } else {
@@ -123,7 +124,7 @@ const TripList = () => {
       ) : (
         trips.map((trip: any) => <TripCard trip={trip} key={trip.id} onDelete={onDelete}/>)
       )}
-      {!loading && (
+      {!loading && totalPages !== 0 && (
         <div className="pagination">
           <PaginationExtension 
             page={page}

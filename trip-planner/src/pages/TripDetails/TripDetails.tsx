@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import Paths from "@/routes/Paths";
 import { getTripDetails } from "@/api/TripDetailService";
 import { getFormattedDateRange, getLocalDate } from "@/utils/date";
+import { CirclePlus } from "lucide-react";
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
@@ -120,7 +121,10 @@ const TripDetails = () => {
             onClick={() =>
               navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))
             }
+            className="rounded-xl"
+            variant="ghost"
           >
+            <CirclePlus className="mr-2"/>
             Add New Plan
           </Button>
         </div>

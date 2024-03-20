@@ -7,11 +7,15 @@
     margin-bottom: 8px;
 }
 
-.left-side-header:first-child {
-    margin-left: 15px;
+.left-side-header:first-child{
+    margin-left: 10px;
 }
 
-.left-side-header > *, .right-side-header > * {
+.right-side-header:last-child  {
+    margin-right: 10px;
+}
+
+.left-side-header > *, .right-side-header > *:not(:last-child) {
     margin-right: 15px;
     font-weight: 500;
 }
@@ -19,7 +23,6 @@
 .link {
     color: inherit;
     border-bottom: 3px solid transparent;
-    padding: 0 5px;
     transition: 0.2s ease-in;
     font-family: "Inter", sans-serif;
 }

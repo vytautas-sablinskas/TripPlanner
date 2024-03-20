@@ -30,7 +30,7 @@
 .trip-card-information-container {
     display: flex;
     flex-direction: column;
-    padding: 24px;
+    padding: 30px;
 }
 
 .destination-text {
@@ -64,6 +64,7 @@
     padding: 0;
     display: flex;
     justify-content: flex-start;
+    font-size: 14px;
 }
 
 @media screen and (max-width: 1000px) {
@@ -79,12 +80,11 @@
 
     .main-card-container-wrapper {
         height: 165px;
-        margin: 8px;
     }
 
     .trip-card-information-container {
         flex: 3;
-        padding: 8px;
+        padding: 16px 8px;
     }
 
     .trip-image-container {
@@ -94,6 +94,10 @@
 
     .trip-title {
         font-size: 14px;
+    }
+
+    .trip-card-button {
+        font-size: 12px;
     }
 
     .destination-text {
@@ -117,12 +121,4 @@
         margin-top: 8px;
         gap: 4px;
     }
-}
-
-@media screen and (max-width: 400px) {
-    .main-card-container-wrapper {
-        height: 165px;
-        width: 50%;
-    }
-    
 }
