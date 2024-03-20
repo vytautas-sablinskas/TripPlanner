@@ -80,7 +80,7 @@ html, body {
 }
 
 html {
-  overflow-y: scroll;
+  width: 100%;
 }
 
 #root {
@@ -90,7 +90,8 @@ html {
 }
 
 html, body, #root {
-  margin: 0 !important;
+  overflow-x: hidden !important;
+  margin-right: calc(-1 * (100vw - 100%));
 }
 
 a {
