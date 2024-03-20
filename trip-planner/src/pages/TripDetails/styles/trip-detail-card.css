@@ -8,7 +8,7 @@
 }
 
 .event-container-information {
-    flex: 3;
+    flex: 4;
 }
 
 .button-container-wrapper {
@@ -39,7 +39,8 @@
 .content-buttons {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: flex-start;
     flex: 1;
 }
 
@@ -49,6 +50,7 @@
 
 .content-buttons > * {
     margin-right: 10px;
+    padding: 0;
 }
 
 @media screen and (max-width: 650px) {

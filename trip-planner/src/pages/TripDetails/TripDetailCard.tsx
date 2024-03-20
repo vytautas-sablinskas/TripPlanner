@@ -109,7 +109,7 @@ const TripDetailCard = ({ detail, onDelete }: any) => {
                 )
               )
             }
-            className="w-full"
+            className="w-full py-0"
             variant="outline"
           >
             <Pencil className="w-4 h-4 mr-2" />
