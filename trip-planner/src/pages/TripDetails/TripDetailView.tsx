@@ -91,6 +91,7 @@ const TripDetailView = () => {
                 onDelete={handleDelete}
                 isLoading={isLoading}
                 onClose={() => setIsDeleteDialogOpen(false)}
+                setOpen={setIsDeleteDialogOpen}
             />
         </span>
       </span>      

@@ -104,6 +104,7 @@ const TripCard = ({ trip, onDelete }: any) => {
               <DropdownMenu
                 open={isMenuOpen}
                 onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
+                modal={false}
               >
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="trip-card-button">
@@ -117,11 +118,11 @@ const TripCard = ({ trip, onDelete }: any) => {
                 <DropdownMenuContent align="start">
                   <DropdownMenuLabel>Options</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <Users className="mr-2 h-4 w-4" />
                     Manage Trip Participants
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <Wallet className="mr-2 h-4 w-4"/>
                     Manage Trip Budgets
                   </DropdownMenuItem>
@@ -138,9 +139,9 @@ const TripCard = ({ trip, onDelete }: any) => {
                     description="Are you sure you want to delete this trip? This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans."
                     dialogButtonText="Delete"
                     onDelete={handleDelete}
-                    loading={loading}
-                    onClose={() => onDialogClose()}
+                    isLoading={loading}
                     open={isDialogOpen}
+                    setOpen={onDialogClose}
                   />
                 </DropdownMenuContent>
               </DropdownMenu>
