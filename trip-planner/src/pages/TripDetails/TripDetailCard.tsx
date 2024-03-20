@@ -88,7 +88,11 @@ const TripDetailCard = ({ detail, onDelete }: any) => {
           <Separator orientation="vertical" className="mx-5" />
         </span>
         <div className="event-container-information">
-          <p className="event-name">{detail.name}</p>
+          <p className="event-name" onClick={() => navigate(Paths.TRIP_DETAILS_VIEW
+          .replace(":tripId", getTripId())
+          .replace(":planId", detail.id))}>
+            {detail.name}
+          </p>
           <p className="text-xs">{detail.address}</p>
         </div>
         <div className="separator-div">
@@ -110,7 +114,7 @@ const TripDetailCard = ({ detail, onDelete }: any) => {
           <DeleteDialogButton
             buttonText="Delete Plan"
             title="Delete Plan"
-            description="Are you sure you want to delete this plan? This will permanently delete the plan."
+            description="Are you sure you want to delete this plan? This will permanently delete this plan and its contents. You and all trip participants will not be able to access the plan or any documents related to this plan anymore."
             dialogButtonText="Delete"
             onDelete={handleDelete}
             isLoading={isLoading}
