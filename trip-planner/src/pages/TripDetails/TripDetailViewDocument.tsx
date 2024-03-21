@@ -7,7 +7,7 @@ const TripDetailViewDocument = () => {
 
     return (
         <div className="document-card-container" onClick={onDocumentClick}>
-            <img src="/default.jpg" alt="Document" className="document-card" />
+            <img src="/default.jpg" alt="Document" className="document-card" height={400} width={400}/>
             <p className="document-card-text">document-text.jpg/pdf</p>
         </div>
     );

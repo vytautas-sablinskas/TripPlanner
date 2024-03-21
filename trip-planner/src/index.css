@@ -77,13 +77,21 @@
 
 html, body {
   font-family: "Inter", sans-serif;
-  overflow-x: hidden;
+}
+
+html {
+  width: 100%;
 }
 
 #root {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+html, body, #root {
+  overflow-x: hidden !important;
+  margin-right: calc(-1 * (100vw - 100%));
 }
 
 a {
