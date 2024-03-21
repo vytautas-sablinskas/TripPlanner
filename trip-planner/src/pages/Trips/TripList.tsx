@@ -13,8 +13,8 @@ import TripCard from "./components/TripCard";
 import { PaginationExtension } from "@/components/Extra/PaginationExtension";
 import { CirclePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 
 const TripList = () => {
   const [tabSelected, setTabSelected] = useState("Upcoming");
@@ -102,7 +102,7 @@ const TripList = () => {
           </TabsList>
         </Tabs>
       </span>
-      <Separator />
+      <Separator className="mb-4"/>
       {loading ? (
         <>
           <Skeleton
