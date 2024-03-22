@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using TripPlanner.API.Database.Enums;
 
 namespace TripPlanner.API.Database.Entities;
@@ -24,6 +25,7 @@ public class TripDetail
 
     public Guid? TripId { get; set; }
 
+    [DeleteBehavior(DeleteBehavior.Restrict)]
     public virtual AppUser Creator { get; set; }
 
     public string CreatorId { get; set; }

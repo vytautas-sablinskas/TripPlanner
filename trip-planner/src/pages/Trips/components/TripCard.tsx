@@ -118,7 +118,7 @@ const TripCard = ({ trip, onDelete }: any) => {
                 <DropdownMenuContent align="start">
                   <DropdownMenuLabel>Options</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.TRIP_TRAVELLERS_VIEW.replace(":tripId", trip.id))}>
                     <Users className="mr-2 h-4 w-4" />
                     Manage Trip Participants
                   </DropdownMenuItem>

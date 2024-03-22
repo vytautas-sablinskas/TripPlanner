@@ -5,18 +5,21 @@ using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.Trips;
 using TripPlanner.API.Services.AzureBlobStorage;
+using TripPlanner.API.Services.TripTravellers;
 
 namespace TripPlanner.API.Services.Trips;
 
 public class TripService : ITripService
 {
     private readonly IRepository<Trip> _tripRepository;
+    private readonly IRepository<AppUser> _appUserRepository;
     private readonly IMapper _mapper;
     private readonly IAzureBlobStorageService _azureBlobStorageService;
 
-    public TripService(IRepository<Trip> tripRepository, IMapper mapper, IAzureBlobStorageService azureBlobStorageService)
+    public TripService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IMapper mapper, IAzureBlobStorageService azureBlobStorageService)
     {
         _tripRepository = tripRepository;
+        _appUserRepository = appUserRepository;
         _mapper = mapper;
         _azureBlobStorageService = azureBlobStorageService;
     }
@@ -26,9 +29,20 @@ public class TripService : ITripService
         var imageUri = await _azureBlobStorageService.UploadImageAsync(tripDto.Image);
 
         var trip = _mapper.Map<Trip>(tripDto);
-        trip.Id = Guid.NewGuid();
-        trip.GroupAdminId = userId;
         trip.PhotoUri = imageUri;
+
+        var user = _appUserRepository.FindByCondition(t => t.Id == userId)
+                                     .FirstOrDefault();
+        if (user != null)
+        {
+            var traveller = new Traveller
+            {
+                Permissions = TripPermissions.Administrator,
+                UserId = userId,
+            };
+
+            trip.Travellers = new List<Traveller> { traveller };
+        }
 
         _tripRepository.Create(trip);
 
@@ -86,8 +100,9 @@ public class TripService : ITripService
     public async Task<TripsDto> GetUserTrips(string userId, TripFilter filter, int page)
     {
         var tripsQuery = _tripRepository.FindAll()
-                                        .Include(t => t.GroupAdmin)
-                                        .Where(t => t.GroupAdminId == userId);
+            .Include(t => t.Travellers)
+            .Where(t => t.Travellers.Any(traveller => traveller.UserId == userId));
+
         switch (filter)
         {
             case TripFilter.Upcoming:
