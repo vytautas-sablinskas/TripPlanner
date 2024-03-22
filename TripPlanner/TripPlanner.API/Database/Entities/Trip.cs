@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace TripPlanner.API.Database.Entities;
 
@@ -19,10 +20,9 @@ public class Trip
 
     public DateTime EndDate { get; set; }
 
-    public virtual AppUser? GroupAdmin { get; set; }
-
-    [Required]
-    public string GroupAdminId { get; set; }
-
+    [DeleteBehavior(DeleteBehavior.Cascade)]
     public virtual IEnumerable<TripDetail> TripDetails { get; set; }
+
+    [DeleteBehavior(DeleteBehavior.Cascade)]
+    public virtual IEnumerable<Traveller> Travellers { get; set; }
 }

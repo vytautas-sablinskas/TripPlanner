@@ -11,6 +11,7 @@ import TripDetails from "@/pages/TripDetails/TripDetails";
 import TripDetailCreate from "@/pages/TripDetails/TripDetailCreate";
 import TripDetailEdit from "@/pages/TripDetails/TripDetailEdit";
 import TripDetailView from "@/pages/TripDetails/TripDetailView";
+import TripTravellersView from "@/pages/TripTravellers/TripTravellersView";
 
 const AppRoutes = [
   {
@@ -57,6 +58,10 @@ const AppRoutes = [
   {
     path: Paths.TRIP_DETAILS_VIEW,
     element: <TripDetailView />
+  },
+  {
+    path: Paths.TRIP_TRAVELLERS_VIEW,
+    element: <TripTravellersView />
   }
 ];
 

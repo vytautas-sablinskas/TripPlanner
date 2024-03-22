@@ -9,6 +9,7 @@ const Paths = {
     TRIP_DETAILS_CREATE: '/trips/:id/create',
     TRIP_DETAILS_EDIT: '/trips/:tripId/edit/:planId',
     TRIP_DETAILS_VIEW: '/trips/:tripId/plan/:planId',
+    TRIP_TRAVELLERS_VIEW: '/trips/:tripId/participants',
 }
 
 export default Paths
