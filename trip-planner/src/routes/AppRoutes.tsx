@@ -12,6 +12,7 @@ import TripDetailCreate from "@/pages/TripDetails/TripDetailCreate";
 import TripDetailEdit from "@/pages/TripDetails/TripDetailEdit";
 import TripDetailView from "@/pages/TripDetails/TripDetailView";
 import TripTravellersView from "@/pages/TripTravellers/TripTravellersView";
+import TripAddTraveller from "@/pages/TripTravellers/TripAddTraveller";
 
 const AppRoutes = [
   {
@@ -62,6 +63,10 @@ const AppRoutes = [
   {
     path: Paths.TRIP_TRAVELLERS_VIEW,
     element: <TripTravellersView />
+  },
+  {
+    path: Paths.TRIP_TRAVELLERS_CREATE,
+    element: <TripAddTraveller />
   }
 ];
 

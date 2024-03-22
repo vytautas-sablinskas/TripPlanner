@@ -37,7 +37,7 @@ public class TripService : ITripService
         {
             var traveller = new Traveller
             {
-                Permission = TripPermissions.Administrator,
+                Permissions = TripPermissions.Administrator,
                 UserId = userId,
             };
 
