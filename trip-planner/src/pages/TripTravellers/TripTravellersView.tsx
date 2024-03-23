@@ -11,7 +11,7 @@ import { getTripTravellers } from "@/api/TripTravellersService";
 
 const TripTravellersView = () => {
     const [travellers, setTravellers] = useState([]);
-    const [userPermissions, setUserPermissions] = useState('');
+    const [userPermissions, setUserPermissions] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
     const navigate = useNavigate();
@@ -63,7 +63,10 @@ const TripTravellersView = () => {
         fetchTravellers();
     }, [])
 
-    
+    const ADMIN_PRIVELLEGES = 2
+    if (!isLoading && userPermissions !== ADMIN_PRIVELLEGES) {
+        navigate(Paths.HOME);
+    }
 
     return (
         <div className="trip-travellers-view-main-container">
