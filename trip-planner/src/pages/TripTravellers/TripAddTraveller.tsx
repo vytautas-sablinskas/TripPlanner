@@ -10,10 +10,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
+import { ValueSelector } from "@/components/Extra/ValueSelector";
+import { PermissionTypes } from "./PermissionTypes";
 
 const formSchema = z.object({
     invites: z.array(z.any()).nonempty({
         message: "At least one invite must be provided.",
+    }),
+    permissions: z.string().min(1, {
+        message: "Permission is required."
     }),
     message: z.string().optional()
 });
@@ -25,6 +30,7 @@ const TripAddTraveller = () => {
         resolver: zodResolver(formSchema),
         defaultValues: {
           invites: [],
+          permissions: "",
           message: "",
         },
     });
@@ -58,7 +64,7 @@ const TripAddTraveller = () => {
                             control={form.control}
                             name="invites"
                             render={({ field }) => (
-                                <FormItem className="mb-6">
+                                <FormItem className="mb-4">
                                   <FormControl>
                                   <MultipleSelector
                                         defaultOptions={field.value}
@@ -67,6 +73,24 @@ const TripAddTraveller = () => {
                                         creatable
                                         isEmail
                                         createErrorMessage="Email is already selected."
+                                    />
+                                  </FormControl>
+                                  <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField 
+                            control={form.control}
+                            name="permissions"
+                            render={({ field }) => (
+                                <FormItem className="mb-4">
+                                  <FormControl>
+                                    <ValueSelector 
+                                        value={field.value}
+                                        setValue={field.onChange}
+                                        items={PermissionTypes}
+                                        label="Permissions"
+                                        placeholder="Select Permissions"
                                     />
                                   </FormControl>
                                   <FormMessage/>
