@@ -40,124 +40,31 @@ import { CirclePlus, CircleX, Pencil } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
 import Paths from "@/routes/Paths"
  
-const data: Payment[] = [
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname1",
-    email: "ken99@yahoo.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname2",
-    email: "Abe45@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname3",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname4",
-    email: "Silas22@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname5",
-    email: "carmella@hotmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname6",
-    email: "ken949@yahoo.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname7",
-    email: "Abe445@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname8",
-    email: "Monserrat444@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname9",
-    email: "Silas242@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname10",
-    email: "carmel5la@hotmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname11",
-    email: "ken995@yahoo.com",
-  },
-  {
-    permissions: "1",
-    status: "0",
-    fullName: "Name Surname12",
-    email: "Abe455@gmail.com",
-  },
-  {
-    permissions: "1",
-    status: "1",
-    fullName: "Name Surname13",
-    email: "Monserrat544@gmail.com",
-  },
-  {
-    permissions: "2",
-    status: "1",
-    fullName: "Name Surname14",
-    email: "Silas22@gmail.com",
-  },
-  {
-    permissions: "1",
-    status: "1",
-    fullName: "Name Surname15",
-    email: "name surname15@gmail.com",
-  },
-]
- 
 export type Payment = {
-  permissions: string
-  status: string
+  permissions: number
+  status: number
   fullName: string
   email: string
 }
 
-const getPermissionName = (permission : string) => {
+const getPermissionName = (permission : number) => {
     switch(permission) {
-        case "0":
+        case 0:
             return "View Only";
-        case "1":
+        case 1:
             return "View and Edit Plans";
-        case "2":
+        case 2:
             return "Trip Administrator";
         default:
             return "Unknown Permission";
     }
 }
 
-const getStatusName = (status : string) => {
+const getStatusName = (status : number) => {
     switch(status) {
-        case "0":
+        case 0:
             return "Joined";
-        case "1":
+        case 1:
             return "Invited";
         default:
             return "Unknown Permission";
@@ -265,7 +172,7 @@ const columns: ColumnDef<Payment>[] = [
   },
 ]
  
-export function TripTravellerList() {
+export function TripTravellerList({ data } : any) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
     { id: 'fullName', value: '' },

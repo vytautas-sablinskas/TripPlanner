@@ -38,6 +38,7 @@ public class TripService : ITripService
             var traveller = new Traveller
             {
                 Permissions = TripPermissions.Administrator,
+                Status = TravellerStatus.Joined,
                 UserId = userId,
             };
 

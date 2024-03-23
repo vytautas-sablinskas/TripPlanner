@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using TripPlanner.API.Extensions;
 using TripPlanner.API.Services.TripTravellers;
 
 namespace TripPlanner.API.Controllers;
@@ -15,10 +17,11 @@ public class TripTravellersController : ControllerBase
     }
 
     [HttpGet("trips/{tripId}/travellers")]
+    [Authorize]
     public IActionResult GetTravellers(Guid tripId)
     {
-        var travellerDtos = _tripTravellersService.GetTravellers(tripId);
+        var travellersDto = _tripTravellersService.GetTravellers(tripId, User.GetUserId());
 
-        return Ok(travellerDtos);
+        return Ok(travellersDto);
     }
 }

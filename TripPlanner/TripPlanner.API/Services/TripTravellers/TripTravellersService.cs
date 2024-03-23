@@ -14,7 +14,7 @@ public class TripTravellersService : ITripTravellersService
         _tripRepository = tripRepository;
     }
 
-    public IEnumerable<TravellerDto> GetTravellers(Guid tripId)
+    public TravellersDto GetTravellers(Guid tripId, string userId)
     {
         var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
             .Include(t => t.Travellers)
@@ -29,7 +29,12 @@ public class TripTravellersService : ITripTravellersService
             Permissions = t.Permissions
         });
 
-        return travellerDtos;
+        var userPermissions = trip.Travellers
+            .Where(t => t.UserId == userId)
+            .Select(t => t.Permissions)
+            .FirstOrDefault();
+
+        return new TravellersDto(travellerDtos, userPermissions);
     }
 
     public void InviteTripTraveller()

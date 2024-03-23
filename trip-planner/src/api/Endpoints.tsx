@@ -21,6 +21,9 @@ const ENDPOINTS = {
         CREATE_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
         EDIT_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
         DELETE_TRIP_DETAILS: `${BASE_URL}/tripDetails/:id`,
+    },
+    TRIP_TRAVELLERS: {
+        GET_ALL_TRIP_TRAVELLERS: `${BASE_URL}/trips/:tripId/travellers`,
     }
 };
 
