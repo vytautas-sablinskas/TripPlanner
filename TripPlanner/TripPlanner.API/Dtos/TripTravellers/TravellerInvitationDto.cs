@@ -1,7 +1,9 @@
-﻿namespace TripPlanner.API.Dtos.TripTravellers;
+﻿using TripPlanner.API.Services.TripTravellers;
+
+namespace TripPlanner.API.Dtos.TripTravellers;
 
 public record TravellerInvitationDto (
-    Guid TripId,
-    string Email,
-    string Message
-);
+    IEnumerable<string> Invites,
+    string Message,
+    TripPermissions Permissions
+); 

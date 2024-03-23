@@ -14,3 +14,35 @@ export const getTripTravellers = async (tripId : any) => {
 
     return response;
 }
+
+export const inviteTripTravellers = async (tripId : any, inviteTripTravellersDto : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIP_TRAVELLERS.ADD_TRIP_TRAVELLERS
+        .replace(":tripId", tripId),
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(inviteTripTravellersDto)
+        });
+
+    return response;
+}
+
+export const deleteTripTraveller = async (tripId : any, email : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIP_TRAVELLERS.DELETE_TRIP_TRAVELLER
+        .replace(":tripId", tripId)
+        .replace(":email", email),
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+    return response;
+}

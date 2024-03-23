@@ -63,6 +63,17 @@ const TripTravellersView = () => {
         fetchTravellers();
     }, [])
 
+    const handleEdit = () => {
+
+    }
+
+    const handleDelete = (indexToDelete : any) => {
+        const dataCopy = [...travellers];
+
+        dataCopy.splice(indexToDelete, 1);
+        setTravellers(dataCopy);
+    }
+
     const ADMIN_PRIVELLEGES = 2
     if (!isLoading && userPermissions !== ADMIN_PRIVELLEGES) {
         navigate(Paths.HOME);
@@ -70,7 +81,7 @@ const TripTravellersView = () => {
 
     return (
         <div className="trip-travellers-view-main-container">
-            <TripTravellerList data={travellers}/>
+            <TripTravellerList data={travellers} onDelete={handleDelete}/>
         </div>
     );
 }

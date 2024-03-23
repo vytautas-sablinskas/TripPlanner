@@ -66,6 +66,8 @@ public static class Program
         services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>();
         services.AddScoped<IRepository<Trip>, Repository<Trip>>();
         services.AddScoped<IRepository<TripDetail>, Repository<TripDetail>>();
+        services.AddScoped<IRepository<Notification>, Repository<Notification>>();
+        services.AddScoped<IRepository<Traveller>, Repository<Traveller>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITripService, TripService>();

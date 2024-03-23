@@ -39,6 +39,13 @@ import {
 import { CirclePlus, CircleX, Pencil } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
 import Paths from "@/routes/Paths"
+import DeleteDialog from "@/components/Extra/DeleteDialog"
+import TripEditTravellerDialog from "./TripEditTravellerDialog"
+import { checkTokenValidity } from "@/utils/jwtUtils"
+import { refreshAccessToken } from "@/api/AuthenticationService"
+import { toast } from "sonner"
+import { useUser } from "@/providers/user-provider/UserContext"
+import { deleteTripTraveller } from "@/api/TripTravellersService"
  
 export type Payment = {
   permissions: number
@@ -60,6 +67,11 @@ const getPermissionName = (permission : number) => {
     }
 }
 
+const getTripId = (location : any) => {
+  const path = location.pathname.split("/");
+  return path[path.length - 2];
+};
+
 const getStatusName = (status : number) => {
     switch(status) {
         case 0:
@@ -71,108 +83,193 @@ const getStatusName = (status : number) => {
     }
 }
  
-const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: "fullName",
-    header: ({ column }) => {
+export function TripTravellerList({ data, onDelete } : any) {
+  const columns: ColumnDef<Payment>[] = [
+    {
+      accessorKey: "fullName",
+      header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              className="p-0"
+            >
+              Traveller Full Name
+              <CaretSortIcon className="ml-2 h-4 w-4" />
+            </Button>
+          )
+        },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("fullName")}</div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="p-0"
           >
-            Traveller Full Name
+            Email
             <CaretSortIcon className="ml-2 h-4 w-4" />
           </Button>
         )
       },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("fullName")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0"
-        >
-          Email
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
+      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => {
-        return (
-        <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="p-0"
-          >
-          Status
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-        )
+    {
+      accessorKey: "status",
+      header: ({ column }) => {
+          return (
+          <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              className="p-0"
+            >
+            Status
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+          )
+        },
+      cell: ({ row }) => {
+        return <div className="text-left font-medium">{getStatusName(row.getValue("status"))}</div>
       },
-    cell: ({ row }) => {
-      return <div className="text-left font-medium">{getStatusName(row.getValue("status"))}</div>
     },
-  },
-  {
-    accessorKey: "permissions",
-    header: ({ column }) => {
-        return (
-        <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="p-0"
-          >
-          Permissions
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-        )
+    {
+      accessorKey: "permissions",
+      header: ({ column }) => {
+          return (
+          <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              className="p-0"
+            >
+            Permissions
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+          )
+        },
+      cell: ({ row }) => {
+        return <div className="text-left font-medium">{getPermissionName(row.getValue("permissions"))}</div>
       },
-    cell: ({ row }) => {
-      return <div className="text-left font-medium">{getPermissionName(row.getValue("permissions"))}</div>
     },
-  },
-  {
-    id: "actions",
-    header: () => "Actions",
-    cell: () => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-                <Pencil className="w-4 h-4 mr-2" />
-                Edit Permissions
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-                <CircleX className="w-4 h-4 mr-2"/>
-                Remove Traveller
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+    {
+      id: "actions",
+      header: () => "Actions",
+      cell: ({ row }) => {
+        const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+        const [isLoading, setIsLoading] = React.useState(false);
+        const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+        const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
+        const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+        const navigate = useNavigate();
+        const location = useLocation();
+  
+        const handleDelete = async () => {
+          setIsLoading(true);
+          const accessToken = localStorage.getItem("accessToken");
+  
+          if (!checkTokenValidity(accessToken || "")) {
+              const result = await refreshAccessToken();
+              if (!result.success) {
+                  toast.error("Session has expired. Login again!", {
+                  position: "top-center",
+                  });
+  
+                  changeUserInformationToLoggedOut();
+                  navigate(Paths.LOGIN);
+                  return;
+              }
+  
+              changeUserInformationToLoggedIn(
+                  result.data.accessToken,
+                  result.data.refreshToken
+              );
+          }
+  
+          const response = await deleteTripTraveller(getTripId(location), row.getValue("email"))
+          if (!response.ok) {
+            toast.error("Failed deleting. Try refreshing page!");
+          }
+  
+          await onDelete(row.index);
+          toast.success(`${row.getValue("fullName")} was deleted from trip`);
+          setIsLoading(false);
+        }
+  
+        const handleEdit = (permission : any) => {
+          console.log(permission);
+        }
+  
+        const onDeleteDialogClose = () => {
+          setIsMenuOpen(false);
+          setIsDeleteDialogOpen(false);
+        };
+  
+        const onEditDialogClose = () => {
+          setIsMenuOpen(false);
+          setIsEditDialogOpen(false);
+        }
+  
+        return (
+          row.getValue("permissions") !== 2 ? (
+            <DropdownMenu
+              open={isMenuOpen}
+              onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
+              modal={false}
+            >
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <DotsHorizontalIcon className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  onClick={() => setIsEditDialogOpen(true)}
+                  className="cursor-pointer"
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit Permissions
+                </DropdownMenuItem>
+                <TripEditTravellerDialog 
+                  title={`Edit ${row.getValue("fullName")} permissions`}
+                  onEdit={handleEdit}
+                  isLoading={isLoading}
+                  currentPermission={row.getValue("permissions")}
+                  open={isEditDialogOpen}
+                  setOpen={onEditDialogClose}
+                />
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                  className="cursor-pointer"
+                >
+                  <CircleX className="w-4 h-4 mr-2"/>
+                  Remove Traveller
+                </DropdownMenuItem>
+                <DeleteDialog
+                  title="Delete Traveller"
+                  description={`Are you sure you want to delete the ${row.getValue("fullName")} from trip?`}
+                  dialogButtonText="Delete"
+                  onDelete={handleDelete}
+                  isLoading={isLoading}
+                  open={isDeleteDialogOpen}
+                  setOpen={onDeleteDialogClose}
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null
+        );
+      }
     },
-  },
-]
- 
-export function TripTravellerList({ data } : any) {
+  ]
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
     { id: 'fullName', value: '' },
@@ -181,11 +278,6 @@ export function TripTravellerList({ data } : any) {
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  const getTripId = () => {
-    const path = location.pathname.split("/");
-    return path[path.length - 2];
-  };
   
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -246,7 +338,7 @@ export function TripTravellerList({ data } : any) {
             className="max-w-sm"
         />
         <div className="ml-auto flex items-end">
-            <Button variant="outline" className="mr-4" onClick={() => navigate(Paths.TRIP_TRAVELLERS_CREATE.replace(":tripId", getTripId()))}>
+            <Button variant="outline" className="mr-4" onClick={() => navigate(Paths.TRIP_TRAVELLERS_CREATE.replace(":tripId", getTripId(location)))}>
                 <CirclePlus className="w-4 h-4 mr-2"/>
                 Add Traveller
             </Button>

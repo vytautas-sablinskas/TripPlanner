@@ -21,3 +21,13 @@
     color: rgb(16, 122, 197);
     cursor: pointer;
 }
+
+@media screen and (max-width: 900px) {   
+    .trip-add-traveller-information-container {
+        width: 100%;
+    }
+
+    .back-to-travellers-list {
+        width: 100%;
+    }
+}
