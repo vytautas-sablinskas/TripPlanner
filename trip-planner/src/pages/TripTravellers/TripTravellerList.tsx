@@ -39,233 +39,237 @@ import {
 import { CirclePlus, CircleX, Pencil } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
 import Paths from "@/routes/Paths"
- 
-const data: Payment[] = [
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname1",
-    email: "ken99@yahoo.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname2",
-    email: "Abe45@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname3",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname4",
-    email: "Silas22@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname5",
-    email: "carmella@hotmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname6",
-    email: "ken949@yahoo.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname7",
-    email: "Abe445@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname8",
-    email: "Monserrat444@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname9",
-    email: "Silas242@gmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname10",
-    email: "carmel5la@hotmail.com",
-  },
-  {
-    permissions: "0",
-    status: "0",
-    fullName: "Name Surname11",
-    email: "ken995@yahoo.com",
-  },
-  {
-    permissions: "1",
-    status: "0",
-    fullName: "Name Surname12",
-    email: "Abe455@gmail.com",
-  },
-  {
-    permissions: "1",
-    status: "1",
-    fullName: "Name Surname13",
-    email: "Monserrat544@gmail.com",
-  },
-  {
-    permissions: "2",
-    status: "1",
-    fullName: "Name Surname14",
-    email: "Silas22@gmail.com",
-  },
-  {
-    permissions: "1",
-    status: "1",
-    fullName: "Name Surname15",
-    email: "name surname15@gmail.com",
-  },
-]
+import DeleteDialog from "@/components/Extra/DeleteDialog"
+import TripEditTravellerDialog from "./TripEditTravellerDialog"
+import { checkTokenValidity } from "@/utils/jwtUtils"
+import { refreshAccessToken } from "@/api/AuthenticationService"
+import { toast } from "sonner"
+import { useUser } from "@/providers/user-provider/UserContext"
+import { deleteTripTraveller } from "@/api/TripTravellersService"
  
 export type Payment = {
-  permissions: string
-  status: string
+  permissions: number
+  status: number
   fullName: string
   email: string
 }
 
-const getPermissionName = (permission : string) => {
+const getPermissionName = (permission : number) => {
     switch(permission) {
-        case "0":
+        case 0:
             return "View Only";
-        case "1":
+        case 1:
             return "View and Edit Plans";
-        case "2":
+        case 2:
             return "Trip Administrator";
         default:
             return "Unknown Permission";
     }
 }
 
-const getStatusName = (status : string) => {
+const getTripId = (location : any) => {
+  const path = location.pathname.split("/");
+  return path[path.length - 2];
+};
+
+const getStatusName = (status : number) => {
     switch(status) {
-        case "0":
+        case 0:
             return "Joined";
-        case "1":
+        case 1:
             return "Invited";
         default:
             return "Unknown Permission";
     }
 }
  
-const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: "fullName",
-    header: ({ column }) => {
+export function TripTravellerList({ data, onDelete } : any) {
+  const columns: ColumnDef<Payment>[] = [
+    {
+      accessorKey: "fullName",
+      header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              className="p-0"
+            >
+              Traveller Full Name
+              <CaretSortIcon className="ml-2 h-4 w-4" />
+            </Button>
+          )
+        },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("fullName")}</div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="p-0"
           >
-            Traveller Full Name
+            Email
             <CaretSortIcon className="ml-2 h-4 w-4" />
           </Button>
         )
       },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("fullName")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="p-0"
-        >
-          Email
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
+      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => {
-        return (
-        <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="p-0"
-          >
-          Status
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-        )
+    {
+      accessorKey: "status",
+      header: ({ column }) => {
+          return (
+          <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              className="p-0"
+            >
+            Status
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+          )
+        },
+      cell: ({ row }) => {
+        return <div className="text-left font-medium">{getStatusName(row.getValue("status"))}</div>
       },
-    cell: ({ row }) => {
-      return <div className="text-left font-medium">{getStatusName(row.getValue("status"))}</div>
     },
-  },
-  {
-    accessorKey: "permissions",
-    header: ({ column }) => {
-        return (
-        <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="p-0"
-          >
-          Permissions
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-        )
+    {
+      accessorKey: "permissions",
+      header: ({ column }) => {
+          return (
+          <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              className="p-0"
+            >
+            Permissions
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+          )
+        },
+      cell: ({ row }) => {
+        return <div className="text-left font-medium">{getPermissionName(row.getValue("permissions"))}</div>
       },
-    cell: ({ row }) => {
-      return <div className="text-left font-medium">{getPermissionName(row.getValue("permissions"))}</div>
     },
-  },
-  {
-    id: "actions",
-    header: () => "Actions",
-    cell: () => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-                <Pencil className="w-4 h-4 mr-2" />
-                Edit Permissions
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-                <CircleX className="w-4 h-4 mr-2"/>
-                Remove Traveller
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+    {
+      id: "actions",
+      header: () => "Actions",
+      cell: ({ row }) => {
+        const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+        const [isLoading, setIsLoading] = React.useState(false);
+        const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+        const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
+        const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+        const navigate = useNavigate();
+        const location = useLocation();
+  
+        const handleDelete = async () => {
+          setIsLoading(true);
+          const accessToken = localStorage.getItem("accessToken");
+  
+          if (!checkTokenValidity(accessToken || "")) {
+              const result = await refreshAccessToken();
+              if (!result.success) {
+                  toast.error("Session has expired. Login again!", {
+                  position: "top-center",
+                  });
+  
+                  changeUserInformationToLoggedOut();
+                  navigate(Paths.LOGIN);
+                  return;
+              }
+  
+              changeUserInformationToLoggedIn(
+                  result.data.accessToken,
+                  result.data.refreshToken
+              );
+          }
+  
+          const response = await deleteTripTraveller(getTripId(location), row.getValue("email"))
+          if (!response.ok) {
+            toast.error("Failed deleting. Try refreshing page!");
+          }
+  
+          await onDelete(row.index);
+          toast.success(`${row.getValue("fullName")} was deleted from trip`);
+          setIsLoading(false);
+        }
+  
+        const handleEdit = (permission : any) => {
+          console.log(permission);
+        }
+  
+        const onDeleteDialogClose = () => {
+          setIsMenuOpen(false);
+          setIsDeleteDialogOpen(false);
+        };
+  
+        const onEditDialogClose = () => {
+          setIsMenuOpen(false);
+          setIsEditDialogOpen(false);
+        }
+  
+        return (
+          row.getValue("permissions") !== 2 ? (
+            <DropdownMenu
+              open={isMenuOpen}
+              onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
+              modal={false}
+            >
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <DotsHorizontalIcon className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  onClick={() => setIsEditDialogOpen(true)}
+                  className="cursor-pointer"
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit Permissions
+                </DropdownMenuItem>
+                <TripEditTravellerDialog 
+                  title={`Edit ${row.getValue("fullName")} permissions`}
+                  onEdit={handleEdit}
+                  isLoading={isLoading}
+                  currentPermission={row.getValue("permissions")}
+                  open={isEditDialogOpen}
+                  setOpen={onEditDialogClose}
+                />
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                  className="cursor-pointer"
+                >
+                  <CircleX className="w-4 h-4 mr-2"/>
+                  Remove Traveller
+                </DropdownMenuItem>
+                <DeleteDialog
+                  title="Delete Traveller"
+                  description={`Are you sure you want to delete the ${row.getValue("fullName")} from trip?`}
+                  dialogButtonText="Delete"
+                  onDelete={handleDelete}
+                  isLoading={isLoading}
+                  open={isDeleteDialogOpen}
+                  setOpen={onDeleteDialogClose}
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null
+        );
+      }
     },
-  },
-]
- 
-export function TripTravellerList() {
+  ]
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
     { id: 'fullName', value: '' },
@@ -274,11 +278,6 @@ export function TripTravellerList() {
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  const getTripId = () => {
-    const path = location.pathname.split("/");
-    return path[path.length - 2];
-  };
   
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -339,7 +338,7 @@ export function TripTravellerList() {
             className="max-w-sm"
         />
         <div className="ml-auto flex items-end">
-            <Button variant="outline" className="mr-4" onClick={() => navigate(Paths.TRIP_TRAVELLERS_CREATE.replace(":tripId", getTripId()))}>
+            <Button variant="outline" className="mr-4" onClick={() => navigate(Paths.TRIP_TRAVELLERS_CREATE.replace(":tripId", getTripId(location)))}>
                 <CirclePlus className="w-4 h-4 mr-2"/>
                 Add Traveller
             </Button>

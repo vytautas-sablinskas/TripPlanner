@@ -38,6 +38,7 @@ public class TripService : ITripService
             var traveller = new Traveller
             {
                 Permissions = TripPermissions.Administrator,
+                Status = TravellerStatus.Joined,
                 UserId = userId,
             };
 
@@ -101,7 +102,7 @@ public class TripService : ITripService
     {
         var tripsQuery = _tripRepository.FindAll()
             .Include(t => t.Travellers)
-            .Where(t => t.Travellers.Any(traveller => traveller.UserId == userId));
+            .Where(t => t.Travellers.Any(traveller => traveller.UserId == userId && traveller.Status == TravellerStatus.Joined));
 
         switch (filter)
         {
