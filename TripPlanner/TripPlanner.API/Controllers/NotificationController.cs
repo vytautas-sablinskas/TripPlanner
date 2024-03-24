@@ -29,9 +29,18 @@ public class NotificationController : ControllerBase
         return Ok(notifications);
     }
 
+    [HttpPost("notifications/status")]
+    [Authorize]
+    public async Task<IActionResult> ReadUserNotifications()
+    {
+        await _notificationService.ReadUserNotifications(User.GetUserId());
+
+        return Ok();
+    }
+
     [HttpPost("notifications/{notificationId}")]
     [Authorize]
-    public async Task<IActionResult> ChangeInvitationStatus(Guid notificationId, UpdateInvitationDto dto)
+    public async Task<IActionResult> ChangeInvitationStatus(Guid notificationId, [FromBody] UpdateInvitationDto dto)
     {
         await _tripTravellersService.UpdateTripStatus(notificationId, dto, User.GetUserId());
 
