@@ -63,9 +63,18 @@ const TripTravellersView = () => {
         fetchTravellers();
     }, [])
 
-    const handleEdit = () => {
-
-    }
+    const handleEdit = (index : any, newPermission : any) => {
+        console.log(newPermission);
+        setTravellers((prevTravellers : any) => {
+            return prevTravellers.map((traveller : any, i : any) => {
+                if (i === index) {
+                    return { ...traveller, permissions: Number(newPermission) };
+                } else {
+                    return traveller;
+                }
+            });
+        });
+    };    
 
     const handleDelete = (indexToDelete : any) => {
         const dataCopy = [...travellers];
@@ -74,14 +83,9 @@ const TripTravellersView = () => {
         setTravellers(dataCopy);
     }
 
-    const ADMIN_PRIVELLEGES = 2
-    if (!isLoading && userPermissions !== ADMIN_PRIVELLEGES) {
-        navigate(Paths.HOME);
-    }
-
     return (
         <div className="trip-travellers-view-main-container">
-            <TripTravellerList data={travellers} onDelete={handleDelete}/>
+            <TripTravellerList data={travellers} onDelete={handleDelete} onEdit={handleEdit} userPermissions={userPermissions}/>
         </div>
     );
 }

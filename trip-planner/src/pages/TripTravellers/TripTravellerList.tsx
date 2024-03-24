@@ -45,9 +45,10 @@ import { checkTokenValidity } from "@/utils/jwtUtils"
 import { refreshAccessToken } from "@/api/AuthenticationService"
 import { toast } from "sonner"
 import { useUser } from "@/providers/user-provider/UserContext"
-import { deleteTripTraveller } from "@/api/TripTravellersService"
+import { deleteTripTraveller, editTripTraveller } from "@/api/TripTravellersService"
  
 export type Payment = {
+  id: string
   permissions: number
   status: number
   fullName: string
@@ -83,7 +84,7 @@ const getStatusName = (status : number) => {
     }
 }
  
-export function TripTravellerList({ data, onDelete } : any) {
+export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : any) {
   const columns: ColumnDef<Payment>[] = [
     {
       accessorKey: "fullName",
@@ -194,13 +195,42 @@ export function TripTravellerList({ data, onDelete } : any) {
             toast.error("Failed deleting. Try refreshing page!");
           }
   
-          await onDelete(row.index);
+          onDelete(row.index);
           toast.success(`${row.getValue("fullName")} was deleted from trip`);
           setIsLoading(false);
         }
   
-        const handleEdit = (permission : any) => {
-          console.log(permission);
+        const handleEdit = async (permission : any) => {
+          setIsLoading(true);
+          const accessToken = localStorage.getItem("accessToken");
+  
+          if (!checkTokenValidity(accessToken || "")) {
+              const result = await refreshAccessToken();
+              if (!result.success) {
+                  toast.error("Session has expired. Login again!", {
+                  position: "top-center",
+                  });
+  
+                  changeUserInformationToLoggedOut();
+                  navigate(Paths.LOGIN);
+                  return;
+              }
+  
+              changeUserInformationToLoggedIn(
+                  result.data.accessToken,
+                  result.data.refreshToken
+              );
+          }
+
+          const response = await editTripTraveller(getTripId(location), data[row.index].id, permission)
+          if (!response.ok) {
+            toast.error("Failed updating. Try refreshing page!");
+            return;
+          }
+  
+          onEdit(row.index, permission);
+          toast.success(`${row.getValue("fullName")} permissions were updated!`);
+          setIsLoading(false);
         }
   
         const onDeleteDialogClose = () => {
@@ -214,7 +244,7 @@ export function TripTravellerList({ data, onDelete } : any) {
         }
   
         return (
-          row.getValue("permissions") !== 2 ? (
+          row.getValue("permissions") !== 2 && userPermissions === 2 ? (
             <DropdownMenu
               open={isMenuOpen}
               onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}

@@ -48,4 +48,13 @@ public class TripTravellersController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPatch("trips/{tripId}/travellers/{travellerId}/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateTraveller(Guid tripId, Guid travellerId, UpdateTravellerInfoDto dto)
+    {
+        await _tripTravellersService.UpdateTravellerInformation(tripId, travellerId, dto, User.GetUserId());
+
+        return Ok();
+    }
 }
