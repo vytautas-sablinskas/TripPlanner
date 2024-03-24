@@ -284,7 +284,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             if (isEmail) {
               const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
               if (!emailRegex.test(value)) {
-                toast.error("Selected value was not an email");
+                toast.error("Invalid email was entered");
                 return;
               }
             }

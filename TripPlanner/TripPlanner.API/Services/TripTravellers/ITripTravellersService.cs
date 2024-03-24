@@ -8,7 +8,9 @@ public interface ITripTravellersService
 
     Task InviteTripTraveller(Guid tripId, TravellerInvitationDto invitationDto, string userId);
 
-    void JoinTrip();
+    Task UpdateTravellerInformation(Guid tripId, Guid travellerId, UpdateTravellerInfoDto dto, string userId);
+
+    Task UpdateTripStatus(Guid notificationId, UpdateInvitationDto dto, string userId);
 
     Task RemoveTravellerFromTrip(Guid tripId, string userToDeleteEmail);
 }

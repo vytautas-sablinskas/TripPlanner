@@ -15,4 +15,9 @@ public class Traveller
     public virtual AppUser User { get; set; }
 
     public string UserId { get; set; }
+
+    [DeleteBehavior(DeleteBehavior.Restrict)]
+    public virtual Trip Trip { get; set; }
+
+    public Guid TripId { get; set; }
 }

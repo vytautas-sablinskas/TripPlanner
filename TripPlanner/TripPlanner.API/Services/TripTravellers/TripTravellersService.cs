@@ -29,6 +29,7 @@ public class TripTravellersService : ITripTravellersService
 
         var travellerDtos = trip.Travellers.Select(t => new TravellerDto
         {
+            Id = t.Id,
             Email = t.User.Email,
             FullName = $"{t.User.Name} {t.User.Surname}",
             Status = t.Status,
@@ -88,9 +89,69 @@ public class TripTravellersService : ITripTravellersService
         await _tripRepository.Update(trip);
     }
 
-    public void JoinTrip()
+    public async Task UpdateTravellerInformation(Guid tripId, Guid travellerId, UpdateTravellerInfoDto dto, string userId)
     {
+        var requester = _travellerRepository.FindByCondition(t => t.UserId == userId && t.TripId == tripId)
+            .FirstOrDefault();
+        if (requester is null || requester.Permissions != TripPermissions.Administrator)
+        {
+            return;
+        }
 
+        var traveller = _travellerRepository.FindByCondition(t => t.Id == travellerId)
+            .FirstOrDefault();
+        if (traveller != null)
+        {
+            traveller.Permissions = dto.Permissions;
+            await _travellerRepository.Update(traveller);
+        }
+    }
+
+    public async Task UpdateTripStatus(Guid notificationId, UpdateInvitationDto dto, string userId)
+    {
+        var notification = _notificationRepository.FindByCondition(t => t.Id == notificationId)
+            .FirstOrDefault();
+        var traveller = _travellerRepository.FindByCondition(t => t.UserId == userId && t.TripId == notification.TripId)
+            .FirstOrDefault();
+
+        if (dto.Status == InvitationUpdateStatus.Declined)
+        {
+            await RejectInvitation(notification, traveller);
+        }
+
+        if (dto.Status == InvitationUpdateStatus.Accepted)
+        {
+            await AcceptInvitation(notification, traveller);
+        }
+    }
+
+    private async Task RejectInvitation(Notification? notification, Traveller? traveller)
+    {
+        if (notification != null)
+        {
+            await _notificationRepository.Delete(notification);
+        }
+
+        if (traveller != null)
+        {
+            await _travellerRepository.Delete(traveller);
+        }
+    }
+
+    private async Task AcceptInvitation(Notification? notification, Traveller? traveller)
+    {
+        if (traveller == null)
+        {
+            return;
+        }
+
+        traveller.Status = TravellerStatus.Joined;
+        await _travellerRepository.Update(traveller);
+
+        if (notification != null)
+        {
+            await _notificationRepository.Delete(notification);
+        }
     }
 
     public async Task RemoveTravellerFromTrip(Guid tripId, string userToDeleteEmail)
