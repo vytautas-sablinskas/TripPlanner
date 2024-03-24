@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TripPlanner.API.Dtos.Authentication;
 using TripPlanner.API.Services.Authentication;
@@ -57,5 +58,12 @@ public class AuthenticationController : ControllerBase
             return BadRequest(new { errorMessage = result.Message });
 
         return Ok(result.Message);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetUserInformation()
+    {
+        return Ok();
     }
 }

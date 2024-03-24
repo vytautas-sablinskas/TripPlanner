@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import UserContext from './UserContext';
 
 const UserContextProvider = ({ children }: any) => {
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('isAuthenticated') === 'true');
     const [role, setRole] = useState(localStorage.getItem('role') || 'none');
+    const [hasNotifications, setHasNotifications] = useState(localStorage.getItem('hasNotifications') === 'true');
 
     function decodeJWT(token : string) {
         try {
@@ -23,11 +24,13 @@ const UserContextProvider = ({ children }: any) => {
 
         setIsAuthenticated(true);
         setRole(userRole);
+        setHasNotifications(false);
 
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('role', userRole);
         localStorage.setItem('accessToken', newAccessToken);
         localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem('hasNotifications', 'false');
     }, []);
 
     const changeUserInformationToLoggedOut = useCallback(() => {
@@ -38,14 +41,22 @@ const UserContextProvider = ({ children }: any) => {
         localStorage.removeItem('role');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('hasNotifications');
+    }, []);
+
+    const changeHasNotifications = useCallback((hasNotifications: boolean) => {
+        setHasNotifications(hasNotifications);
+        localStorage.setItem('hasNotifications', String(hasNotifications));
     }, []);
 
     const contextValue = useMemo(() => ({
         isAuthenticated,
         role,
+        hasNotifications,
         changeUserInformationToLoggedIn,
-        changeUserInformationToLoggedOut
-    }), [isAuthenticated, role, changeUserInformationToLoggedIn, changeUserInformationToLoggedOut]);
+        changeUserInformationToLoggedOut,
+        changeHasNotifications
+    }), [isAuthenticated, role, hasNotifications, changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, changeHasNotifications]);
 
     return (
         <UserContext.Provider value={contextValue}>

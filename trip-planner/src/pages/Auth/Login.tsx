@@ -120,7 +120,7 @@ const Login = () => {
                   <FormItem>
                     <FormLabel required>Email</FormLabel>
                     <FormControl className="w-full mb-4">
-                      <Input placeholder="Enter Your Email" {...field} />
+                      <Input placeholder="Enter Your Email" {...field} autoComplete="email"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

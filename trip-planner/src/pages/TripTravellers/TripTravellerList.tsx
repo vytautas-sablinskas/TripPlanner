@@ -285,7 +285,7 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
                 </DropdownMenuItem>
                 <DeleteDialog
                   title="Delete Traveller"
-                  description={`Are you sure you want to delete the ${row.getValue("fullName")} from trip?`}
+                  description={`Are you sure you want to delete ${row.getValue("fullName")} from trip?`}
                   dialogButtonText="Delete"
                   onDelete={handleDelete}
                   isLoading={isLoading}

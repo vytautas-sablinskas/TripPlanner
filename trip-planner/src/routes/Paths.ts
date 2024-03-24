@@ -10,7 +10,8 @@ const Paths = {
     TRIP_DETAILS_EDIT: '/trips/:tripId/edit/:planId',
     TRIP_DETAILS_VIEW: '/trips/:tripId/plan/:planId',
     TRIP_TRAVELLERS_VIEW: '/trips/:tripId/participants',
-    TRIP_TRAVELLERS_CREATE: '/trips/:tripId/participants/create'
+    TRIP_TRAVELLERS_CREATE: '/trips/:tripId/participants/create',
+    NOTIFICATIONS: '/notifications',
 }
 
 export default Paths

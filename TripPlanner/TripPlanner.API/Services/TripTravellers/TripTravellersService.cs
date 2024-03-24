@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
+using TripPlanner.API.Database.Enums;
 using TripPlanner.API.Dtos.TripTravellers;
 
 namespace TripPlanner.API.Services.TripTravellers;
@@ -78,6 +79,7 @@ public class TripTravellersService : ITripTravellersService
                     TripId = tripId,
                     User = user,
                     UserId = user.Id,
+                    Status = NotificationStatus.Unread,
                 };
 
                 _notificationRepository.Create(notification);
