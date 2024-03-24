@@ -1,8 +1,8 @@
 ﻿using TripPlanner.API.Database.Enums;
 
-namespace TripPlanner.API.Database.Entities;
+namespace TripPlanner.API.Dtos.Notifications;
 
-public class Notification
+public class NotificationDto
 {
     public Guid Id { get; set; }
 
@@ -10,11 +10,5 @@ public class Notification
 
     public string? Message { get; set; }
 
-    public virtual AppUser User { get; set; }
-
-    public string UserId { get; set; }
-
     public NotificationStatus Status { get; set; }
-
-    public Guid? TripId { get; set; }
 }

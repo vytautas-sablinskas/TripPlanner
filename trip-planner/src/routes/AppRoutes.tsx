@@ -13,6 +13,7 @@ import TripDetailEdit from "@/pages/TripDetails/TripDetailEdit";
 import TripDetailView from "@/pages/TripDetails/TripDetailView";
 import TripTravellersView from "@/pages/TripTravellers/TripTravellersView";
 import TripAddTraveller from "@/pages/TripTravellers/TripAddTraveller";
+import Notifications from "@/pages/Notifications/Notifications";
 
 const AppRoutes = [
   {
@@ -67,6 +68,10 @@ const AppRoutes = [
   {
     path: Paths.TRIP_TRAVELLERS_CREATE,
     element: <TripAddTraveller />
+  },
+  {
+    path: Paths.NOTIFICATIONS,
+    element: <Notifications />
   }
 ];
 

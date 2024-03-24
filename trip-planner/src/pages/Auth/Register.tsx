@@ -151,7 +151,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel required>Name</FormLabel>
                   <FormControl className="w-full mb-4">
-                    <Input placeholder="Enter Your Name" {...field} />
+                    <Input placeholder="Enter Your Name" {...field} autoComplete="given-name"/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -164,7 +164,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel required>Surname</FormLabel>
                   <FormControl className="w-full mb-4">
-                    <Input placeholder="Enter Your Surname" {...field} />
+                    <Input placeholder="Enter Your Surname" {...field} autoComplete="family-name"/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -177,7 +177,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel required>Email</FormLabel>
                   <FormControl className="w-full mb-4">
-                    <Input placeholder="Enter Your Email" {...field} />
+                    <Input placeholder="Enter Your Email" {...field} autoComplete="email"/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
