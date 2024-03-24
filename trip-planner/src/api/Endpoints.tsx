@@ -30,6 +30,11 @@ const ENDPOINTS = {
     },
     USER: {
         GET_INFORMATION: `${BASE_URL}/user/information`,
+    },
+    NOTIFICATIONS: {
+        GET_USER_NOTIFICATIONS: `${BASE_URL}/notifications`,
+        MARK_NOTIFICATIONS_AS_READ: `${BASE_URL}/notifications/status`,
+        CHANGE_INVITATION_STATUS: `${BASE_URL}/notifications/:notificationId`
     }
 };
 
