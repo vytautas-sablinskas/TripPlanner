@@ -360,21 +360,21 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex flex-col items-center py-4 sm:flex-row sm:items-end">
         <Input
             placeholder="Filter emails or full names..."
             value={combinedFilterValue}
             onChange={handleCombinedFilterChange}
-            className="max-w-sm"
+            className="w-full sm:mr-2"
         />
-        <div className="ml-auto flex items-end">
-            <Button variant="outline" className="mr-4" onClick={() => navigate(Paths.TRIP_TRAVELLERS_CREATE.replace(":tripId", getTripId(location)))}>
+        <div className="sm:ml-auto mt-2 flex flex-col justify-end sm:items-end sm:flex-row w-full">
+            <Button variant="outline" className="sm:mr-4 sm:w-auto w-full justify-start" onClick={() => navigate(Paths.TRIP_TRAVELLERS_CREATE.replace(":tripId", getTripId(location)))}>
                 <CirclePlus className="w-4 h-4 mr-2"/>
                 Add Traveller
             </Button>
             <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+            <DropdownMenuTrigger asChild className="mt-2 w-full sm:w-auto">
+                <Button variant="outline" className="justify-start">
                 Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>

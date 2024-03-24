@@ -36,8 +36,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { CirclePlus, CircleX, Pencil } from "lucide-react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { CirclePlus, CircleX } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import Paths from "@/routes/Paths"
 import DeleteDialog from "@/components/Extra/DeleteDialog"
 import { checkTokenValidity } from "@/utils/jwtUtils"
@@ -45,6 +45,7 @@ import { refreshAccessToken } from "@/api/AuthenticationService"
 import { toast } from "sonner"
 import { useUser } from "@/providers/user-provider/UserContext"
 import { changeInvitationStatus } from "@/api/NotificationService"
+import "./styles/notification-list.css";
  
 export type Notification = {
   id: string
@@ -87,7 +88,7 @@ export function NotificationList({ data, onStatusChange } : any) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("message")}</div>,
+      cell: ({ row }) => <div className="break-words overflow-auto max-w-[600px]">{row.getValue("message")}</div>,
     },
     {
       id: "actions",
@@ -96,10 +97,8 @@ export function NotificationList({ data, onStatusChange } : any) {
         const [isMenuOpen, setIsMenuOpen] = React.useState(false);
         const [isLoading, setIsLoading] = React.useState(false);
         const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
-        const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
         const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
         const navigate = useNavigate();
-        const location = useLocation();
   
         const handleAccessToken = async () => {
             const accessToken = localStorage.getItem("accessToken");
@@ -134,7 +133,6 @@ export function NotificationList({ data, onStatusChange } : any) {
                 setIsLoading(false)
                 return;
             }
-            console.log(response);
 
             toast.success(`Notification was successfully deleted`, {
                 position: 'top-center'
@@ -276,7 +274,7 @@ export function NotificationList({ data, onStatusChange } : any) {
             placeholder="Filter by Information"
             value={combinedFilterValue}
             onChange={handleCombinedFilterChange}
-            className="max-w-sm"
+            className="max-w-sm mr-2"
         />
         <div className="ml-auto flex items-end">
             <DropdownMenu>
