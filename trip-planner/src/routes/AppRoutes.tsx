@@ -11,6 +11,8 @@ import TripDetails from "@/pages/TripDetails/TripDetails";
 import TripDetailCreate from "@/pages/TripDetails/TripDetailCreate";
 import TripDetailEdit from "@/pages/TripDetails/TripDetailEdit";
 import TripDetailView from "@/pages/TripDetails/TripDetailView";
+import BudgetList from "@/Budgets/BudgetList";
+import CreateBudget from "@/Budgets/CreateBudget";
 
 const AppRoutes = [
   {
@@ -57,6 +59,14 @@ const AppRoutes = [
   {
     path: Paths.TRIP_DETAILS_VIEW,
     element: <TripDetailView />
+  },
+  {
+    path: Paths.BUDGETS,
+    element: <BudgetList />
+  },
+  {
+    path: Paths.CREATE_BUDGET,
+    element: <CreateBudget />
   }
 ];
 
