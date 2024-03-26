@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Collections;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Roles;
 
@@ -26,7 +27,10 @@ public class AuthenticationSeeder : IAuthenticationSeeder
         var newAdminUser = new AppUser()
         {
             UserName = "admin",
-            Email = "admin@admin.com"
+            Name = "Admin",
+            Surname = "Administrator",
+            Email = "admin@admin.com",
+            RefreshTokens = new List<RefreshToken>(),
         };
 
         var adminUserExists = await _userManager.FindByNameAsync(newAdminUser.UserName);

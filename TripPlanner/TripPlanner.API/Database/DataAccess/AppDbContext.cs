@@ -14,7 +14,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<AppUser> AppUsers { get; set; }
 
-    public DbSet<Traveller> TripTravellers { get; set; }
+    public DbSet<Traveller> Travellers { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)

@@ -12,8 +12,8 @@ using TripPlanner.API.Database.DataAccess;
 namespace TripPlanner.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240317143339_AddedNotesToTripDetail")]
-    partial class AddedNotesToTripDetail
+    [Migration("20240326212449_UpdateToLatest")]
+    partial class UpdateToLatest
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,6 +231,35 @@ namespace TripPlanner.API.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("TripId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("NotificationDetails");
+                });
+
             modelBuilder.Entity("TripPlanner.API.Database.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
@@ -260,6 +289,34 @@ namespace TripPlanner.API.Migrations
                     b.ToTable("RefreshToken");
                 });
 
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.Traveller", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Permissions")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TripId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Travellers");
+                });
+
             modelBuilder.Entity("TripPlanner.API.Database.Entities.Trip", b =>
                 {
                     b.Property<Guid>("Id")
@@ -277,10 +334,6 @@ namespace TripPlanner.API.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("GroupAdminId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("PhotoUri")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -293,8 +346,6 @@ namespace TripPlanner.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupAdminId");
 
                     b.ToTable("Trips");
                 });
@@ -391,6 +442,17 @@ namespace TripPlanner.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.Notification", b =>
+                {
+                    b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TripPlanner.API.Database.Entities.RefreshToken", b =>
                 {
                     b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
@@ -402,15 +464,23 @@ namespace TripPlanner.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TripPlanner.API.Database.Entities.Trip", b =>
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.Traveller", b =>
                 {
-                    b.HasOne("TripPlanner.API.Database.Entities.AppUser", "GroupAdmin")
-                        .WithMany()
-                        .HasForeignKey("GroupAdminId")
+                    b.HasOne("TripPlanner.API.Database.Entities.Trip", "Trip")
+                        .WithMany("Travellers")
+                        .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("GroupAdmin");
+                    b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TripPlanner.API.Database.Entities.TripDetail", b =>
@@ -422,8 +492,9 @@ namespace TripPlanner.API.Migrations
                         .IsRequired();
 
                     b.HasOne("TripPlanner.API.Database.Entities.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId");
+                        .WithMany("TripDetails")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Creator");
 
@@ -433,6 +504,13 @@ namespace TripPlanner.API.Migrations
             modelBuilder.Entity("TripPlanner.API.Database.Entities.AppUser", b =>
                 {
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.Trip", b =>
+                {
+                    b.Navigation("Travellers");
+
+                    b.Navigation("TripDetails");
                 });
 #pragma warning restore 612, 618
         }
