@@ -21,6 +21,20 @@ const ENDPOINTS = {
         CREATE_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
         EDIT_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
         DELETE_TRIP_DETAILS: `${BASE_URL}/tripDetails/:id`,
+    },
+    TRIP_TRAVELLERS: {
+        GET_ALL_TRIP_TRAVELLERS: `${BASE_URL}/trips/:tripId/travellers`,
+        ADD_TRIP_TRAVELLERS: `${BASE_URL}/trips/:tripId/travellers/create`,
+        DELETE_TRIP_TRAVELLER: `${BASE_URL}/trips/:tripId/travellers/:email`,
+        EDIT_TRIP_TRAVELLER: `${BASE_URL}/trips/:tripId/travellers/:travellerId/update`
+    },
+    USER: {
+        GET_INFORMATION: `${BASE_URL}/user/information`,
+    },
+    NOTIFICATIONS: {
+        GET_USER_NOTIFICATIONS: `${BASE_URL}/notifications`,
+        MARK_NOTIFICATIONS_AS_READ: `${BASE_URL}/notifications/status`,
+        CHANGE_INVITATION_STATUS: `${BASE_URL}/notifications/:notificationId`
     }
 };
 

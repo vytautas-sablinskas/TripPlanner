@@ -1,0 +1,33 @@
+.trip-add-traveller-main-container {
+    padding: 24px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.trip-add-traveller-information-container {
+    width: 50%;
+    height: max-content;
+}
+
+.back-to-travellers-list {
+    width: 50%;
+    display: flex;
+    margin-bottom: 16px;
+}
+
+.back-to-travellers-list > * {
+    color: rgb(16, 122, 197);
+    cursor: pointer;
+}
+
+@media screen and (max-width: 900px) {   
+    .trip-add-traveller-information-container {
+        width: 100%;
+    }
+
+    .back-to-travellers-list {
+        width: 100%;
+    }
+}

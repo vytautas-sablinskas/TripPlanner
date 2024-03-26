@@ -13,6 +13,9 @@ import TripDetailEdit from "@/pages/TripDetails/TripDetailEdit";
 import TripDetailView from "@/pages/TripDetails/TripDetailView";
 import BudgetList from "@/Budgets/BudgetList";
 import CreateBudget from "@/Budgets/CreateBudget";
+import TripTravellersView from "@/pages/TripTravellers/TripTravellersView";
+import TripAddTraveller from "@/pages/TripTravellers/TripAddTraveller";
+import Notifications from "@/pages/Notifications/Notifications";
 
 const AppRoutes = [
   {
@@ -59,6 +62,18 @@ const AppRoutes = [
   {
     path: Paths.TRIP_DETAILS_VIEW,
     element: <TripDetailView />
+  },
+  {
+    path: Paths.TRIP_TRAVELLERS_VIEW,
+    element: <TripTravellersView />
+  },
+  {
+    path: Paths.TRIP_TRAVELLERS_CREATE,
+    element: <TripAddTraveller />
+  },
+  {
+    path: Paths.NOTIFICATIONS,
+    element: <Notifications />
   },
   {
     path: Paths.BUDGETS,

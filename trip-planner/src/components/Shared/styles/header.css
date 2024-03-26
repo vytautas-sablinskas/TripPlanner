@@ -25,8 +25,28 @@
     border-bottom: 3px solid transparent;
     transition: 0.2s ease-in;
     font-family: "Inter", sans-serif;
+    padding: 8px;
 }
 
 .link:hover {
     border-color: #f75940
 }
+
+.notification {
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    border-radius: 2px;
+  }
+
+  .notification .badge {
+    position: absolute;
+    top: 11px;
+    right: 9px;
+    height: 7px;
+    width: 8px;
+    border-radius: 50%;
+    font-size: 10px;
+    background: red;
+    color: white;
+  }

@@ -14,8 +14,11 @@ using TripPlanner.API.Database.Policies;
 using TripPlanner.API.Database.Seeders;
 using TripPlanner.API.Services.Authentication;
 using TripPlanner.API.Services.AzureBlobStorage;
+using TripPlanner.API.Services.Notifications;
 using TripPlanner.API.Services.TripDetails;
 using TripPlanner.API.Services.Trips;
+using TripPlanner.API.Services.TripTravellers;
+using TripPlanner.API.Services.User;
 
 namespace TripPlanner.API;
 
@@ -65,6 +68,8 @@ public static class Program
         services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>();
         services.AddScoped<IRepository<Trip>, Repository<Trip>>();
         services.AddScoped<IRepository<TripDetail>, Repository<TripDetail>>();
+        services.AddScoped<IRepository<Notification>, Repository<Notification>>();
+        services.AddScoped<IRepository<Traveller>, Repository<Traveller>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITripService, TripService>();
@@ -73,6 +78,9 @@ public static class Program
         services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
         services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
         services.AddScoped<ITripDetailsService, TripDetailsService>();
+        services.AddScoped<ITripTravellersService, TripTravellersService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         services.AddAutoMapper(typeof(Program));
 

@@ -10,6 +10,12 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<TripDetail> TripDetails { get; set; }
 
+    public DbSet<Notification> NotificationDetails { get; set; }
+
+    public DbSet<AppUser> AppUsers { get; set; }
+
+    public DbSet<Traveller> TripTravellers { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
     {
@@ -17,18 +23,6 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TripDetail>()
-            .HasOne(td => td.Creator)
-            .WithMany()
-            .HasForeignKey(td => td.CreatorId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Trip>()
-            .HasMany(t => t.TripDetails)
-            .WithOne(t => t.Trip)
-            .HasForeignKey(t => t.TripId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         base.OnModelCreating(modelBuilder);
     }
 }
