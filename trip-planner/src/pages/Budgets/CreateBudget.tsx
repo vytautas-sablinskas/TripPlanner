@@ -74,12 +74,12 @@ const CreateBudget = () => {
               }}
               width="40"
             />
-            <div className="space-y-1 w-full flex-3">
+            <div className="space-y-1 w-full flex-grow">
               <h3 className="font-semibold">{traveller.email}</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">{traveller.fullName}</p>
             </div>
             {selectedType === INDIVIDUAL_FIXED_AMOUNTS_TYPE && (
-              <Input className="w-full" placeholder="Budget" type="number" />
+              <Input className="w-full min-w-[90px]" placeholder="Budget" type="number" />
             )}
             <Button className="ml-auto trip-element-remove-button" size="sm" onClick={() => setSelectedMembers((prev : any) => prev.filter((prevMember : any) => prevMember !== member))}>
               Remove
