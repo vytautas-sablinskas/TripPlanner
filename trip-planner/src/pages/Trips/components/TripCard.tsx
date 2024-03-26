@@ -122,7 +122,7 @@ const TripCard = ({ trip, onDelete }: any) => {
                     <Users className="mr-2 h-4 w-4" />
                     Manage Trip Participants
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.BUDGETS.replace(":tripId", trip.id))}>
                     <Wallet className="mr-2 h-4 w-4"/>
                     Manage Trip Budgets
                   </DropdownMenuItem>

@@ -311,7 +311,7 @@ namespace TripPlanner.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TripTravellers");
+                    b.ToTable("Travellers");
                 });
 
             modelBuilder.Entity("TripPlanner.API.Database.Entities.Trip", b =>

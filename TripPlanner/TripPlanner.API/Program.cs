@@ -60,16 +60,16 @@ public static class Program
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        var blobServiceClient = new BlobServiceClient(configuration["AzureBlobStorage:BlobStorageConnectionString"]);
-        var blobContainerClient = blobServiceClient.GetBlobContainerClient(configuration["AzureBlobStorage:BlobStorageContainerName"]);
+        var blobServiceClient = new BlobServiceClient(configuration["AzureBlobStorage:ConnectionString"]);
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(configuration["AzureBlobStorage:ContainerName"]);
         services.AddScoped(provider => blobContainerClient);
 
         services.AddScoped<IRepository<AppUser>, Repository<AppUser>>();
         services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>();
+        services.AddScoped<IRepository<Traveller>, Repository<Traveller>>();
         services.AddScoped<IRepository<Trip>, Repository<Trip>>();
         services.AddScoped<IRepository<TripDetail>, Repository<TripDetail>>();
         services.AddScoped<IRepository<Notification>, Repository<Notification>>();
-        services.AddScoped<IRepository<Traveller>, Repository<Traveller>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITripService, TripService>();
