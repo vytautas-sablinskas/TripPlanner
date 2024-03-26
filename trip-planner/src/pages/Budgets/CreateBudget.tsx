@@ -88,7 +88,6 @@ const CreateBudget = () => {
             {travellerElements}
           </div>
         </div>
-        
       );
     } else if (selectedType === INDIVIDUAL_FIXED_AMOUNTS_TYPE) {
       return (
