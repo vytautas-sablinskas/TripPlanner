@@ -22,6 +22,7 @@ import { CurrencySelector } from "./CurrencySelector";
 import { Checkbox } from "@/components/ui/checkbox";
 import CurrencyInput from "react-currency-input-field";
 import { Button } from "@/components/ui/button";
+import MultipleSelector from "@/components/ui/multiple-selector";
 
 const CreateBudget = () => {
   const [selectedType, setSelectedType] = useState("0");
@@ -29,6 +30,7 @@ const CreateBudget = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [totalBudget, setTotalBudget] = useState<any>(0);
   const [isUnlimitedBudget, setIsUnlimitedBudget] = useState(false);
+  const [selectedMembers, setSelectedMembers] = useState<any>([]);
 
   useEffect(() => {
     console.log(isUnlimitedBudget);
@@ -56,60 +58,57 @@ const CreateBudget = () => {
       }
     ]
 
-    const travellerElements = travellers.map(traveller => (
-      <div key={traveller.id} className="flex items-center space-x-4">
-        <img
-          alt="Avatar"
-          className="rounded-lg"
-          height="40"
-          src="/placeholder.svg"
-          style={{
-            aspectRatio: "40/40",
-            objectFit: "cover",
-          }}
-          width="40"
-        />
-        <div className="space-y-1 w-full">
-          <h3 className="font-semibold">{traveller.email}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{traveller.fullName}</p>
-        </div>
-        <Input className="w-full" placeholder="Budget" type="number" />
-        <Button className="ml-auto" size="sm">
-          Remove
-        </Button>
-      </div>
-    ));
+  const travellerElements = selectedMembers.map((member: any, index: number) => {
+  const traveller = travellers.find(traveller => traveller.email === member.value);
+  if (traveller) {
+        return (
+          <div key={traveller.id + "-traveller-" + index} className="flex items-center space-x-4 w-full">
+            <img
+              alt="Avatar"
+              className="rounded-lg traveller-element-image"
+              height="40"
+              src="/avatar-placeholder.png"
+              style={{
+                aspectRatio: "40/40",
+                objectFit: "cover",
+              }}
+              width="40"
+            />
+            <div className="space-y-1 w-full flex-3">
+              <h3 className="font-semibold">{traveller.email}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{traveller.fullName}</p>
+            </div>
+            {selectedType === INDIVIDUAL_FIXED_AMOUNTS_TYPE && (
+              <Input className="w-full" placeholder="Budget" type="number" />
+            )}
+            <Button className="ml-auto trip-element-remove-button" size="sm" onClick={() => setSelectedMembers((prev : any) => prev.filter((prevMember : any) => prevMember !== member))}>
+              Remove
+            </Button>
+          </div>
+        );
+      } 
 
-    if (selectedType === SHARED_TYPE) {
+      return null;
+    });
+
+    if (selectedType === SHARED_TYPE || selectedType === INDIVIDUAL_FIXED_AMOUNTS_TYPE) {
       return (
         <div className="mt-2">
-          <Label htmlFor="members">Assigned Members To Budget</Label>
-          <div className="border rounded-lg p-4 flex flex-col items-between space-y-4 overflow-y-auto max-h-40 mt-2">
-            {travellerElements}
-          </div>
-        </div>
-      );
-    } else if (selectedType === INDIVIDUAL_FIXED_AMOUNTS_TYPE) {
-      return (
-        <div>
-          <Label htmlFor="amount">Amount</Label>
-          <Input
-            id="amount"
-            type="number"
-            placeholder="Budget amount"
-            required
+          <Label htmlFor="members">Assign Members To Budget</Label>
+          <MultipleSelector 
+            value={selectedMembers}
+            onChange={setSelectedMembers}
+            defaultOptions = {travellers.map(traveller => ({
+              label: `${traveller.fullName} - ${traveller.email}`,
+              value: traveller.email
+            }))}
+            placeholder="Select members to add"
           />
-          <Label htmlFor="members">Members</Label>
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="Select members" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">Member 1</SelectItem>
-              <SelectItem value="2">Member 2</SelectItem>
-              <SelectItem value="3">Member 3</SelectItem>
-            </SelectContent>
-          </Select>
+          {travellerElements?.length > 0 && (
+            <div className="border rounded-lg p-4 flex flex-col items-between space-y-4 overflow-y-auto max-h-40 mt-2 overflow-x-scroll">
+              {travellerElements}
+            </div>
+          )}
         </div>
       );
     }

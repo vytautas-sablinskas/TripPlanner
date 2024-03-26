@@ -15,3 +15,13 @@
     border-radius: 6px;
     cursor: pointer;
 }
+
+@media screen and (max-width: 550px) {
+    .traveller-element-image {
+        display: none;
+    }
+
+    .trip-element-remove-button {
+        display: none;
+    }
+}
