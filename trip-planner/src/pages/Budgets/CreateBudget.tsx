@@ -31,10 +31,24 @@ const CreateBudget = () => {
   const [totalBudget, setTotalBudget] = useState<any>(0);
   const [isUnlimitedBudget, setIsUnlimitedBudget] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<any>([]);
+  const [selectedMemberBudgets, setSelectedMemberBudgets] = useState<any>([]);
 
   useEffect(() => {
-    console.log(isUnlimitedBudget);
-  }, [isUnlimitedBudget]);
+    let sum = 0;
+    Object.keys(selectedMemberBudgets).forEach((key: any) => {
+      if (selectedMembers.find((member: any) => member.value === key)) {
+        sum += Number(selectedMemberBudgets[key]);
+      }
+    });
+
+    setTotalBudget(sum.toFixed(2));
+  }, [selectedMemberBudgets, selectedMembers]);
+
+  useEffect(() => {
+    setSelectedMemberBudgets([]);
+    setSelectedMembers([]);
+    setTotalBudget(0);
+  }, [selectedType]);
 
   const getSelectedTypeInputs = () => {
     const SHARED_TYPE = "1";
@@ -52,7 +66,7 @@ const CreateBudget = () => {
         email: 'bob@example.com'
       },
       {
-        id: "1",
+        id: "3",
         fullName: "Charlie Brown",
         email: 'charlie@example.com'
       }
@@ -79,7 +93,24 @@ const CreateBudget = () => {
               <p className="text-sm text-gray-500 dark:text-gray-400">{traveller.fullName}</p>
             </div>
             {selectedType === INDIVIDUAL_FIXED_AMOUNTS_TYPE && (
-              <Input className="w-full min-w-[90px]" placeholder="Budget" type="number" />
+              <CurrencyInput
+                className="create-edit-budget-currency-input"
+                decimalSeparator="."
+                placeholder="Please enter a number"
+                suffix={` ${value}`}
+                step={1}
+                value={selectedMemberBudgets[traveller.email] || 0}
+                allowNegativeValue={false}
+                allowDecimals={true}
+                onValueChange={(value, _name, _values) => {
+                  const updatedBudgets = {
+                    ...selectedMemberBudgets,
+                    [traveller.email]: value
+                  };
+
+                  setSelectedMemberBudgets(updatedBudgets);
+                }}
+              />
             )}
             <Button className="ml-auto trip-element-remove-button" size="sm" onClick={() => setSelectedMembers((prev : any) => prev.filter((prevMember : any) => prevMember !== member))}>
               Remove
@@ -152,30 +183,33 @@ const CreateBudget = () => {
             required
           />
         </div>
-        <div className="items-top flex space-x-2">
-          <div className="mt-4 mb-4">
-            <div className="grid grid-cols-auto-1 gap-3 items-center leading-none">
-              <div className="flex items-center">
-                <label
-                  htmlFor="unlimitedBudget"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center"
-                >
-                  <Checkbox
-                    id="unlimitedBudget"
-                    className="mr-2"
-                    onCheckedChange={(checked) =>
-                      setIsUnlimitedBudget(Boolean(checked))
-                    }
-                  />
-                  <span>Unlimited Budget</span>
-                </label>
+        { selectedType !== "2" && (
+          <div className="items-top flex space-x-2">
+            <div className="mt-4 mb-4">
+              <div className="grid grid-cols-auto-1 gap-3 items-center leading-none">
+                <div className="flex items-center">
+                  <label
+                    htmlFor="unlimitedBudget"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center"
+                  >
+                    <Checkbox
+                      id="unlimitedBudget"
+                      className="mr-2"
+                      onCheckedChange={(checked) =>
+                        setIsUnlimitedBudget(Boolean(checked))
+                      }
+                    />
+                    <span>Unlimited Budget</span>
+                  </label>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Budget will not have a set amount.
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Budget will not have a set amount.
-              </p>
             </div>
           </div>
-        </div>
+        )}
+        
         <div className="mt-2">
           <Label>Main Currency</Label>
           <CurrencySelector
@@ -185,10 +219,11 @@ const CreateBudget = () => {
             setSearchTerm={setSearchTerm}
           />
         </div>
-        {!isUnlimitedBudget && (
+        {(!isUnlimitedBudget || selectedType === "2") && (
           <div className="mt-2">
             <Label>Budget Amount</Label>
             <CurrencyInput
+              disabled={selectedType === "2"}
               className="create-edit-budget-currency-input"
               id="input-example"
               name="input-name"
@@ -197,8 +232,8 @@ const CreateBudget = () => {
               value={totalBudget}
               allowNegativeValue={false}
               decimalsLimit={2}
-              onValueChange={(value, name, values) =>
-                setTotalBudget(values?.float)
+              onValueChange={(value, _name, _values) =>
+                setTotalBudget(value)
               }
             />
           </div>
