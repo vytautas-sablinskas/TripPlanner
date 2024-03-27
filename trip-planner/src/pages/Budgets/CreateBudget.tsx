@@ -105,7 +105,7 @@ const CreateBudget = () => {
                 onValueChange={(value, _name, _values) => {
                   const updatedBudgets = {
                     ...selectedMemberBudgets,
-                    [traveller.email]: value
+                    [traveller.email]: value && Number(value) > 100000 ? 100000 : value
                   };
 
                   setSelectedMemberBudgets(updatedBudgets);
@@ -136,7 +136,7 @@ const CreateBudget = () => {
             placeholder="Select members to add"
           />
           {travellerElements?.length > 0 && (
-            <div className="border rounded-lg p-4 flex flex-col items-between space-y-4 overflow-y-auto max-h-40 mt-2 overflow-x-scroll">
+            <div className="border rounded-lg p-4 flex flex-col items-between space-y-4 overflow-y-auto max-h-40 mt-2">
               {travellerElements}
             </div>
           )}
@@ -233,7 +233,7 @@ const CreateBudget = () => {
               allowNegativeValue={false}
               decimalsLimit={2}
               onValueChange={(value, _name, _values) =>
-                setTotalBudget(value)
+                setTotalBudget(value && Number(value) > 100000 ? 100000 : value)
               }
             />
           </div>
