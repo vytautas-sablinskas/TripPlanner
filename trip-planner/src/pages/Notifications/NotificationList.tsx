@@ -125,19 +125,16 @@ export function NotificationList({ data, onStatusChange } : any) {
         const handleAccept = async () => {
             await handleAccessToken();
 
-            console.log(data[row.index].id)
+            console.log(data[row.index])
             console.log({ status: 1 });
             const response = await changeInvitationStatus(data[row.index].id, { status: 0 })
             if (!response.ok) {
-                toast.error("Unexpected error. Try refreshing page!");
-                setIsLoading(false)
-                return;
+               toast.error("Unexpected error. Try refreshing page!");
+               setIsLoading(false)
+               return;
             }
 
-            toast.success(`Notification was successfully deleted`, {
-                position: 'top-center'
-            });
-
+            navigate(Paths.TRIPS);
             onStatusChange(row.index);
         }
 

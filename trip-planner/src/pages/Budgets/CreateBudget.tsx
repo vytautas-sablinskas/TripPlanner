@@ -34,6 +34,10 @@ const CreateBudget = () => {
   const [selectedMemberBudgets, setSelectedMemberBudgets] = useState<any>([]);
 
   useEffect(() => {
+    if (selectedType !== "2") {
+      return;
+    }
+
     let sum = 0;
     Object.keys(selectedMemberBudgets).forEach((key: any) => {
       if (selectedMembers.find((member: any) => member.value === key)) {
@@ -46,7 +50,6 @@ const CreateBudget = () => {
 
   useEffect(() => {
     setSelectedMemberBudgets([]);
-    setSelectedMembers([]);
     setTotalBudget(0);
   }, [selectedType]);
 
