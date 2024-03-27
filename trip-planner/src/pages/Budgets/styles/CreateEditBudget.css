@@ -1,5 +1,5 @@
 .create-edit-budget-main-container { 
-    padding: 24px;
+    margin: 24px;
     width: 100%;
     height: 100%;
 }
@@ -14,4 +14,14 @@
     border: 1px solid rgb(226, 232, 240);
     border-radius: 6px;
     cursor: pointer;
+}
+
+@media screen and (max-width: 550px) {
+    .traveller-element-image {
+        display: none;
+    }
+
+    .trip-element-remove-button {
+        display: none;
+    }
 }
