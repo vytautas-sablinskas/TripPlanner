@@ -41,7 +41,10 @@ const CreateBudget = () => {
     let sum = 0;
     Object.keys(selectedMemberBudgets).forEach((key: any) => {
       if (selectedMembers.find((member: any) => member.value === key)) {
-        sum += Number(selectedMemberBudgets[key]);
+        const budget = Number(selectedMemberBudgets[key]);
+        if (budget) {
+          sum += budget;
+        }
       }
     });
 
