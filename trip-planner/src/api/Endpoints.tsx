@@ -35,6 +35,10 @@ const ENDPOINTS = {
         GET_USER_NOTIFICATIONS: `${BASE_URL}/notifications`,
         MARK_NOTIFICATIONS_AS_READ: `${BASE_URL}/notifications/status`,
         CHANGE_INVITATION_STATUS: `${BASE_URL}/notifications/:notificationId`
+    },
+    TRIP_BUDGETS: {
+        GET_TRAVELLERS_MINIMAL_INFO: `${BASE_URL}/trips/:tripId/budgets/travellerInfo`,
+        ADD_BUDGET: `${BASE_URL}/trips/:tripId/budgets`,
     }
 };
 

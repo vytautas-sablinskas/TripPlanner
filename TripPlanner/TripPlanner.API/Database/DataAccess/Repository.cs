@@ -21,15 +21,17 @@ public class Repository<T> : IRepository<T> where T : class
         =>
         _context.Set<T>().Where(expression);
 
-    public void Create(T entity)
+    public T Create(T entity)
     {
         if (entity == null)
         {
             throw new ArgumentNullException("entity");
         }
 
-        _table.Add(entity);
+        var entry = _table.Add(entity);
         _context.SaveChanges();
+
+        return entry.Entity;
     }
 
     public async Task Update(T entity)

@@ -8,7 +8,7 @@ public interface IRepository<T> where T : class
 
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
 
-    void Create(T entity);
+    T Create(T entity);
 
     Task Update(T entity);
 
