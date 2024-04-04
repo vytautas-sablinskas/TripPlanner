@@ -1,0 +1,11 @@
+.main-budget-list-container {
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+}
+
+.budget-card-container-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}

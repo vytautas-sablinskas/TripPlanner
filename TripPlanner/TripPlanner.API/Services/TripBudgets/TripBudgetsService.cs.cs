@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Enums;
@@ -13,14 +14,15 @@ public class TripBudgetsService : ITripBudgetsService
     private readonly IRepository<AppUser> _appUserRepository;
     private readonly IRepository<TripBudget> _tripBudgetRepository;
     private readonly IRepository<TripBudgetMember> _tripBudgetMembersRepository;
+    private readonly IMapper _mapper;
 
-    public TripBudgetsService(IRepository<Traveller> travellerRepository, IRepository<AppUser> appUserRepository, IRepository<TripBudget> tripBudgetRepository, IRepository<TripBudgetMember> tripBudgetMembersRepository)
+    public TripBudgetsService(IRepository<Traveller> travellerRepository, IRepository<AppUser> appUserRepository, IRepository<TripBudget> tripBudgetRepository, IRepository<TripBudgetMember> tripBudgetMembersRepository, IMapper mapper)
     {
         _travellersRepository = travellerRepository;
         _appUserRepository = appUserRepository;
         _tripBudgetRepository = tripBudgetRepository;
         _tripBudgetMembersRepository = tripBudgetMembersRepository;
-
+        _mapper = mapper;
     }
 
     public IEnumerable<TripTravellerMinimalDto> GetTripTravellers(Guid tripId)
@@ -67,5 +69,53 @@ public class TripBudgetsService : ITripBudgetsService
                 _tripBudgetMembersRepository.Create(budgetMember);
             }
         }
+    }
+
+    public async Task<IEnumerable<TripBudgetDto>> GetTripBudgets(Guid tripId, string userId)
+    {
+        var budgets = await _tripBudgetRepository.FindByCondition(t => t.TripId == tripId && (t.CreatorId == userId || t.BudgetMembers != null && t.BudgetMembers.Any(m => m.UserId == userId)))
+            .ToListAsync();
+
+        if (budgets == null)
+        {
+            return new List<TripBudgetDto>();
+        }
+
+        budgets = budgets.Select((budget) =>
+        {
+            var member = _tripBudgetMembersRepository.FindByCondition(t => t.TripBudgetId == budget.Id && t.UserId == userId)
+                .FirstOrDefault();
+
+            if (budget.Type == BudgetTypes.IndividualWithFixedAmount && budget.CreatorId != userId)
+            {
+                budget.Budget = member.Amount;
+            }
+
+            return budget;
+        }).ToList();
+
+        var budgetDtos = _mapper.Map<IEnumerable<TripBudgetDto>>(budgets);
+        budgetDtos = budgetDtos.Select((budget) =>
+        {
+            var rnd = new Random();
+            // TODO: remake spent amount to whatever it's after expenses.
+            budget.SpentAmount = rnd.Next(0, (int)budget.Amount);
+
+            return budget;
+        }).ToList();
+
+        return budgetDtos;
+    }
+
+    public async Task DeleteTripBudget(Guid budgetId)
+    {
+        var budget = _tripBudgetRepository.FindByCondition(b => b.Id == budgetId)
+            .FirstOrDefault();
+        if (budget == null)
+        {
+            return;
+        }
+
+        await _tripBudgetRepository.Delete(budget);
     }
 }

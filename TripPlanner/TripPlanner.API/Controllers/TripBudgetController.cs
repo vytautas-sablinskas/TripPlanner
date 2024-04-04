@@ -26,6 +26,15 @@ public class TripBudgetController : ControllerBase
         return Ok(travellers);
     }
 
+    [HttpGet("trips/{tripId}/budgets")]
+    [Authorize]
+    public async Task<IActionResult> GetAllBudgets(Guid tripId)
+    {
+        var budgets = await _tripBudgetsService.GetTripBudgets(tripId, User.GetUserId());
+
+        return Ok(budgets);
+    }
+
     [HttpPost("trips/{tripId}/budgets")]
     [Authorize]
     public IActionResult CreateBudget(Guid tripId, AddTripBudgetDto dto)
@@ -33,5 +42,14 @@ public class TripBudgetController : ControllerBase
         _tripBudgetsService.AddTripBudget(tripId, User.GetUserId(), dto);
 
         return Ok();
+    }
+
+    [HttpDelete("trips/{tripId}/budgets/{budgetId}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteBudget(Guid budgetId)
+    {
+        await _tripBudgetsService.DeleteTripBudget(budgetId);
+
+        return NoContent();
     }
 }

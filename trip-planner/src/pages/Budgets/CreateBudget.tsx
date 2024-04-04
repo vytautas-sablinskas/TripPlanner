@@ -248,7 +248,6 @@ const CreateBudget = () => {
   };
 
   const onSubmit = async (formValues: any) => {
-    setIsSubmitting(true);
     const actualValues = {
       type: Number(selectedType),
       name: formValues.name,
@@ -284,6 +283,7 @@ const CreateBudget = () => {
       return;
     }
 
+    setIsSubmitting(true);
     const accessToken = localStorage.getItem("accessToken");
 
     if (!checkTokenValidity(accessToken || "")) {

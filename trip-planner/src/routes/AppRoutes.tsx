@@ -16,6 +16,7 @@ import CreateBudget from "@/pages/Budgets/CreateBudget";
 import TripTravellersView from "@/pages/TripTravellers/TripTravellersView";
 import TripAddTraveller from "@/pages/TripTravellers/TripAddTraveller";
 import Notifications from "@/pages/Notifications/Notifications";
+import EditBudget from "@/pages/Budgets/EditBudget";
 
 const AppRoutes = [
   {
@@ -82,6 +83,10 @@ const AppRoutes = [
   {
     path: Paths.CREATE_BUDGET,
     element: <CreateBudget />
+  },
+  {
+    path: Paths.EDIT_BUDGET,
+    element: <EditBudget />
   }
 ];
 
