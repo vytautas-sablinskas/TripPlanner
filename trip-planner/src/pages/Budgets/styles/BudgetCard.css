@@ -1,0 +1,25 @@
+.budget-card {
+    flex-grow: 0;
+    flex-basis: calc((100% / 3) - 48px);
+    max-width: calc((100% / 3) - 48px);
+    height: 300px;
+    border: 1px solid rgb(226, 232, 240);
+    margin: 24px;
+    padding: 24px;
+    white-space: pre-wrap;
+}
+
+.budget-card-content {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.description-text {
+    color: rgb(102, 102, 102);
+    font-size: 0.875rem;
+}

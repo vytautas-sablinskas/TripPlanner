@@ -11,6 +11,7 @@ const Paths = {
     TRIP_DETAILS_VIEW: '/trips/:tripId/plan/:planId',
     BUDGETS: '/trips/:tripId/budgets',
     CREATE_BUDGET: '/trips/:tripId/budgets/create',
+    EDIT_BUDGET: '/trips/:tripId/budgets/:budgetId/edit',
     TRIP_TRAVELLERS_VIEW: '/trips/:tripId/participants',
     TRIP_TRAVELLERS_CREATE: '/trips/:tripId/participants/create',
     NOTIFICATIONS: '/notifications',

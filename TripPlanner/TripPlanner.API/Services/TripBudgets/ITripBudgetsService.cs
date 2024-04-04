@@ -7,6 +7,10 @@ namespace TripPlanner.API.Services.TripBudgets
     {
         IEnumerable<TripTravellerMinimalDto> GetTripTravellers(Guid tripId);
 
+        Task<IEnumerable<TripBudgetDto>> GetTripBudgets(Guid tripId, string userId);
+
+        Task DeleteTripBudget(Guid budgetId);
+
         void AddTripBudget(Guid tripId, string userId, AddTripBudgetDto addBudgetDto);
     }
 }
