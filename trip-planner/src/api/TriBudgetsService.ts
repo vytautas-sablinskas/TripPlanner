@@ -28,6 +28,20 @@ export const getTripBudgets = async (tripId : any) => {
     return response;
 }
 
+export const getTripBudgetEditInfo = async (tripId : any, budgetId : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIP_BUDGETS.GET_CURRENT_EDIT_INFO.replace(":tripId", tripId).replace(":budgetId", budgetId),
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response;
+}
+
 export const addTripBudget = async (tripId : any,  values : any) => {
     const token = localStorage.getItem('accessToken');
     const response = await fetch(ENDPOINTS.TRIP_BUDGETS.ADD_BUDGET.replace(":tripId", tripId),
