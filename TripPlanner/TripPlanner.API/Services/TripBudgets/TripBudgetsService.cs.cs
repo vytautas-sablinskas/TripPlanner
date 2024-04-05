@@ -35,6 +35,41 @@ public class TripBudgetsService : ITripBudgetsService
         return travellerMinimalDtos;
     }
 
+    public async Task<EditBudgetCurrentInfoDto> GetEditBudgetCurrentInfo(Guid tripId, Guid budgetId)
+    {
+        var travellers = _travellersRepository.FindByCondition(t => t.TripId == tripId)
+            .Include(t => t.User);
+
+        var travellerMinimalDtos = await travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}"))
+            .ToListAsync();
+
+        var budget = _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
+            .Include(b => b.BudgetMembers)
+            .ThenInclude(b => b.User)
+            .FirstOrDefault();
+
+
+        IEnumerable<TripBudgetMemberDto> budgetMembersDto = new List<TripBudgetMemberDto>();
+        if (budget?.BudgetMembers?.Count > 0)
+        {
+            budgetMembersDto = budget.BudgetMembers.Select(b => new TripBudgetMemberDto(b.User.Email, b.Amount));
+        }
+
+        var dto = new EditBudgetCurrentInfoDto
+        {
+            Name = budget.Name,
+            Description = budget.Description,
+            MainCurrency = budget.MainCurrency,
+            UnlimitedBudget = budget.UnlimitedBudget ?? false,
+            Type = budget.Type,
+            Amount = budget.Budget,
+            BudgetMembers = budgetMembersDto,
+            TripTravellers = travellerMinimalDtos,
+        };
+
+        return dto;
+    }
+
     public void AddTripBudget(Guid tripId, string userId, AddTripBudgetDto addBudgetDto)
     {
         var user = _appUserRepository.FindByCondition(t => t.Id == userId).FirstOrDefault();

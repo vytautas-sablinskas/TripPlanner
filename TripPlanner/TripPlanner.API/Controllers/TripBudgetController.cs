@@ -26,6 +26,15 @@ public class TripBudgetController : ControllerBase
         return Ok(travellers);
     }
 
+    [HttpGet("trips/{tripId}/budgets/{budgetId}/info")]
+    [Authorize]
+    public async Task<IActionResult> GetTripBudgetInfo(Guid tripId, Guid budgetId)
+    {
+        var budgetInfo = await _tripBudgetsService.GetEditBudgetCurrentInfo(tripId, budgetId);
+
+        return Ok(budgetInfo);
+    }
+
     [HttpGet("trips/{tripId}/budgets")]
     [Authorize]
     public async Task<IActionResult> GetAllBudgets(Guid tripId)
