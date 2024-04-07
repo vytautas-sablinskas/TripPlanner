@@ -1,9 +1,12 @@
 ﻿using TripPlanner.API.Dtos.Profile;
 
-namespace TripPlanner.API.Services.Profile
+namespace TripPlanner.API.Services.Profile;
+
+public interface IProfileService
 {
-    public interface IProfileService
-    {
-        Task<ProfileInformationDto> GetUserInformation(string userId);
-    }
+    Task<ProfileInformationDto> GetUserInformation(string userId);
+
+    Task<bool> ChangePassword(string userId, ChangePasswordDto dto);
+
+    Task<bool> ChangeProfileInformation(string userId, ChangeProfileInformationDto dto);
 }

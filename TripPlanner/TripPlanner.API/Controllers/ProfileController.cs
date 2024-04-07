@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TripPlanner.API.Dtos.Profile;
 using TripPlanner.API.Extensions;
 using TripPlanner.API.Services.Profile;
 
@@ -16,7 +17,7 @@ public class ProfileController : ControllerBase
         _profileService = profileService;
     }
 
-    [HttpGet("/profile")]
+    [HttpGet("profile")]
     [Authorize]
     public async Task<IActionResult> GetUserInformation()
     {
@@ -28,4 +29,30 @@ public class ProfileController : ControllerBase
 
         return Ok(profileInformation);
     }
+
+    [HttpPut("profile/password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+    {
+        var isSuccess = await _profileService.ChangePassword(User.GetUserId(), dto);
+        if (!isSuccess)
+        {
+            return BadRequest("Current password was incorrect!");
+        }
+
+        return Ok();
+    }
+
+    [HttpPut("profile/information")]
+    [Authorize]
+    public async Task<IActionResult> ChangeProfileInformation([FromBody] ChangeProfileInformationDto dto)
+    {
+        var isSuccess = await _profileService.ChangeProfileInformation(User.GetUserId(), dto);
+        if (!isSuccess)
+        {
+            return BadRequest("Current password was incorrect!");
+        }
+
+        return Ok();
+    } 
 }

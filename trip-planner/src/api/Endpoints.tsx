@@ -43,6 +43,11 @@ const ENDPOINTS = {
         GET_BUDGETS: `${BASE_URL}/trips/:tripId/budgets`,
         GET_CURRENT_EDIT_INFO: `${BASE_URL}/trips/:tripId/budgets/:budgetId/info`,
         DELETE_BUDGET: `${BASE_URL}/trips/:tripId/budgets/:budgetId`,
+    },
+    PROFILE: {
+        GET_USER_PROFILE: `${BASE_URL}/profile`,
+        CHANGE_PASSWORD: `${BASE_URL}/profile/password`,
+        CHANGE_PROFILE_INFORMATION: `${BASE_URL}/profile/information`,
     }
 };
 
