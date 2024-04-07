@@ -30,7 +30,7 @@ public class TripBudgetsService : ITripBudgetsService
         var travellers = _travellersRepository.FindByCondition(t => t.TripId == tripId)
             .Include(t => t.User);
 
-        var travellerMinimalDtos = travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}"));
+        var travellerMinimalDtos = travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}", t.User.PhotoUri));
 
         return travellerMinimalDtos;
     }
@@ -40,7 +40,7 @@ public class TripBudgetsService : ITripBudgetsService
         var travellers = _travellersRepository.FindByCondition(t => t.TripId == tripId)
             .Include(t => t.User);
 
-        var travellerMinimalDtos = await travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}"))
+        var travellerMinimalDtos = await travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}", t.User.PhotoUri))
             .ToListAsync();
 
         var budget = _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)

@@ -18,9 +18,9 @@ public class UserController : ControllerBase
 
     [HttpGet("user/information")]
     [Authorize]
-    public IActionResult GetUserInformation()
+    public async Task<IActionResult> GetUserInformation()
     {   
-        var userInformation = _userService.GetUserInformation(User.GetUserId());
+        var userInformation = await _userService.GetUserInformation(User.GetUserId());
 
         return Ok(userInformation);
     }

@@ -17,6 +17,7 @@ import TripTravellersView from "@/pages/TripTravellers/TripTravellersView";
 import TripAddTraveller from "@/pages/TripTravellers/TripAddTraveller";
 import Notifications from "@/pages/Notifications/Notifications";
 import EditBudget from "@/pages/Budgets/EditBudget";
+import Profile from "@/pages/Profile/Profile";
 
 const AppRoutes = [
   {
@@ -87,6 +88,10 @@ const AppRoutes = [
   {
     path: Paths.EDIT_BUDGET,
     element: <EditBudget />
+  },
+  {
+    path: Paths.PROFILE,
+    element: <Profile />
   }
 ];
 

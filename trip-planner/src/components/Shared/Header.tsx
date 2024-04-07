@@ -3,16 +3,18 @@ import './styles/header.css';
 import Paths from '../../routes/Paths';
 import { useUser } from '../../providers/user-provider/UserContext';
 import { logout, refreshAccessToken } from '../../api/AuthenticationService';
-import { BellDot } from 'lucide-react';
+import { BellDot, LogOut, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { checkTokenValidity } from '@/utils/jwtUtils';
 import { toast } from 'sonner';
 import { getUserInformation } from '@/api/UserService';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 const Header = () => {
     const { isAuthenticated, hasNotifications, changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, changeHasNotifications } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
+    const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");
 
     const handleLogout = async () => {
         const refreshToken = localStorage.getItem('refreshToken');
@@ -47,6 +49,7 @@ const Header = () => {
                 if (response.ok) {
                     const data = await response.json();
                     changeHasNotifications(data.hasUnreadNotifications);
+                    setPhoto(data.photo);
                 }
             }
         }
@@ -74,7 +77,23 @@ const Header = () => {
                         <BellDot className='w-5 h-5'/>
                         <span className={hasNotifications ? "badge" : ""} />
                       </Link>
-                      <Link to={Paths.HOME} className='link' onClick={handleLogout}>Logout</Link>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <img src={photo} width={40} height={40} alt="avatar" className="header-avatar" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end'>
+                            <DropdownMenuLabel>User Information</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => navigate(Paths.PROFILE)} >
+                                <User className='w-4 h-4 mr-4'/>
+                                Profile
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleLogout}>
+                                <LogOut className='w-4 h-4 mr-4'/>
+                                Logout
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                 )}
             </section>

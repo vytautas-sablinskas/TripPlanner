@@ -184,7 +184,7 @@ import {
                   alt="Avatar"
                   className="rounded-lg traveller-element-image"
                   height="40"
-                  src="/avatar-placeholder.png"
+                  src={traveller.photo || "/avatar-placeholder.png"}
                   style={{
                     aspectRatio: "40/40",
                     objectFit: "cover",

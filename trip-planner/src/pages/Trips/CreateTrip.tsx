@@ -23,6 +23,7 @@ import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
+import PasswordInput from "@/components/Extra/PasswordInput";
 
 const MAX_FILE_SIZE = 2000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -176,7 +177,11 @@ const CreateTrip = () => {
                   <FormItem className="inputs">
                     <FormLabel required>Trip Name</FormLabel>
                     <FormControl className="w-full mb-4">
-                      <Input placeholder="Enter trip name" {...field} />
+                      <PasswordInput 
+                        value={field.value}
+                        onChange={(e : any) => field.onChange(e.target.value)}
+                        autoComplete="current-password"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

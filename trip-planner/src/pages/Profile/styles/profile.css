@@ -1,0 +1,29 @@
+.account-and-security-main-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.account-and-security-card {
+    width: 540px;
+    padding: 32px 24px;
+    margin-bottom: 48px;
+}
+
+.image-profile {
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgb(226, 232, 240);
+    border-radius: 50%;
+    margin-top: 32px;
+}
+
+@media screen and (max-width: 800px) {
+    .account-and-security-card {
+        width: 100%;
+        margin: 16px;
+    }
+}

@@ -8,5 +8,7 @@ public class AppUser : IdentityUser
     
     public string Surname { get; set; }
 
+    public string PhotoUri { get; set; }
+
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 }

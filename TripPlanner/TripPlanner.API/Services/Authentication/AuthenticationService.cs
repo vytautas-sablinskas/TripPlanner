@@ -45,6 +45,7 @@ public class AuthenticationService : IAuthenticationService
             Email = userDto.Email,
             Name = userDto.Name,
             Surname = userDto.Surname,
+            PhotoUri = "/avatar-placeholder.png",
         };
 
         var createdResult = await _userManager.CreateAsync(newUser, userDto.Password);

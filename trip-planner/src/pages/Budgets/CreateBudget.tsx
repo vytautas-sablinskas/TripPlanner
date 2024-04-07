@@ -165,13 +165,9 @@ const CreateBudget = () => {
             >
               <img
                 alt="Avatar"
-                className="rounded-lg traveller-element-image"
+                className="traveller-element-image"
                 height="40"
-                src="/avatar-placeholder.png"
-                style={{
-                  aspectRatio: "40/40",
-                  objectFit: "cover",
-                }}
+                src={traveller.photo || "/avatar-placeholder.png"}
                 width="40"
               />
               <div className="space-y-1 w-full flex-grow">

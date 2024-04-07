@@ -32,6 +32,24 @@
     border-color: #f75940
 }
 
+.link .inactive:hover {
+    border-color: transparent;
+    padding: 0;
+}
+
+.header-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: 0.1s ease-in;
+}
+
+.header-avatar:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
 .notification {
     text-decoration: none;
     position: relative;
