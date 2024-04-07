@@ -39,6 +39,7 @@ const ENDPOINTS = {
     TRIP_BUDGETS: {
         GET_TRAVELLERS_MINIMAL_INFO: `${BASE_URL}/trips/:tripId/budgets/travellerInfo`,
         ADD_BUDGET: `${BASE_URL}/trips/:tripId/budgets`,
+        EDIT_BUDGET: `${BASE_URL}/trips/:tripId/budgets/:budgetId`,
         GET_BUDGETS: `${BASE_URL}/trips/:tripId/budgets`,
         GET_CURRENT_EDIT_INFO: `${BASE_URL}/trips/:tripId/budgets/:budgetId/info`,
         DELETE_BUDGET: `${BASE_URL}/trips/:tripId/budgets/:budgetId`,

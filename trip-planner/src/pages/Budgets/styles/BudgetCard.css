@@ -2,7 +2,7 @@
     flex-grow: 0;
     flex-basis: calc((100% / 3) - 48px);
     max-width: calc((100% / 3) - 48px);
-    height: 300px;
+    min-height: 300px;
     border: 1px solid rgb(226, 232, 240);
     margin: 24px;
     padding: 24px;
@@ -18,8 +18,14 @@
     justify-content: space-between;
 }
 
-
 .description-text {
     color: rgb(102, 102, 102);
     font-size: 0.875rem;
+}
+
+@media screen and (max-width: 800px) {
+    .budget-card {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
 }

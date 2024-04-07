@@ -57,6 +57,21 @@ export const addTripBudget = async (tripId : any,  values : any) => {
     return response;
 }
 
+export const editTripBudget = async (tripId : any, budgetId : any,  values : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIP_BUDGETS.EDIT_BUDGET.replace(":tripId", tripId).replace(":budgetId", budgetId),
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(values)
+        });
+
+    return response;
+}
+
 export const deleteTripBudget = async (tripId : any,  budgetId : any) => {
     const token = localStorage.getItem('accessToken');
     const response = await fetch(ENDPOINTS.TRIP_BUDGETS.DELETE_BUDGET.replace(":tripId", tripId).replace(":budgetId", budgetId),
