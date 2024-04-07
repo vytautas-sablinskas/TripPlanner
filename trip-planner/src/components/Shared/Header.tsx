@@ -86,10 +86,6 @@ const Header = () => {
                                 <User className='w-4 h-4 mr-4'/>
                                 Profile
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate(Paths.ACCOUNT_AND_SECURITY)}>
-                                <KeyRound className='w-4 h-4 mr-4'/>
-                                Account and Security
-                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={handleLogout}>
                                 <LogOut className='w-4 h-4 mr-4'/>
                                 Logout

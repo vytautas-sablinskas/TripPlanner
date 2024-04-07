@@ -15,6 +15,7 @@ using TripPlanner.API.Database.Seeders;
 using TripPlanner.API.Services.Authentication;
 using TripPlanner.API.Services.AzureBlobStorage;
 using TripPlanner.API.Services.Notifications;
+using TripPlanner.API.Services.Profile;
 using TripPlanner.API.Services.TripBudgets;
 using TripPlanner.API.Services.TripDetails;
 using TripPlanner.API.Services.Trips;
@@ -85,6 +86,7 @@ public static class Program
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<ITripBudgetsService, TripBudgetsService>();
+        services.AddScoped<IProfileService, ProfileService>();
 
         services.AddAutoMapper(typeof(Program));
 

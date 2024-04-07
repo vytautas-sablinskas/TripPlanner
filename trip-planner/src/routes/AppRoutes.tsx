@@ -18,7 +18,6 @@ import TripAddTraveller from "@/pages/TripTravellers/TripAddTraveller";
 import Notifications from "@/pages/Notifications/Notifications";
 import EditBudget from "@/pages/Budgets/EditBudget";
 import Profile from "@/pages/Profile/Profile";
-import AccountAndSecurity from "@/pages/Profile/AccountAndSecurity";
 
 const AppRoutes = [
   {
@@ -93,10 +92,6 @@ const AppRoutes = [
   {
     path: Paths.PROFILE,
     element: <Profile />
-  },
-  {
-    path: Paths.ACCOUNT_AND_SECURITY,
-    element: <AccountAndSecurity />
   }
 ];
 
