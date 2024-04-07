@@ -12,6 +12,8 @@ public class TripDocument
 
     public string LinkToFile { get; set; }
 
+    public string TypeOfFile { get; set; }
+
     [DeleteBehavior(DeleteBehavior.Restrict)]
     public TripDetail TripDetail { get; set; }
 

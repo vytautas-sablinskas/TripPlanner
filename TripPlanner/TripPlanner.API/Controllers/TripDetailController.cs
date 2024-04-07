@@ -35,6 +35,19 @@ public class TripDetailController : ControllerBase
         return Ok(detailById);
     }
 
+    [HttpGet("trips/{tripId}/tripDetails/{detailId}/view")]
+    [Authorize]
+    public async Task<IActionResult> GetTripDetailForView(Guid detailId)
+    {
+        var (isSuccess, dto) = await _tripDetailsService.GetTripDetailView(detailId);
+        if (!isSuccess)
+        {
+            return BadRequest();
+        }
+
+        return Ok(dto);
+    }
+
     [HttpPost("tripDetails")]
     [Authorize]
     public IActionResult CreateTripDetail([FromBody] CreateTripDetailDto dto)

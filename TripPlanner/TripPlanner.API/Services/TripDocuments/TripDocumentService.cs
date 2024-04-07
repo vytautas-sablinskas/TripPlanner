@@ -16,7 +16,6 @@ public class TripDocumentService : ITripDocumentService
         _tripDocumentRepository = tripDocumentRepository;
     }
 
-
     public async Task<(bool, TripDocumentDto?)> AddNewDocument(string userId, Guid tripDetailId, AddNewTripDocumentDto dto)
     {
         var (isSuccess, uri) = await _azureBlobStorageService.UploadFileAsync(dto.Document);
@@ -30,11 +29,12 @@ public class TripDocumentService : ITripDocumentService
             CreatorId = userId,
             LinkToFile = uri,
             Name = dto.Name,
-            TripDetailId = tripDetailId
+            TripDetailId = tripDetailId,
+            TypeOfFile = dto.Document.ContentType,
         };
 
         var document = _tripDocumentRepository.Create(tripDocument);
 
-        return (true, new TripDocumentDto(document.Name, document.LinkToFile, document.Id));
+        return (true, new TripDocumentDto(document.Name, document.LinkToFile, document.Id, document.TypeOfFile));
     }
 }

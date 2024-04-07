@@ -3,5 +3,6 @@
 public record TripDocumentDto(
   string Name,
   string LinkToFile,
-  Guid Id
+  Guid Id,
+  string TypeOfFile
 );

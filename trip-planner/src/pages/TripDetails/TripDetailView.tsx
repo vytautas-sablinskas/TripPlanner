@@ -7,18 +7,22 @@ import { Button } from "@/components/ui/button";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { deleteTripDetail } from "@/api/TripDetailService";
+import { deleteTripDetail, getTripDetailForView } from "@/api/TripDetailService";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import TripDetailViewDocument from "./TripDetailViewDocument";
+import AddDocumentDialog from "./TripDocuments/AddDocumentDialog";
+import { addTripDocument } from "@/api/TripDocumentService";
 
 const TripDetailView = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
-
+  const [isAddDocumentDialogOpen, setIsAddDocumentDialogOpen] = useState(false);
+  const [isAddDocumentSubmitting, setIsAddDocumentSubmitting] = useState(false);
+  const [documents, setDocuments] = useState<any>([]);
 
   const getTripId = () => {
     const path = location.pathname.split("/");
@@ -29,6 +33,46 @@ const TripDetailView = () => {
     const path = location.pathname.split("/");
     return path[path.length - 1];
   }
+
+  useEffect(() => {
+    const tryFetchingDetails = async () => {
+      setIsLoading(true);
+      const accessToken = localStorage.getItem("accessToken");
+
+      if (!checkTokenValidity(accessToken || "")) {
+        const result = await refreshAccessToken();
+        if (!result.success) {
+          toast.error("Session has expired. Login again!", {
+            position: "top-center",
+          });
+
+          changeUserInformationToLoggedOut();
+          navigate(Paths.LOGIN);
+          return;
+        }
+
+        changeUserInformationToLoggedIn(
+          result.data.accessToken,
+          result.data.refreshToken
+        );
+      }
+
+      const response = await getTripDetailForView(getTripDetailId(), getTripId());
+      if (!response.ok) {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+      setDocuments(data.documents);
+      setIsLoading(false);
+    }
+
+    tryFetchingDetails();
+  }, []);
 
   const handleDelete = async () => {
     setIsLoading(true);
@@ -63,6 +107,47 @@ const TripDetailView = () => {
     navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()));
     setIsLoading(false);
   };
+
+  const handleAddDocument = async (formValues : any) => {
+    setIsAddDocumentSubmitting(true);
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
+          position: "top-center",
+        });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
+      );
+    }
+
+    const form = new FormData();
+    form.append("document", formValues.file);
+    form.append("name", formValues.name);
+    const response = await addTripDocument(getTripId(), getTripDetailId(), form);
+    if (!response.ok) {
+      toast.error("Unexpected error. Try again later", {
+        position: "top-center",
+      });
+      setIsAddDocumentSubmitting(false);
+      return;
+    };
+    
+    const data = await response.json();
+    setDocuments([...documents, data]);
+    setIsAddDocumentSubmitting(false);
+    setIsAddDocumentDialogOpen(false);
+    toast.success("Document added successfully", { position: "top-center" });
+  }
 
   return (
     <div className="trip-view-main-container">
@@ -131,15 +216,22 @@ const TripDetailView = () => {
       <Card className="trip-detail-view-documents">
         <span className="documents-information-container">
           <h2 className="font-bold text-xl">Documents</h2>
-          <CirclePlus className="h-6 w-6 ml-3"/>
-          <p>Add PDF or Photo</p>
+          <Button className="p-2 justify-start" variant="ghost" onClick={() => setIsAddDocumentDialogOpen(true)}>
+            <CirclePlus className="h-6 w-6 mr-3"/>
+            Add PDF or Photo
+          </Button>
         </span>
         <div className="documents-document-container">
-          <TripDetailViewDocument />
-          <TripDetailViewDocument />
-          <TripDetailViewDocument />
-          <TripDetailViewDocument />
+          {documents.map((document : any) => (
+           <TripDetailViewDocument key={document.id} document={document} /> 
+          ))}
         </div>
+        <AddDocumentDialog 
+          onAdd={handleAddDocument}
+          isLoading={isAddDocumentSubmitting}
+          open={isAddDocumentDialogOpen}
+          setOpen={setIsAddDocumentDialogOpen}
+        />
       </Card>
     </div>
   );

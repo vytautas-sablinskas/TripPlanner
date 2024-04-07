@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.TripDetails;
+using TripPlanner.API.Dtos.TripDocuments;
 using TripPlanner.API.Dtos.Trips;
 
 namespace TripPlanner.API.Services.TripDetails;
@@ -71,5 +72,22 @@ public class TripDetailsService : ITripDetailsService
         editDetailsDto.TripEndTime = trip.EndDate;
 
         return editDetailsDto;
+    }
+
+    public async Task<(bool, TripDetailViewDto)> GetTripDetailView(Guid detailId)
+    {
+        var tripDetail = await _tripDetailsRepository.FindByCondition(t => t.Id == detailId)
+            .Include(t => t.Documents)
+            .FirstOrDefaultAsync();
+
+        if (tripDetail == null)
+        {
+            return (false, null);
+        }
+
+        var documents = tripDetail.Documents.Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile));
+        var tripDetailViewDto = new TripDetailViewDto(documents);
+
+        return (true, tripDetailViewDto);
     }
 }

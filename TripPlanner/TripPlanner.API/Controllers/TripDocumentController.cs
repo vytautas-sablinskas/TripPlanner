@@ -16,7 +16,7 @@ public class TripDocumentController : ControllerBase
         _tripDocumentService = tripDocumentService;
     }
 
-    [HttpPost("trips/{tripId}/tripDetails/{tripDetailId}")]
+    [HttpPost("trips/{tripId}/tripDetails/{tripDetailId}/documents")]
     public async Task<IActionResult> AddDocument(Guid tripDetailId, [FromForm] AddNewTripDocumentDto dto)
     {
         var (isSuccess, successDto) = await _tripDocumentService.AddNewDocument(User.GetUserId(), tripDetailId, dto);
