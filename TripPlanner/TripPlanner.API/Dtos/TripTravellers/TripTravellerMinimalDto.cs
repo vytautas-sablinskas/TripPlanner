@@ -3,5 +3,6 @@
 public record TripTravellerMinimalDto(
     string Id,
     string Email,
-    string FullName
+    string FullName,
+    string Photo
 );

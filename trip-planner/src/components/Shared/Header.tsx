@@ -4,7 +4,7 @@ import Paths from '../../routes/Paths';
 import { useUser } from '../../providers/user-provider/UserContext';
 import { logout, refreshAccessToken } from '../../api/AuthenticationService';
 import { BellDot, LogOut, User } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { checkTokenValidity } from '@/utils/jwtUtils';
 import { toast } from 'sonner';
 import { getUserInformation } from '@/api/UserService';
@@ -14,6 +14,7 @@ const Header = () => {
     const { isAuthenticated, hasNotifications, changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, changeHasNotifications } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
+    const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");
 
     const handleLogout = async () => {
         const refreshToken = localStorage.getItem('refreshToken');
@@ -48,6 +49,7 @@ const Header = () => {
                 if (response.ok) {
                     const data = await response.json();
                     changeHasNotifications(data.hasUnreadNotifications);
+                    setPhoto(data.photo);
                 }
             }
         }
@@ -77,7 +79,7 @@ const Header = () => {
                       </Link>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <img src="/avatar-placeholder.png" width={40} height={40} alt="avatar" className="header-avatar" />
+                            <img src={photo} width={40} height={40} alt="avatar" className="header-avatar" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align='end'>
                             <DropdownMenuLabel>User Information</DropdownMenuLabel>

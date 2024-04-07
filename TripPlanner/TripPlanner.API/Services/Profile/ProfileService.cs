@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.Profile;
+using TripPlanner.API.Services.AzureBlobStorage;
 
 namespace TripPlanner.API.Services.Profile;
 
 public class ProfileService : IProfileService
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly IAzureBlobStorageService _azureBlobStorageService;
 
-    public ProfileService(UserManager<AppUser> userManager)
+    public ProfileService(UserManager<AppUser> userManager, IAzureBlobStorageService azureBlobStorageService)
     {
         _userManager = userManager;
+        _azureBlobStorageService = azureBlobStorageService;        
     }
 
     public async Task<ProfileInformationDto> GetUserInformation(string userId)
@@ -21,7 +24,7 @@ public class ProfileService : IProfileService
             return null;
         }
 
-        var profileInformation = new ProfileInformationDto(user.Name, user.Surname, user.UserName);
+        var profileInformation = new ProfileInformationDto(user.Name, user.Surname, user.UserName, user.PhotoUri);
         
         return profileInformation;
     }
@@ -46,6 +49,16 @@ public class ProfileService : IProfileService
         if (user == null)
         {
             return false;
+        }
+
+        if (dto.Image != null)
+        {
+            if (!string.IsNullOrEmpty(user.PhotoUri))
+            {
+                await _azureBlobStorageService.DeleteImageAsync(user.PhotoUri);
+            }
+
+            user.PhotoUri = await _azureBlobStorageService.UploadImageAsync(dto.Image);
         }
 
         user.Name = dto.Name;

@@ -4,6 +4,6 @@ namespace TripPlanner.API.Services.User
 {
     public interface IUserService
     {
-        UserInformationDto GetUserInformation(string userId);
+        Task<UserInformationDto> GetUserInformation(string userId);
     }
 }

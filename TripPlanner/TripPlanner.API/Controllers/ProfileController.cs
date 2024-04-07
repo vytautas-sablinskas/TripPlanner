@@ -45,7 +45,7 @@ public class ProfileController : ControllerBase
 
     [HttpPut("profile/information")]
     [Authorize]
-    public async Task<IActionResult> ChangeProfileInformation([FromBody] ChangeProfileInformationDto dto)
+    public async Task<IActionResult> ChangeProfileInformation([FromForm] ChangeProfileInformationDto dto)
     {
         var isSuccess = await _profileService.ChangeProfileInformation(User.GetUserId(), dto);
         if (!isSuccess)

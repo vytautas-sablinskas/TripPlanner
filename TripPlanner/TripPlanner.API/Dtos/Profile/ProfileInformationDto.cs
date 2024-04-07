@@ -3,5 +3,6 @@
 public record ProfileInformationDto (
     string Name,
     string Surname,
-    string Email
+    string Email,
+    string Photo
 );

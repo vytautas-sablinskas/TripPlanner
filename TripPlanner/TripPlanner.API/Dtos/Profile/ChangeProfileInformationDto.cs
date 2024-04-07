@@ -3,5 +3,6 @@
 public record ChangeProfileInformationDto (
    string Name,
    string Surname,
-   string Email
+   string Email,
+   IFormFile? Image
 );

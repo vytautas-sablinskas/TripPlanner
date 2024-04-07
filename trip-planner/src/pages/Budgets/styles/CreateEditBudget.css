@@ -8,6 +8,13 @@
     margin-top: 16px;
 }
 
+.traveller-element-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
 .create-edit-budget-currency-input {
     padding: 8px 16px;
     width: 100%;

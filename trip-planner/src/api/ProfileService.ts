@@ -35,10 +35,9 @@ export const changeProfileInformation = async (values : any) => {
         {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(values),
+            body: values,
         });
 
     return response;

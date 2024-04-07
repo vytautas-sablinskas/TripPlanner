@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import "./styles/account-and-security.css";
+import "./styles/profile.css";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -22,6 +22,7 @@ import { refreshAccessToken } from "@/api/AuthenticationService";
 import Paths from "@/routes/Paths";
 import { changePassword, changeProfileInformation, getUserProfile } from "@/api/ProfileService";
 import PasswordInput from "@/components/Extra/PasswordInput";
+import { Separator } from "@/components/ui/separator";
 
 const passwordSchema = z.object({
   oldPassword: z.string().min(1, {
@@ -46,6 +47,7 @@ const profileSchema = z.object({
     .string()
     .min(1, "Email is required.")
     .email({ message: "Please enter a valid email address." }),
+  image: z.any(),
 });
 
 const Profile = () => {
@@ -64,6 +66,7 @@ const Profile = () => {
       name: "",
       surname: "",
       email: "",
+      image: null,
     },
   });
 
@@ -71,6 +74,7 @@ const Profile = () => {
     useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [image, setImage] = useState<any>("https://via.placeholder.com/100");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -109,11 +113,41 @@ const Profile = () => {
       profileForm.setValue("name", data.name);
       profileForm.setValue("surname", data.surname);
       profileForm.setValue("email", data.email);
+      setImage(data.photo);
       setIsLoading(false);
     };
 
     tryFetchingUserInformation();
   }, []);
+
+  const handleFileUpload = (event: any) => {
+    const MAX_FILE_SIZE = 2000000;
+    const ACCEPTED_IMAGE_TYPES = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+    ];
+
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("File is too large! 2MB Max.", { position: "bottom-right" });
+      return;
+    }
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      toast.error("Invalid file type!", { position: "bottom-right" });
+      return;
+    }
+
+    profileForm.setValue("image", file);
+    setImage(URL.createObjectURL(file));
+    console.log("here");
+  };
 
   const onChangePersonalInfromation = async (formValues: any) => {
     console.log(formValues);
@@ -139,7 +173,13 @@ const Profile = () => {
       );
     }
 
-    const response = await changeProfileInformation(formValues);
+    const formData = new FormData();
+    formData.append("name", formValues.name);
+    formData.append("surname", formValues.surname);
+    formData.append("email", formValues.email);
+    formData.append("image", formValues.image);
+
+    const response = await changeProfileInformation(formData);
     if (!response.ok) {
       toast.error("Unexpected error. Try again later!", {
         position: "top-center",
@@ -211,7 +251,6 @@ const Profile = () => {
       newPassword: formValues.newPassword,
     };
     const response = await changePassword(dto);
-    console.log(response);
     if (!response.ok) {
       const message = await response.text();
       toast.error(message, {
@@ -238,10 +277,35 @@ const Profile = () => {
       <Card className="account-and-security-card">
         <CardContent>
           <Form {...profileForm}>
-            <FormLabel className="font-bold text-lg">
+            <FormLabel className="font-bold text-2xl">
               Personal Information
             </FormLabel>
             <form onSubmit={profileForm.handleSubmit(onChangePersonalInfromation)}>
+            <div>
+                <div className="flex flex-col items-center">
+                  <img
+                    src={image}
+                    height={100}
+                    className="image-profile"
+                    width={100}
+                  />
+                </div>
+                <FormField
+                  control={profileForm.control}
+                  name="image"
+                  render={() => {
+                    return (
+                      <FormItem className="mt-4">
+                        <FormLabel>Upload New Image</FormLabel>
+                        <FormControl>
+                          <Input type="file" onChange={handleFileUpload} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
               <FormField
                 control={profileForm.control}
                 name="name"
@@ -281,7 +345,7 @@ const Profile = () => {
                   </FormItem>
                 )}
               />
-              <Button className="mt-4" disabled={isSubmitting}>
+              <Button className="mt-8" disabled={isSubmitting}>
                 Change Personal Information
               </Button>
             </form>
