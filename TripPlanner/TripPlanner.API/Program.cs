@@ -74,6 +74,7 @@ public static class Program
         services.AddScoped<IRepository<Notification>, Repository<Notification>>();
         services.AddScoped<IRepository<TripBudget>, Repository<TripBudget>>();
         services.AddScoped<IRepository<TripBudgetMember>, Repository<TripBudgetMember>>();
+        services.AddScoped<IRepository<TripDocument>, Repository<TripDocument>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITripService, TripService>();
