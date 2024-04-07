@@ -119,8 +119,8 @@ public class TripService : ITripService
 
     private async Task<TripsDto> GetUpcomingTrips(IQueryable<Trip> tripsQuery, int page)
     {
-        var tripsCount = tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
-                                   .Count();
+        var tripsCount = await tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
+                                   .CountAsync();
 
         var trips = await tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
                         .Skip((page - 1) * FetchSizes.DEFAULT_SIZE)
@@ -134,8 +134,8 @@ public class TripService : ITripService
 
     private async Task<TripsDto> GetPastTrips(IQueryable<Trip> tripsQuery, int page)
     {
-        var tripsCount = tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
-                                   .Count();
+        var tripsCount = await tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
+                                   .CountAsync();
 
         var trips = await tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
                          .Skip((page - 1) * FetchSizes.DEFAULT_SIZE)
