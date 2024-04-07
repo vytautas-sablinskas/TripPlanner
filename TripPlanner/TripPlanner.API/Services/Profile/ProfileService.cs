@@ -55,7 +55,7 @@ public class ProfileService : IProfileService
         {
             if (!string.IsNullOrEmpty(user.PhotoUri))
             {
-                await _azureBlobStorageService.DeleteImageAsync(user.PhotoUri);
+                await _azureBlobStorageService.DeleteFileAsync(user.PhotoUri);
             }
 
             user.PhotoUri = await _azureBlobStorageService.UploadImageAsync(dto.Image);

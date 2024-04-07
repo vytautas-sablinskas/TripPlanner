@@ -18,6 +18,7 @@ using TripPlanner.API.Services.Notifications;
 using TripPlanner.API.Services.Profile;
 using TripPlanner.API.Services.TripBudgets;
 using TripPlanner.API.Services.TripDetails;
+using TripPlanner.API.Services.TripDocuments;
 using TripPlanner.API.Services.Trips;
 using TripPlanner.API.Services.TripTravellers;
 using TripPlanner.API.Services.User;
@@ -74,6 +75,7 @@ public static class Program
         services.AddScoped<IRepository<Notification>, Repository<Notification>>();
         services.AddScoped<IRepository<TripBudget>, Repository<TripBudget>>();
         services.AddScoped<IRepository<TripBudgetMember>, Repository<TripBudgetMember>>();
+        services.AddScoped<IRepository<TripDocument>, Repository<TripDocument>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITripService, TripService>();
@@ -87,6 +89,7 @@ public static class Program
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<ITripBudgetsService, TripBudgetsService>();
         services.AddScoped<IProfileService, ProfileService>();
+        services.AddScoped<ITripDocumentService, TripDocumentService>();
 
         services.AddAutoMapper(typeof(Program));
 

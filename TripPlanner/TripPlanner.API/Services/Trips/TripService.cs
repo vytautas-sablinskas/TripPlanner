@@ -59,7 +59,7 @@ public class TripService : ITripService
         {
             if (!trip.PhotoUri.StartsWith("/default"))
             {
-                await _azureBlobStorageService.DeleteImageAsync(trip.PhotoUri);
+                await _azureBlobStorageService.DeleteFileAsync(trip.PhotoUri);
             }
             
             trip.PhotoUri = await _azureBlobStorageService.UploadImageAsync(tripDto.Image);
@@ -76,7 +76,7 @@ public class TripService : ITripService
 
         if (!trip.PhotoUri.StartsWith("/default"))
         {
-            await _azureBlobStorageService.DeleteImageAsync(trip.PhotoUri);
+            await _azureBlobStorageService.DeleteFileAsync(trip.PhotoUri);
         }
 
         await _tripRepository.Delete(trip);

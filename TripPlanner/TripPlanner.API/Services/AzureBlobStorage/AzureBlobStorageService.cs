@@ -12,15 +12,10 @@ public class AzureBlobStorageService : IAzureBlobStorageService
         _blobContainerClient = blobContainerClient;
     }
 
-    public async Task<string> UploadImageAsync(IFormFile? image)
+    public async Task<(bool, string)> UploadFileAsync(IFormFile image)
     {
-        if (image == null ||
-            image.Length == 0 ||
-            !image.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
-            return "/default.jpg";
-
         var uniqueImageBlobName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
-        
+
         try
         {
             var blobClient = _blobContainerClient.GetBlobClient(uniqueImageBlobName);
@@ -38,15 +33,32 @@ public class AzureBlobStorageService : IAzureBlobStorageService
                     Path = $"{_blobContainerClient.Name}/{uniqueImageBlobName}"
                 }.Uri;
 
-                return fullUriWithSas.ToString();
+                return (true, fullUriWithSas.ToString());
             }
-        } catch
+        }
+        catch
         {
-            return "/default.jpg";
+            return (false, "");
         }
     }
 
-    public async Task DeleteImageAsync(string uri)
+    public async Task<string> UploadImageAsync(IFormFile? image)
+    {
+        if (image == null ||
+            image.Length == 0 ||
+            !image.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
+            return "/default.jpg";
+
+        var (isUploaded, uri) = await UploadFileAsync(image);
+        if (!isUploaded)
+        {
+            return "/default.jpg";
+        }
+
+        return uri;
+    }
+
+    public async Task DeleteFileAsync(string uri)
     {
         try
         {

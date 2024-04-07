@@ -20,6 +20,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<TripBudgetMember> TripBudgetMembers { get; set; }
 
+    public DbSet<TripDocument> TripDocuments { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
     {

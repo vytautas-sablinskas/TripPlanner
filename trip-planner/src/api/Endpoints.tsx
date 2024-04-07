@@ -18,6 +18,7 @@ const ENDPOINTS = {
     TRIP_DETAILS: {
         GET_ALL_TRIP_DETAILS: `${BASE_URL}/trips/:id/tripDetails/`,
         GET_TRIP_DETAILS_BY_ID: `${BASE_URL}/trips/:tripId/tripDetails/:detailId`,
+        GET_TRIP_DETAIL_FOR_VIEW: `${BASE_URL}/trips/:tripId/tripDetails/:detailId/view`,
         CREATE_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
         EDIT_TRIP_DETAILS: `${BASE_URL}/tripDetails`,
         DELETE_TRIP_DETAILS: `${BASE_URL}/tripDetails/:id`,
@@ -48,6 +49,11 @@ const ENDPOINTS = {
         GET_USER_PROFILE: `${BASE_URL}/profile`,
         CHANGE_PASSWORD: `${BASE_URL}/profile/password`,
         CHANGE_PROFILE_INFORMATION: `${BASE_URL}/profile/information`,
+    },
+    TRIP_DOCUMENTS: {
+        ADD_NEW_DOCUMENT: `${BASE_URL}/trips/:tripId/tripDetails/:tripDetailId/documents`,
+        EDIT_DOCUMENT: `${BASE_URL}/trips/:tripId/tripDetails/:tripDetailId/documents/:documentId`,
+        DELETE_DOCUMENT: `${BASE_URL}/trips/:tripId/tripDetails/:tripDetailId/documents/:documentId`,
     }
 };
 

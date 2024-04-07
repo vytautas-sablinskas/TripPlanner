@@ -78,8 +78,8 @@
     margin: 24px 0;
     display: flex;
     flex-wrap: wrap;
+    overflow-wrap: break-word;
     justify-content: space-between;
-    gap: 64px;
 }
 
 .change-info-buttons {
@@ -90,5 +90,9 @@
 @media screen and (max-width: 600px) {
     .change-info-buttons {
         flex-direction: column;
+    }
+
+    .documents-document-container {
+        justify-content: center;
     }
 }

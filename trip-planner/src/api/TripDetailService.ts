@@ -31,6 +31,22 @@ export const getTripDetailById = async (detailId : any, tripId : any) => {
     return response;
 }
 
+export const getTripDetailForView = async (detailId : any, tripId : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIP_DETAILS.GET_TRIP_DETAIL_FOR_VIEW
+        .replace(":detailId", detailId)
+        .replace(":tripId", tripId),
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response;
+}
+
 export const addTripDetails = async (data : any) => {
     const token = localStorage.getItem('accessToken');
     const response = await fetch(ENDPOINTS.TRIP_DETAILS.CREATE_TRIP_DETAILS,
