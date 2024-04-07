@@ -53,6 +53,15 @@ public class TripBudgetController : ControllerBase
         return Ok();
     }
 
+    [HttpPut("trips/{tripId}/budgets/{budgetId}")]
+    [Authorize]
+    public async Task<IActionResult> EditBudget(Guid budgetId, EditBudgetDto dto)
+    {
+        await _tripBudgetsService.EditTripBudget(budgetId, dto);
+
+        return Ok();
+    }
+
     [HttpDelete("trips/{tripId}/budgets/{budgetId}")]
     [Authorize]
     public async Task<IActionResult> DeleteBudget(Guid budgetId)

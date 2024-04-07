@@ -49,10 +49,10 @@ public class TripBudgetsService : ITripBudgetsService
             .FirstOrDefault();
 
 
-        IEnumerable<TripBudgetMemberDto> budgetMembersDto = new List<TripBudgetMemberDto>();
+        IEnumerable<TripBudgetMemberWithNameDto> budgetMembersDto = new List<TripBudgetMemberWithNameDto>();
         if (budget?.BudgetMembers?.Count > 0)
         {
-            budgetMembersDto = budget.BudgetMembers.Select(b => new TripBudgetMemberDto(b.User.Email, b.Amount));
+            budgetMembersDto = budget.BudgetMembers.Select(b => new TripBudgetMemberWithNameDto(b.User.Email, $"{b.User.Name} {b.User.Surname}", b.Amount));
         }
 
         var dto = new EditBudgetCurrentInfoDto
@@ -98,6 +98,50 @@ public class TripBudgetsService : ITripBudgetsService
                 {
                     UserId = userToAdd.Id,
                     TripBudgetId = createdBudget.Id,
+                    Amount = member.Amount
+                };
+
+                _tripBudgetMembersRepository.Create(budgetMember);
+            }
+        }
+    }
+
+    public async Task EditTripBudget(Guid budgetId, EditBudgetDto dto)
+    {
+        var budget = _tripBudgetRepository.FindByCondition(b => b.Id == budgetId)
+            .FirstOrDefault();
+        if (budget is null)
+        {
+            return;
+        }
+
+        budget.Name = dto.Name;
+        budget.Description = dto.Description;
+        budget.Type = dto.Type;
+        budget.UnlimitedBudget = dto.UnlimitedAmount;
+        budget.Budget = dto.Budget;
+        budget.MainCurrency = dto.MainCurrency;
+        budget.BudgetMembers = new List<TripBudgetMember>();
+
+        await _tripBudgetRepository.Update(budget);
+
+        var oldMembers = await _tripBudgetMembersRepository.FindByCondition(t => t.TripBudgetId == budgetId)
+            .ToListAsync();
+        foreach (var member in oldMembers)
+        {
+            await _tripBudgetMembersRepository.Delete(member);
+        }
+
+        if (dto.Members != null)
+        {
+            foreach (var member in dto.Members)
+            {
+                var userToAdd = _appUserRepository.FindByCondition(t => t.Email == member.Email)
+                    .FirstOrDefault();
+                var budgetMember = new TripBudgetMember
+                {
+                    UserId = userToAdd.Id,
+                    TripBudgetId = budget.Id,
                     Amount = member.Amount
                 };
 

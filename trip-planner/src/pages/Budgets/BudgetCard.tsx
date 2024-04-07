@@ -100,7 +100,7 @@ const BudgetCard = ({ budget, setData } : any) => {
                         )}
                     </p>
                 </div>
-                <div className="budget-buttons">
+                <div className="mt-2">
                     <Button className="mr-6 pl-0 justify-start" variant="ghost" onClick={() => navigate(Paths.EDIT_BUDGET.replace(":tripId", getTripId()).replace(":budgetId", budget.id))}>
                         <Pencil className="mr-2"/>
                         Edit

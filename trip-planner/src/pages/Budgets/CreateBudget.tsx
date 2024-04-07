@@ -145,6 +145,7 @@ const CreateBudget = () => {
   useEffect(() => {
     setSelectedMemberBudgets([]);
     setTotalBudget(0);
+    setIsUnlimitedBudget(false);
   }, [selectedType]);
 
   const getSelectedTypeInputs = () => {
@@ -263,7 +264,7 @@ const CreateBudget = () => {
       }),
     };
 
-    if (actualValues.type === 2 && actualValues.budget === 0) {
+    if (actualValues.budget === 0 && !isUnlimitedBudget) {
       form.setError("budgetAmount", {
         message: "Budget amount must be greater than 0",
       });
@@ -435,7 +436,7 @@ const CreateBudget = () => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem className="mt-2">
-                    <FormLabel>Budget Amount</FormLabel>
+                    <FormLabel required>Budget Amount</FormLabel>
                     <CurrencyInput
                       disabled={selectedType === "2"}
                       className="create-edit-budget-currency-input"

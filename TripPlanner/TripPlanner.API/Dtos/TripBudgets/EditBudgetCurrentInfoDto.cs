@@ -14,5 +14,5 @@ public class EditBudgetCurrentInfoDto
     public bool UnlimitedBudget { get; set; }
     public string MainCurrency { get; set; }
     public IEnumerable<TripTravellerMinimalDto> TripTravellers { get; set; }
-    public IEnumerable<TripBudgetMemberDto> BudgetMembers { get; set; }
+    public IEnumerable<TripBudgetMemberWithNameDto> BudgetMembers { get; set; }
 }

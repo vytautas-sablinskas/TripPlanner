@@ -34,7 +34,7 @@ import {
     FormLabel,
     FormMessage,
   } from "@/components/ui/form";
-  import { addTripBudget, getTripBudgetEditInfo, getTripTravellersForBudget } from "@/api/TriBudgetsService";
+  import { addTripBudget, editTripBudget, getTripBudgetEditInfo, getTripTravellersForBudget } from "@/api/TriBudgetsService";
   import { checkTokenValidity } from "@/utils/jwtUtils";
   import { refreshAccessToken } from "@/api/AuthenticationService";
   import { toast } from "sonner";
@@ -125,8 +125,25 @@ import {
         }
   
         const data = await response.json();
-        console.log(data);
-        setTravellers([]);
+        setSelectedType(data.type.toString());
+        form.setValue("name", data.name);
+        form.setValue("description", data.description);
+        form.setValue("unlimitedBudget", data.unlimitedBudget);
+        form.setValue("mainCurrency", data.mainCurrency);
+        setTotalBudget(data.amount);
+        setIsUnlimitedBudget(data.unlimitedBudget);
+        setValue(data.mainCurrency);
+        setTravellers(data.tripTravellers);
+        const memberBudgets = data.budgetMembers.reduce((acc : any, member : any) => {
+          acc[member.email] = member.amount.toString();
+          return acc;
+        }, {});
+        setSelectedMemberBudgets(memberBudgets);
+        setSelectedMembers(data.budgetMembers.map((member: any) => ({
+          label: `${member.fullName} - ${member.email}`,
+          value: member.email,
+        })));
+
         setLoading(false);
       };
   
@@ -147,11 +164,6 @@ import {
   
       setTotalBudget(sum.toFixed(2));
     }, [selectedMemberBudgets, selectedMembers]);
-  
-    useEffect(() => {
-      setSelectedMemberBudgets([]);
-      setTotalBudget(0);
-    }, [selectedType]);
   
     const getSelectedTypeInputs = () => {
       const SHARED_TYPE = "1";
@@ -254,12 +266,14 @@ import {
     };
   
     const onSubmit = async (formValues: any) => {
+      const newBudget = isUnlimitedBudget ? 0 : Number(totalBudget);
+      
       const actualValues = {
         type: Number(selectedType),
         name: formValues.name,
         description: formValues.description,
         mainCurrency: value,
-        budget: Number(totalBudget),
+        budget: newBudget,
         unlimitedAmount: isUnlimitedBudget,
         members: selectedMembers.map((member: any) => {
           return {
@@ -268,8 +282,10 @@ import {
           };
         }),
       };
+
+      console.log(actualValues);
   
-      if (actualValues.type === 2 && actualValues.budget === 0) {
+      if (actualValues.budget === 0 && !isUnlimitedBudget) {
         form.setError("budgetAmount", {
           message: "Budget amount must be greater than 0",
         });
@@ -310,16 +326,16 @@ import {
         );
       }
   
-      const response = await addTripBudget(getTripId(), actualValues);
+      const response = await editTripBudget(getTripId(), getBudgetId(), actualValues);
       if (!response.ok) {
-        toast.error("Failed to create budget. Try again later", {
+        toast.error("Failed to edit budget. Try again later", {
           position: "top-center",
         });
         setIsSubmitting(false);
         return;
       }
   
-      toast.success("Budget created successfully!", {
+      toast.success("Budget edited successfully!", {
         position: "top-center",
       });
       navigate(Paths.BUDGETS.replace(":tripId", getTripId()));
@@ -348,23 +364,9 @@ import {
                 name="type"
                 render={() => (
                   <FormItem className="mt-4">
-                    <FormLabel required>Type</FormLabel>
+                    <FormLabel>Type</FormLabel>
                     <FormControl className="create-edit-select">
-                      <Select
-                        value={selectedType}
-                        onValueChange={setSelectedType}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select budget type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {BudgetTypes.map((type) => (
-                            <SelectItem key={type.key} value={String(type.key)}>
-                              {type.value}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Input disabled value={Object.values(BudgetTypes)[Number(selectedType)].value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -377,7 +379,7 @@ import {
                   <FormItem className="mt-2">
                     <FormLabel required>Name</FormLabel>
                     <FormControl>
-                      <Input id="name" placeholder="Budget name" {...field} />
+                      <Input id="name" placeholder=" dget name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -411,6 +413,7 @@ import {
                           <Checkbox
                             id="unlimitedBudget"
                             className="mr-2"
+                            checked={isUnlimitedBudget}
                             onCheckedChange={(checked) =>
                               setIsUnlimitedBudget(Boolean(checked))
                             }
@@ -441,7 +444,7 @@ import {
                   control={form.control}
                   render={({ field }) => (
                     <FormItem className="mt-2">
-                      <FormLabel>Budget Amount</FormLabel>
+                      <FormLabel required>Budget Amount</FormLabel>
                       <CurrencyInput
                         disabled={selectedType === "2"}
                         className="create-edit-budget-currency-input"
@@ -464,7 +467,7 @@ import {
                 />
               )}
               {getSelectedTypeInputs()}
-              <CreateEditLoadingButton className="mt-4 w-full" text="Create Budget" loading={isSubmitting}/>
+              <CreateEditLoadingButton className="mt-4 w-full" text="Edit Budget" loading={isSubmitting}/>
             </CardContent>
           </Card>
         </form>
