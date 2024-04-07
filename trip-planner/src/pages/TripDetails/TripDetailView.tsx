@@ -13,7 +13,7 @@ import { deleteTripDetail, getTripDetailForView } from "@/api/TripDetailService"
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import TripDetailViewDocument from "./TripDetailViewDocument";
 import AddDocumentDialog from "./TripDocuments/AddDocumentDialog";
-import { addTripDocument } from "@/api/TripDocumentService";
+import { addTripDocument, deleteTripDocument, editTripDocument } from "@/api/TripDocumentService";
 
 const TripDetailView = () => {
   const navigate = useNavigate();
@@ -22,6 +22,8 @@ const TripDetailView = () => {
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
   const [isAddDocumentDialogOpen, setIsAddDocumentDialogOpen] = useState(false);
   const [isAddDocumentSubmitting, setIsAddDocumentSubmitting] = useState(false);
+  const [isEditDocumentSubmitting, setIsEditDocumentSubmitting] = useState(false);
+  const [isDeleteDocumentDeleting, setIsDeleteDocumentDeleting] = useState(false);
   const [documents, setDocuments] = useState<any>([]);
 
   const getTripId = () => {
@@ -149,6 +151,79 @@ const TripDetailView = () => {
     toast.success("Document added successfully", { position: "top-center" });
   }
 
+  const handleDeleteDocument = async (id : any) => {
+    setIsDeleteDocumentDeleting(true);
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
+          position: "top-center",
+        });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
+      );
+    }
+
+    const response = await deleteTripDocument(getTripId(), getTripDetailId(), id);
+    if (!response.ok) {
+      toast.error("Unexpected error. Try again later", {
+        position: "top-center",
+      });
+      setIsDeleteDocumentDeleting(false);
+      return;
+    }
+
+    setDocuments(documents.filter((document : any) => document.id !== id));
+    toast.success("Document deleted successfully", { position: "top-center" });
+    setIsDeleteDocumentDeleting(false);
+  }
+
+  const handleEditDocument = async (formValues : any) => {
+    setIsEditDocumentSubmitting(true);
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
+          position: "top-center",
+        });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
+      );
+    }
+
+    console.log(formValues);
+    const response = await editTripDocument(getTripId(), getTripDetailId(), formValues.id, { name: formValues.name });
+    if (!response.ok) {
+      toast.error("Unexpected error. Try again later", {
+        position: "top-center",
+      });
+      setIsEditDocumentSubmitting(false);
+      return;
+    }
+
+    setDocuments(documents.map((document : any) => document.id === formValues.id ? { ...document, name: formValues.name } : document));
+    toast.success("Document edited successfully", { position: "top-center" });
+    setIsEditDocumentSubmitting(false);
+  }
+
   return (
     <div className="trip-view-main-container">
       <span
@@ -223,7 +298,14 @@ const TripDetailView = () => {
         </span>
         <div className="documents-document-container">
           {documents.map((document : any) => (
-           <TripDetailViewDocument key={document.id} document={document} /> 
+           <TripDetailViewDocument 
+            key={document.id} 
+            document={document}
+            onDelete={handleDeleteDocument}
+            isDeleteLoading={isDeleteDocumentDeleting}
+            onEdit={handleEditDocument}
+            isEditLoading={isEditDocumentSubmitting}
+          /> 
           ))}
         </div>
         <AddDocumentDialog 

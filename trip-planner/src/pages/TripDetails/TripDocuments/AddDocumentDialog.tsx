@@ -123,7 +123,7 @@ const AddDocumentDialog = ({ onAdd, isLoading, open, setOpen }: any) => {
               name="name"
               render={({ field }) => (
                 <FormItem className="mb-4 mt-4">
-                  <FormLabel required>Plan Name</FormLabel>
+                  <FormLabel required>Document Name</FormLabel>
                   <FormControl className="w-full">
                     <Input placeholder="Enter Document Name" {...field} />
                   </FormControl>

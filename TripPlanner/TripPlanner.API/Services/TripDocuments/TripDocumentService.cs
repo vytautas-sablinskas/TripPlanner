@@ -1,4 +1,5 @@
-﻿using TripPlanner.API.Database.DataAccess;
+﻿using Microsoft.EntityFrameworkCore;
+using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.TripDocuments;
 using TripPlanner.API.Services.AzureBlobStorage;
@@ -36,5 +37,36 @@ public class TripDocumentService : ITripDocumentService
         var document = _tripDocumentRepository.Create(tripDocument);
 
         return (true, new TripDocumentDto(document.Name, document.LinkToFile, document.Id, document.TypeOfFile));
+    }
+
+    public async Task<bool> EditDocument(Guid documentId, EditDocumentDto dto)
+    {
+        var document = await _tripDocumentRepository.FindByCondition(t => t.Id == documentId)
+            .FirstOrDefaultAsync();
+        if (document == null)
+        {
+            return false;
+        }
+
+        document.Name = dto.Name;
+        await _tripDocumentRepository.Update(document);
+        
+        return true;
+    }
+
+    public async Task<bool> DeleteDocument(Guid documentId)
+    {
+
+        var document = await _tripDocumentRepository.FindByCondition(t => t.Id == documentId)
+            .FirstOrDefaultAsync();
+        if (document == null)
+        {
+            return false;
+        }
+
+        await _azureBlobStorageService.DeleteFileAsync(document.LinkToFile);
+        await _tripDocumentRepository.Delete(document);
+       
+        return true;
     }
 }
