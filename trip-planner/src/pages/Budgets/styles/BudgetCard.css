@@ -6,7 +6,7 @@
     border: 1px solid rgb(226, 232, 240);
     margin: 24px;
     padding: 24px;
-    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 .budget-card-content {

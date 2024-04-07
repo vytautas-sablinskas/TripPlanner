@@ -32,6 +32,19 @@
     border-color: #f75940
 }
 
+.header-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.header-avatar:hover {
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
 .notification {
     text-decoration: none;
     position: relative;

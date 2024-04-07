@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { checkTokenValidity } from '@/utils/jwtUtils';
 import { toast } from 'sonner';
 import { getUserInformation } from '@/api/UserService';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 const Header = () => {
     const { isAuthenticated, hasNotifications, changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, changeHasNotifications } = useUser();
@@ -74,7 +75,18 @@ const Header = () => {
                         <BellDot className='w-5 h-5'/>
                         <span className={hasNotifications ? "badge" : ""} />
                       </Link>
-                      <Link to={Paths.HOME} className='link' onClick={handleLogout}>Logout</Link>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <img src="/avatar-placeholder.png" width={40} height={40} alt="avatar" className="header-avatar" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuLabel>User Information</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Link to={Paths.HOME} className='link' onClick={handleLogout}>Logout</Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                 )}
             </section>
