@@ -3,7 +3,7 @@ import './styles/header.css';
 import Paths from '../../routes/Paths';
 import { useUser } from '../../providers/user-provider/UserContext';
 import { logout, refreshAccessToken } from '../../api/AuthenticationService';
-import { BellDot } from 'lucide-react';
+import { BellDot, KeyRound, LogOut, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { checkTokenValidity } from '@/utils/jwtUtils';
 import { toast } from 'sonner';
@@ -79,11 +79,20 @@ const Header = () => {
                         <DropdownMenuTrigger asChild>
                             <img src="/avatar-placeholder.png" width={40} height={40} alt="avatar" className="header-avatar" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent align='end'>
                             <DropdownMenuLabel>User Information</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Link to={Paths.HOME} className='link' onClick={handleLogout}>Logout</Link>
+                            <DropdownMenuItem onClick={() => navigate(Paths.PROFILE)} >
+                                <User className='w-4 h-4 mr-4'/>
+                                Profile
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => navigate(Paths.ACCOUNT_AND_SECURITY)}>
+                                <KeyRound className='w-4 h-4 mr-4'/>
+                                Account and Security
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleLogout}>
+                                <LogOut className='w-4 h-4 mr-4'/>
+                                Logout
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
