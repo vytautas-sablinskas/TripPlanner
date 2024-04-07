@@ -70,11 +70,12 @@ const Profile = () => {
   const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } =
     useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const tryFetchingUserInformation = async () => {
-      setIsSubmitting(true);
+      setIsLoading(true);
       const accessToken = localStorage.getItem("accessToken");
 
       if (!checkTokenValidity(accessToken || "")) {
@@ -100,7 +101,7 @@ const Profile = () => {
         toast.error("Unexpected error. Try refreshing page", {
           position: "top-center",
         });
-        setIsSubmitting(false);
+        setIsLoading(false);
         return;
       }
 
@@ -108,7 +109,7 @@ const Profile = () => {
       profileForm.setValue("name", data.name);
       profileForm.setValue("surname", data.surname);
       profileForm.setValue("email", data.email);
-      setIsSubmitting(false);
+      setIsLoading(false);
     };
 
     tryFetchingUserInformation();
@@ -225,6 +226,12 @@ const Profile = () => {
     });
     setIsSubmitting(false);
   };
+
+  if (isLoading) {
+    return (
+      <p>Loading...</p>
+    )
+  }
 
   return (
     <div className="account-and-security-main-container">
