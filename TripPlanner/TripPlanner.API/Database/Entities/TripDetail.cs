@@ -29,4 +29,6 @@ public class TripDetail
     public virtual AppUser Creator { get; set; }
 
     public string CreatorId { get; set; }
+
+    public virtual IEnumerable<TripDocument> Documents { get; set; }
 }
