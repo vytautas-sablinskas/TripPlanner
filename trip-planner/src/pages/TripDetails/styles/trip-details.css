@@ -54,12 +54,92 @@
     padding: 0 24px 24px 24px;
 }
 
+.trip-budget-main-container {
+    padding: 24px 24px 0 24px;
+    width: 80%;
+}
+
+.trip-budget-information {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.trip-budget-all-info {
+    margin: 16px 0;
+    background-color: rgb(243, 244, 245);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+}
+
+.trip-budget-all-info-first-column {
+    display: flex;
+    flex-direction: column;
+    flex: 5;
+}
+
+.text-muted { 
+    color: rgb(108, 117, 125);
+}
+
+.spent-budget-currency {
+    font-size: 24px;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.total-budget-amount {
+    font-size: 16px;
+}
+
+.breakdown-button {
+    font-size: 14px;
+}
+
+.budget-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-wrap: break-word;
+    flex: 1;
+}
+
+.separator-budget {
+    height: 100%;
+    color: rgb(102, 102, 102);
+    margin-right: 16px;
+    margin-left: 32px;
+}
+
+.right-side-budget {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.expense-person-photo {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.expense-person-photo-container {
+    display: flex;
+    gap: 8px;
+    font-weight: 500;
+}
+
 @media screen and (max-width: 550px) {
     .trip-information-container {
         width: 100%;
     }
 
     .trip-details-main-container {
+        width: 100%;
+    }
+
+    .trip-budget-main-container {
         width: 100%;
     }
     
@@ -69,5 +149,29 @@
 
     .trip-information-image {
         display: none;
+    }
+
+    .separator-budget {
+        display: none;
+    }
+
+    .spent-budget-currency {
+        font-size: 14px;
+    }
+
+    .trip-budget-all-info {
+        padding: 16px;
+    }
+
+    .total-budget-amount {
+        font-size: 10px;
+    }
+
+    .breakdown-button {
+        font-size: 10px;
+    }
+
+    .right-side-budget {
+        flex: 2;
     }
 }

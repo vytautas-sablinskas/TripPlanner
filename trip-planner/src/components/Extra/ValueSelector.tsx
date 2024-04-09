@@ -14,10 +14,11 @@ export function ValueSelector({
   placeholder,
   label,
   items,
+  className,
 }: any) {
   return (
     <Select defaultValue={value} onValueChange={setValue}>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className={className || "w-full"}>
         <SelectValue placeholder={placeholder || "Select Value"} />
       </SelectTrigger>
       <SelectContent>
