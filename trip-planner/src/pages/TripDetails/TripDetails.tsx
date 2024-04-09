@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/accordion";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
+import AddExpenseDialog from "./AddExpenseDialog";
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
@@ -38,6 +39,7 @@ const TripDetails = () => {
   const [selectedBudget, setSelectedBudget] = useState<any>(budgetIds[0]);
   const [openDeleteExpenseDialog, setOpenDeleteExpenseDialog] = useState(false);
   const [openEditExpenseDialog, setOpenEditExpenseDialog] = useState(false);
+  const [openAddExpenseDialog, setOpenAddExpenseDialog] = useState(false);
   const [isEditSubmitting, setIsEditSubmitting] = useState(false);
   const [isDeleteExpenseSubmitting, setIsDeleteExpenseSubmitting] =
     useState(false);
@@ -232,7 +234,7 @@ const TripDetails = () => {
         <div className="trip-budget-main-container">
           <div className="trip-budget-information">
             <p className="trip-details-itinerary">Budgeting</p>
-            <Button variant="ghost" className="px-0">
+            <Button variant="ghost" className="px-0" onClick={() => setOpenAddExpenseDialog(true)}>
               <CirclePlus className="mr-2" />
               Add Expense
             </Button>
@@ -335,6 +337,10 @@ const TripDetails = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+          <AddExpenseDialog
+            open={openAddExpenseDialog}
+            setOpen={setOpenAddExpenseDialog}
+          />
           <DeleteDialog
             title="Delete Expense"
             description="Are you sure you want to delete this expense?"
@@ -351,6 +357,7 @@ const TripDetails = () => {
             amount={budget.expenses
               .find((e: any) => e.id === openId)
               ?.amount.toString()}
+            eventType={budget.expenses.find((e: any) => e.id === openId)?.type.toString()}
             open={openEditExpenseDialog}
             setOpen={setOpenEditExpenseDialog}
             id={openId}
