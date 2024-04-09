@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { z } from "zod";
@@ -27,7 +28,13 @@ const formSchema = z.object({
   amount: z.string().optional(),
 });
 
-const EditExpenseDialog = ({ currencyValue, id, amount, open, setOpen }: any) => {
+const EditExpenseDialog = ({
+  currencyValue,
+  id,
+  amount,
+  open,
+  setOpen,
+}: any) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,7 +58,7 @@ const EditExpenseDialog = ({ currencyValue, id, amount, open, setOpen }: any) =>
       });
       return;
     }
-    
+
     setIsLoading(true);
     console.log(formValues);
     console.log(id);
@@ -84,6 +91,7 @@ const EditExpenseDialog = ({ currencyValue, id, amount, open, setOpen }: any) =>
                       setValue={field.onChange}
                       searchTerm={searchTerm}
                       setSearchTerm={setSearchTerm}
+                      modal
                     />
                   </FormControl>
                 </FormItem>
@@ -97,16 +105,21 @@ const EditExpenseDialog = ({ currencyValue, id, amount, open, setOpen }: any) =>
                   <FormLabel required>Amount</FormLabel>
                   <FormControl>
                     <CurrencyInput
-                      className="create-edit-budget-currency-input"
+                      className="create-edit-budget-currency-input z-50"
                       decimalSeparator="."
                       placeholder="Please enter a number"
                       suffix={` ${form.getValues("currency")}`}
                       step={1}
-                      value={field.value || 0}
+                      value={field.value}
                       allowNegativeValue={false}
                       allowDecimals={true}
-                      onValueChange={(value, _name, _values) => field.onChange(Number(value) > 100000 ? "100000" : value,)}
-                  />
+                      onValueChange={(value, _name, _values) =>
+                        field.onChange(
+                          Number(value) > 100000 ? "100000" : value
+                        )
+                      }
+                      autoFocus={true}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

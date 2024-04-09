@@ -39,7 +39,8 @@ const TripDetails = () => {
   const [openDeleteExpenseDialog, setOpenDeleteExpenseDialog] = useState(false);
   const [openEditExpenseDialog, setOpenEditExpenseDialog] = useState(false);
   const [isEditSubmitting, setIsEditSubmitting] = useState(false);
-  const [isDeleteExpenseSubmitting, setIsDeleteExpenseSubmitting] = useState(false);
+  const [isDeleteExpenseSubmitting, setIsDeleteExpenseSubmitting] =
+    useState(false);
   const [budget, setBudget] = useState<any>({
     id: "id1",
     currency: "USD",
@@ -149,7 +150,7 @@ const TripDetails = () => {
       default:
         return "";
     }
-  }
+  };
 
   const getBudgetPhoto = (type: any) => {
     switch (type) {
@@ -160,25 +161,25 @@ const TripDetails = () => {
       default:
         return "";
     }
-  }
+  };
 
   const handleOpenDeleteDialog = (id: any) => {
     setOpenId(id);
     setOpenDeleteExpenseDialog(true);
-  }
+  };
 
   const handleEditExpense = (id: any) => {
     setOpenId(id);
     setOpenEditExpenseDialog(true);
-  }
+  };
 
   const handleDeleteExpense = () => {
     console.log(openId);
-  }
+  };
 
   const handeEditSubmit = () => {
     console.log(openId);
-  }
+  };
 
   return isLoading ? (
     <div>Loading</div>
@@ -268,12 +269,19 @@ const TripDetails = () => {
               </div>
             </div>
           </div>
-          <Accordion type="single" collapsible className="w-full overflow-visible">
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full overflow-visible"
+          >
             <AccordionItem value="item-1">
               <AccordionTrigger>Expenses</AccordionTrigger>
               <AccordionContent>
                 {budget.expenses.map((expense: any) => (
-                  <div className="h-full w-full flex justify-between mt-4" key={expense.id}>
+                  <div
+                    className="h-full w-full flex justify-between mt-4"
+                    key={expense.id}
+                  >
                     <div className="flex items-center justify-center">
                       <img
                         src={getBudgetPhoto(expense.type)}
@@ -289,9 +297,13 @@ const TripDetails = () => {
                     </div>
                     <div className="flex items-center">
                       <div className="flex flex-col items-end">
-                        <p className="font-bold">{expense.currency} {expense.amount.toLocaleString()}</p>
+                        <p className="font-bold">
+                          {expense.currency} {expense.amount.toLocaleString()}
+                        </p>
                         <div className="expense-person-photo-container">
-                          <div className="expense-person-image-name-container">{expense.personName}</div>
+                          <div className="expense-person-image-name-container">
+                            {expense.personName}
+                          </div>
                           <img
                             src={expense.personPhoto}
                             height={20}
@@ -302,35 +314,47 @@ const TripDetails = () => {
                         </div>
                       </div>
                       <div className="flex flex-col items-center h-[50px] ml-8">
-                        <Button className="p-0" variant="ghost" onClick={() => handleEditExpense(expense.id)}>
+                        <Button
+                          className="p-0"
+                          variant="ghost"
+                          onClick={() => handleEditExpense(expense.id)}
+                        >
                           <Pencil className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" className="p-0" onClick={() => handleOpenDeleteDialog(expense.id)}>
+                        <Button
+                          variant="ghost"
+                          className="p-0"
+                          onClick={() => handleOpenDeleteDialog(expense.id)}
+                        >
                           <CircleX className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
-                    <DeleteDialog 
-                      title="Delete Expense"
-                      description="Are you sure you want to delete this expense?"
-                      dialogButtonText="Delete"
-                      setOpen={setOpenDeleteExpenseDialog}
-                      open={openDeleteExpenseDialog}
-                      onDelete={handleDeleteExpense}
-                      isLoading={isDeleteExpenseSubmitting}
-                    />
-                    <EditExpenseDialog 
-                      currencyValue={budget.expenses.find((e: any) => e.id === openId)?.currency}
-                      amount={budget.expenses.find((e: any) => e.id === openId)?.amount.toString()}
-                      open={openEditExpenseDialog}
-                      setOpen={setOpenEditExpenseDialog}
-                      id={openId}
-                    />
                   </div>
                 ))}
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+          <DeleteDialog
+            title="Delete Expense"
+            description="Are you sure you want to delete this expense?"
+            dialogButtonText="Delete"
+            setOpen={setOpenDeleteExpenseDialog}
+            open={openDeleteExpenseDialog}
+            onDelete={handleDeleteExpense}
+            isLoading={isDeleteExpenseSubmitting}
+          />
+          <EditExpenseDialog
+            currencyValue={
+              budget.expenses.find((e: any) => e.id === openId)?.currency
+            }
+            amount={budget.expenses
+              .find((e: any) => e.id === openId)
+              ?.amount.toString()}
+            open={openEditExpenseDialog}
+            setOpen={setOpenEditExpenseDialog}
+            id={openId}
+          />
         </div>
       )}
     </div>
