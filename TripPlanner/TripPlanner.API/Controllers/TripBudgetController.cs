@@ -48,7 +48,7 @@ public class TripBudgetController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetBudgetById(Guid budgetId)
     {
-        var budget = await _tripBudgetsService.GetTripBudgetById(budgetId);
+        var budget = await _tripBudgetsService.GetTripBudgetById(budgetId, User.GetUserId());
 
         return Ok(budget);
     }

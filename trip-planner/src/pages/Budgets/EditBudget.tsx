@@ -7,13 +7,6 @@ import {
   } from "@/components/ui/card";
   import "./styles/CreateEditBudget.css";
   import { Label } from "@/components/ui/label";
-  import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
   import BudgetTypes from "./BudgetTypes";
   import { Input } from "@/components/ui/input";
   import { Textarea } from "@/components/ui/textarea";
@@ -34,7 +27,7 @@ import {
     FormLabel,
     FormMessage,
   } from "@/components/ui/form";
-  import { addTripBudget, editTripBudget, getTripBudgetEditInfo, getTripTravellersForBudget } from "@/api/TriBudgetsService";
+  import { editTripBudget, getTripBudgetEditInfo } from "@/api/TriBudgetsService";
   import { checkTokenValidity } from "@/utils/jwtUtils";
   import { refreshAccessToken } from "@/api/AuthenticationService";
   import { toast } from "sonner";
@@ -158,7 +151,8 @@ import {
       let sum = 0;
       Object.keys(selectedMemberBudgets).forEach((key: any) => {
         if (selectedMembers.find((member: any) => member.value === key)) {
-          sum += Number(selectedMemberBudgets[key]);
+          const value = selectedMemberBudgets[key];
+          sum += value ? Number(value) : 0;
         }
       });
   
@@ -202,16 +196,16 @@ import {
                     className="create-edit-budget-currency-input"
                     decimalSeparator="."
                     placeholder="Please enter a number"
-                    suffix={` ${value}`}
                     step={1}
-                    value={selectedMemberBudgets[traveller.email] || 0}
+                    prefix={`${value} `}
+                    value={selectedMemberBudgets[traveller.email]}
                     allowNegativeValue={false}
                     allowDecimals={true}
                     onValueChange={(value, _name, _values) => {
+                      console.log(selectedMemberBudgets[traveller.email]);
                       const updatedBudgets = {
                         ...selectedMemberBudgets,
-                        [traveller.email]:
-                          value && Number(value) > 100000 ? 100000 : value,
+                        [traveller.email]: value && Number(value) > 100000 ? 100000 : value,
                       };
   
                       setSelectedMemberBudgets(updatedBudgets);
@@ -451,13 +445,13 @@ import {
                         id="input-example"
                         name="input-name"
                         placeholder="Please enter a number"
-                        suffix={` ${value}`}
+                        prefix={`${value} `}
                         value={totalBudget}
                         allowNegativeValue={false}
                         decimalsLimit={2}
                         onValueChange={(value, _name, _values) =>
                           setTotalBudget(
-                            value && Number(value) > 100000 ? 100000 : value || 0
+                            value && Number(value) > 100000 ? 100000 : value ?? 0
                           )
                         }
                       />

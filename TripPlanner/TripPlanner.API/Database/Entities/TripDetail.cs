@@ -21,6 +21,7 @@ public class TripDetail
 
     public DateTime? EndTime { get; set; }
 
+    [DeleteBehavior(DeleteBehavior.Restrict)]
     public virtual Trip? Trip { get; set; }
 
     public Guid? TripId { get; set; }

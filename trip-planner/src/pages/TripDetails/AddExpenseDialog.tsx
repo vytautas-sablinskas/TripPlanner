@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CurrencySelector } from "../Budgets/CurrencySelector";
 import CurrencyInput from "react-currency-input-field";
 import { ActivityTypes } from "./ActivityTypes";
@@ -49,6 +49,11 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
       name: "",
     },
   });
+
+  
+  useEffect(() => {
+    form.setValue("currency", mainCurrency);
+  }, [mainCurrency]);
 
   const getTripId = () => {
     const paths = location.pathname.split("/");
@@ -182,7 +187,7 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
                       className="create-edit-budget-currency-input z-50"
                       decimalSeparator="."
                       placeholder="Please enter a number"
-                      suffix={` ${form.getValues("currency")}`}
+                      prefix={`${form.getValues("currency")} `}
                       step={1}
                       value={field.value}
                       allowNegativeValue={false}
