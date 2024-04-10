@@ -430,7 +430,7 @@ const TripDetails = () => {
             open={openAddExpenseDialog}
             setOpen={setOpenAddExpenseDialog}
             onAdd={onExpenseAdd}
-            budgetId={openId}
+            budgetId={selectedBudget}
           />
           <DeleteDialog
             title="Delete Expense"
