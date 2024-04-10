@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import "./styles/google-autocomplete.css";
 import Autocomplete from "react-google-autocomplete";
 
-const GoogleAutocomplete = ({ className, onSelect } : any) => {
+const GoogleAutocomplete = ({ className, onSelect, value } : any) => {
     return (
         <Autocomplete 
             apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
@@ -14,6 +14,7 @@ const GoogleAutocomplete = ({ className, onSelect } : any) => {
                 "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
                 className
             )}
+            defaultValue={value || ""}
         />
     )
 }

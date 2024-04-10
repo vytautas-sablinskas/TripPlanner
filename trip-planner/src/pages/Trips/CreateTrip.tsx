@@ -24,6 +24,7 @@ import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 import PasswordInput from "@/components/Extra/PasswordInput";
+import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
 const MAX_FILE_SIZE = 2000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -174,14 +175,10 @@ const CreateTrip = () => {
                 control={form.control}
                 name="tripTitle"
                 render={({ field }) => (
-                  <FormItem className="inputs">
+                  <FormItem className="inputs mb-4">
                     <FormLabel required>Trip Name</FormLabel>
-                    <FormControl className="w-full mb-4">
-                      <PasswordInput 
-                        value={field.value}
-                        onChange={(e : any) => field.onChange(e.target.value)}
-                        autoComplete="current-password"
-                      />
+                    <FormControl>
+                      <Input {...field} placeholder="Enter trip name" className="w-full"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -191,10 +188,15 @@ const CreateTrip = () => {
                 control={form.control}
                 name="destinationCountry"
                 render={({ field }) => (
-                  <FormItem className="inputs">
-                    <FormLabel required>Destination Country</FormLabel>
-                    <FormControl className="w-full mb-4">
-                      <Input placeholder="Enter destination" {...field} />
+                  <FormItem className="inputs mb-4">
+                    <FormLabel required>Destination</FormLabel>
+                    <FormControl>
+                      <GoogleAutocomplete
+                        onSelect={(place : any) => {
+                          field.onChange(place.formatted_address);
+                        }}
+                        className="w-full"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -205,8 +207,8 @@ const CreateTrip = () => {
                 name="date"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel required>Trip Date Range</FormLabel>
-                    <FormControl className="mb-4">
+                    <FormLabel required className="mb-4">Trip Date Range</FormLabel>
+                    <FormControl>
                       <DatePickerWithRange
                         field={field}
                         className="text-left font-normal"
@@ -244,7 +246,7 @@ const CreateTrip = () => {
             </div>
           </div>
           <div className="submit-buttons-container">
-            <Button disabled={loading} onClick={() => navigate(Paths.TRIPS)}>
+            <Button type="button" disabled={loading} onClick={() => navigate(Paths.TRIPS)}>
               Cancel
             </Button>
             <CreateEditLoadingButton loading={loading} text="Submit" />
