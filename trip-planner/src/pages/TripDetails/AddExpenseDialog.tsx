@@ -30,11 +30,11 @@ const formSchema = z.object({
   eventType: z.string(),
 });
 
-const AddExpenseDialog = ({ open, setOpen }: any) => {
+const AddExpenseDialog = ({ open, setOpen, mainCurrency }: any) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      currency: "EUR",
+      currency: mainCurrency,
       amount: "0",
       eventType: "0",
     },

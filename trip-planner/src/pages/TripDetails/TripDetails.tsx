@@ -351,6 +351,7 @@ const TripDetails = () => {
             </AccordionItem>
           </Accordion>
           <AddExpenseDialog
+            mainCurrency={budget.currency}
             open={openAddExpenseDialog}
             setOpen={setOpenAddExpenseDialog}
           />
