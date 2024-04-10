@@ -17,12 +17,17 @@ public class ExpenseController : ControllerBase
         _expenseService = expenseService;
     }
 
-    [HttpPost("budgets/{budgetId}/expense")]
+    [HttpPost("trips/{tripId}/budgets/{budgetId}/expenses")]
     [Authorize]
     public async Task<IActionResult> AddExpense(Guid budgetId, AddExpenseDto dto)
     {
-        await _expenseService.AddExpense(budgetId, User.GetUserId(), dto);
+        var expense = await _expenseService.AddExpense(budgetId, User.GetUserId(), dto);
 
-        return Ok();
+        if (expense == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(expense);
     }
 }
