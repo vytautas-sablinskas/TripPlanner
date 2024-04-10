@@ -58,6 +58,7 @@ const ENDPOINTS = {
     },
     EXPENSES: {
         ADD_EXPENSE: `${BASE_URL}/trips/:tripId/budgets/:budgetId/expenses`,
+        DELETE_EXPENSE: `${BASE_URL}/trips/:tripId/budgets/:budgetId/expenses/:expenseId`,
     }
 };
 

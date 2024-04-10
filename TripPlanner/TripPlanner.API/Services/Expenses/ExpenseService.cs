@@ -55,4 +55,30 @@ public class ExpenseService : IExpenseService
 
         return new CreatedExpenseResponseDto(budget.SpentAmount, createdExpense.Id, user.PhotoUri, $"{user.Name} {user.Surname}");
     }
+
+    public async Task<DeleteExpenseResponseDto> DeleteExpense(Guid expenseId)
+    {
+        var expense = await _expenseRepository.FindByCondition(e => e.Id == expenseId)
+            .FirstOrDefaultAsync();
+        if (expense == null)
+        {
+            return null;
+        }
+
+        var budget = await _tripBudgetRepository.FindByCondition(b => b.Id == expense.TripBudgetId)
+            .FirstOrDefaultAsync();
+        if (budget == null)
+        {
+            return null;
+        }
+
+        var newSpentAmount = budget.SpentAmount - expense.AmountInMainCurrency < 0 ? 0 : budget.SpentAmount - expense.AmountInMainCurrency;
+        budget.SpentAmount = newSpentAmount;
+        await _tripBudgetRepository.Update(budget);
+
+        await _expenseRepository.Delete(expense);
+
+
+        return new DeleteExpenseResponseDto(newSpentAmount);
+    }
 }

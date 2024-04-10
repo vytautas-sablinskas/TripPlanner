@@ -30,4 +30,18 @@ public class ExpenseController : ControllerBase
 
         return Ok(expense);
     }
+
+    [HttpDelete("trips/{tripId}/budgets/{budgetId}/expenses/{expenseId}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteExpense(Guid expenseId)
+    {
+        var response = await _expenseService.DeleteExpense(expenseId);
+
+        if (response == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(response);
+    }
 }
