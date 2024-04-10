@@ -79,6 +79,7 @@ public class TripBudgetsService : ITripBudgetsService
         return new TripBudgetMainViewDto(
             budget.Id,
             budget.MainCurrency,
+            budget.UnlimitedBudget ?? false,
             spentAmount,
             totalBudget,
             expensesDto

@@ -258,7 +258,7 @@ const TripDetails = () => {
 
   const getSpentAmountPercentage = () => {
     const percentage = (budget.spentAmount / budget.budgetAmount) * 100;
-    return percentage > 100 ? 100 : percentage;
+    return percentage > 100 || budget.unlimitedBudget ? 100 : percentage;
   };
 
   const onExpenseAdd = (response: any, formValues: any) => {
@@ -357,8 +357,7 @@ const TripDetails = () => {
                   {budget.spentAmount.toFixed(2).toLocaleString()}
                 </p>
                 <p className="total-budget-amount">
-                  Budget: {budget.currency}{" "}
-                  {budget.budgetAmount.toLocaleString()}
+                  {budget.unlimitedBudget ? "Unlimited Budget" : `Budget: ${budget.currency} ${budget.budgetAmount.toLocaleString()}`}
                 </p>
               </div>
               <Progress value={getSpentAmountPercentage()} className="h-2" />
