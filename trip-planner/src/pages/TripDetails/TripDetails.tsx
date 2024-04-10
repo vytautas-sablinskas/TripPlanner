@@ -236,9 +236,24 @@ const TripDetails = () => {
     setOpenDeleteExpenseDialog(false);
   };
 
-  const handeEditSubmit = (formValues: any) => {
-    console.log(openId);
-    console.log(formValues);
+  const handeEditSubmit = (formValues: any, response : any) => {
+    setBudget({
+      ...budget,
+      spentAmount: response.amount,
+      expenses: budget.expenses.map((e: any) => {
+        if (e.id === openId) {
+          return {
+            ...e,
+            name: formValues.name,
+            currency: formValues.currency,
+            amount: Number(formValues.amount),
+            type: Number(formValues.eventType),
+          };
+        }
+        return e;
+      }),
+    })
+    setOpenEditExpenseDialog(false);
   };
 
   const getSpentAmountPercentage = () => {
@@ -453,8 +468,10 @@ const TripDetails = () => {
               ?.type.toString()}
             open={openEditExpenseDialog}
             setOpen={setOpenEditExpenseDialog}
-            id={openId}
+            expenseId={openId}
             handeEditSubmit={handeEditSubmit}
+            name={budget.expenses.find((e: any) => e.id === openId)?.name}
+            budgetId={selectedBudget}
           />
         </div>
       )}

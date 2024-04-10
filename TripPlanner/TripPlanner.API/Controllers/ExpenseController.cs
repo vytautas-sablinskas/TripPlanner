@@ -44,4 +44,18 @@ public class ExpenseController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPut("trips/{tripId}/budgets/{budgetId}/expenses/{expenseId}")]
+    [Authorize]
+    public async Task<IActionResult> EditExpense(Guid budgetId, Guid expenseId, AddExpenseDto dto)
+    {
+        var response = await _expenseService.EditExpense(budgetId, expenseId, dto);
+
+        if (response == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(response);
+    }
 }

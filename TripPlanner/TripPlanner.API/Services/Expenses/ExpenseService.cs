@@ -81,4 +81,35 @@ public class ExpenseService : IExpenseService
 
         return new DeleteExpenseResponseDto(newSpentAmount);
     }
+
+    public async Task<EditExpenseResponseDto> EditExpense(Guid budgetId, Guid expenseId, AddExpenseDto dto)
+    {
+        var budget = await _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
+            .FirstOrDefaultAsync();
+
+        if (budget == null)
+        {
+            return null;
+        }
+
+        var rate = await _currencyExchangeService.GetCurrencyInformation(DateTime.UtcNow, budget.MainCurrency, dto.Currency);
+
+        var currentExpense = await _expenseRepository.FindByCondition(t => t.Id == expenseId)
+            .FirstOrDefaultAsync();
+
+        var spentAmountInMainCurrency = rate * dto.Amount;
+        var newAmount = budget.SpentAmount - currentExpense.AmountInMainCurrency + spentAmountInMainCurrency;
+        newAmount = newAmount < 0 ? 0 : newAmount;
+        budget.SpentAmount = newAmount;
+        await _tripBudgetRepository.Update(budget);
+
+        currentExpense.Currency = dto.Currency;
+        currentExpense.AmountInMainCurrency = dto.Amount * rate;
+        currentExpense.Amount = dto.Amount;
+        currentExpense.Name = dto.Name;
+        currentExpense.Type = dto.Type;
+        await _expenseRepository.Update(currentExpense);
+
+        return new EditExpenseResponseDto(newAmount);
+    }
 }
