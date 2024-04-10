@@ -23,11 +23,13 @@ import { CurrencySelector } from "../Budgets/CurrencySelector";
 import CurrencyInput from "react-currency-input-field";
 import { ActivityTypes } from "./ActivityTypes";
 import { ValueSelector } from "@/components/Extra/ValueSelector";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   currency: z.string(),
   amount: z.string().optional(),
   eventType: z.string(),
+  name: z.string().optional(),
 });
 
 const AddExpenseDialog = ({ open, setOpen, mainCurrency }: any) => {
@@ -37,6 +39,7 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency }: any) => {
       currency: mainCurrency,
       amount: "0",
       eventType: "0",
+      name: "",
     },
   });
 
@@ -71,24 +74,6 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency }: any) => {
             </DialogHeader>
             <FormField
               control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel required>Currency</FormLabel>
-                  <FormControl>
-                    <CurrencySelector
-                      value={field.value}
-                      setValue={field.onChange}
-                      searchTerm={searchTerm}
-                      setSearchTerm={setSearchTerm}
-                      modal
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="eventType"
               render={({ field }) => (
                 <FormItem className=" mt-4">
@@ -103,6 +88,37 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency }: any) => {
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className=" mt-4">
+                  <FormLabel>Name</FormLabel>
+                  <FormControl className="w-full">
+                    <Input {...field} placeholder="Enter name of expense" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="currency"
+              render={({ field }) => (
+                <FormItem className="mt-4">
+                  <FormLabel required>Currency</FormLabel>
+                  <FormControl>
+                    <CurrencySelector
+                      value={field.value}
+                      setValue={field.onChange}
+                      searchTerm={searchTerm}
+                      setSearchTerm={setSearchTerm}
+                      modal
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />

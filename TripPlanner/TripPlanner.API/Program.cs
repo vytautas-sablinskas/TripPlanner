@@ -14,6 +14,8 @@ using TripPlanner.API.Database.Policies;
 using TripPlanner.API.Database.Seeders;
 using TripPlanner.API.Services.Authentication;
 using TripPlanner.API.Services.AzureBlobStorage;
+using TripPlanner.API.Services.CurrencyExchangeService;
+using TripPlanner.API.Services.Expenses;
 using TripPlanner.API.Services.Notifications;
 using TripPlanner.API.Services.Profile;
 using TripPlanner.API.Services.TripBudgets;
@@ -67,6 +69,8 @@ public static class Program
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(configuration["AzureBlobStorage:ContainerName"]);
         services.AddScoped(provider => blobContainerClient);
 
+        services.AddHttpClient();
+
         services.AddScoped<IRepository<AppUser>, Repository<AppUser>>();
         services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>();
         services.AddScoped<IRepository<Traveller>, Repository<Traveller>>();
@@ -77,6 +81,7 @@ public static class Program
         services.AddScoped<IRepository<TripBudgetMember>, Repository<TripBudgetMember>>();
         services.AddScoped<IRepository<TripDocument>, Repository<TripDocument>>();
         services.AddScoped<IRepository<Expense>, Repository<Expense>>();
+        services.AddScoped<IRepository<CurrencyExchangeRate>, Repository<CurrencyExchangeRate>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITripService, TripService>();
@@ -91,6 +96,8 @@ public static class Program
         services.AddScoped<ITripBudgetsService, TripBudgetsService>();
         services.AddScoped<IProfileService, ProfileService>();
         services.AddScoped<ITripDocumentService, TripDocumentService>();
+        services.AddScoped<ICurrencyExchangeService, CurrencyExchangeService>();
+        services.AddScoped<IExpenseService, ExpenseService>();
 
         services.AddAutoMapper(typeof(Program));
 
