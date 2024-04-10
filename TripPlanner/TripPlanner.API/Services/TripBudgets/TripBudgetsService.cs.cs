@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Enums;
+using TripPlanner.API.Dtos.Expenses;
 using TripPlanner.API.Dtos.TripBudgets;
 using TripPlanner.API.Dtos.TripTravellers;
 
@@ -33,6 +34,36 @@ public class TripBudgetsService : ITripBudgetsService
         var travellerMinimalDtos = travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}", t.User.PhotoUri));
 
         return travellerMinimalDtos;
+    }
+
+    public async Task<TripBudgetMainViewDto> GetTripBudgetById(Guid budgetId)
+    {
+        var budget = await _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
+            .Include(b => b.Expenses)
+            .FirstOrDefaultAsync();
+
+        var expenses = budget.Expenses.Select(e => {
+            var user = _appUserRepository.FindByCondition(t => t.Id == e.UserId)
+                .FirstOrDefault();
+
+            return new ExpenseDto(
+                e.Id,
+                e.Currency,
+                e.Amount,
+                e.Name,
+                e.Type,
+                user.PhotoUri,
+                $"{user.Name} {user.Surname}"
+            );   
+        });
+
+        return new TripBudgetMainViewDto(
+            budget.Id,
+            budget.MainCurrency,
+            budget.SpentAmount,
+            budget.Budget,
+            expenses
+        );
     }
 
     public async Task<EditBudgetCurrentInfoDto> GetEditBudgetCurrentInfo(Guid tripId, Guid budgetId)

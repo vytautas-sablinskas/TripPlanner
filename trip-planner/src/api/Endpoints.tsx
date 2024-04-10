@@ -42,6 +42,7 @@ const ENDPOINTS = {
         ADD_BUDGET: `${BASE_URL}/trips/:tripId/budgets`,
         EDIT_BUDGET: `${BASE_URL}/trips/:tripId/budgets/:budgetId`,
         GET_BUDGETS: `${BASE_URL}/trips/:tripId/budgets`,
+        GET_BUDGET: `${BASE_URL}/trips/:tripId/budgets/:budgetId`,
         GET_CURRENT_EDIT_INFO: `${BASE_URL}/trips/:tripId/budgets/:budgetId/info`,
         DELETE_BUDGET: `${BASE_URL}/trips/:tripId/budgets/:budgetId`,
     },

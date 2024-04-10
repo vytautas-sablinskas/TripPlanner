@@ -23,6 +23,7 @@ import {
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import AddExpenseDialog from "./AddExpenseDialog";
+import { getTripBudget } from "@/api/TriBudgetsService";
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
@@ -31,44 +32,16 @@ const TripDetails = () => {
     useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const [budgetIds, setBudgetIds] = useState<any>([
-    { value: "id1", label: "First budget name" },
-    { value: "id2", label: "Second budget name" },
-  ]);
+  const [budgetIds, setBudgetIds] = useState<any>([]);
   const [openId, setOpenId] = useState<any>(null);
-  const [selectedBudget, setSelectedBudget] = useState<any>(budgetIds[0]);
+  const [selectedBudget, setSelectedBudget] = useState<any>(null);
   const [openDeleteExpenseDialog, setOpenDeleteExpenseDialog] = useState(false);
   const [openEditExpenseDialog, setOpenEditExpenseDialog] = useState(false);
   const [openAddExpenseDialog, setOpenAddExpenseDialog] = useState(false);
   const [isEditSubmitting, setIsEditSubmitting] = useState(false);
   const [isDeleteExpenseSubmitting, setIsDeleteExpenseSubmitting] =
     useState(false);
-  const [budget, setBudget] = useState<any>({
-    id: "id1",
-    currency: "USD",
-    spentAmount: 113932.51,
-    budgetAmount: 50433.56,
-    expenses: [
-      {
-        id: 44,
-        currency: "EUR",
-        amount: 140.53,
-        name: "Dinner at a fancy restaurant",
-        type: 0,
-        personPhoto: "/avatar-placeholder.png",
-        personName: "LebronZE James",
-      },
-      {
-        id: 22,
-        currency: "DJF",
-        amount: 44.22,
-        name: "Dinner at a fancy restaurant",
-        type: 1,
-        personPhoto: "/avatar-placeholder.png",
-        personName: "John Doe",
-      },
-    ],
-  });
+  const [budget, setBudget] = useState<any>(null);
 
   const getTripId = () => {
     const paths = location.pathname.split("/");
@@ -128,7 +101,48 @@ const TripDetails = () => {
 
     setIsLoading(false);
     setTripDetails(tripDetails);
+
+    if (!data.budgets || data.budgets.length === 0) return;
+
+    setBudgetIds(data.budgets);
+    setSelectedBudget(data.budgets[0].value);
   };
+
+  useEffect(() => {
+    const fetchBudget = async () => {
+      const accessToken = localStorage.getItem("accessToken");
+
+      if (!checkTokenValidity(accessToken || "")) {
+        const result = await refreshAccessToken();
+        if (!result.success) {
+          toast.error("Session has expired. Login again!", {
+            position: "top-center",
+          });
+
+          changeUserInformationToLoggedOut();
+          navigate(Paths.LOGIN);
+          return;
+        }
+
+        changeUserInformationToLoggedIn(
+          result.data.accessToken,
+          result.data.refreshToken
+        );
+      }
+
+      const response = await getTripBudget(getTripId(), selectedBudget);
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      setBudget(data);
+    }
+
+    if (!selectedBudget) return;
+
+    fetchBudget();
+  }, [selectedBudget]);
 
   useEffect(() => {
     tryFetchingTripDetails();
@@ -140,7 +154,6 @@ const TripDetails = () => {
 
   const onBudgetChange = (value: any) => {
     setSelectedBudget(value);
-    console.log(value);
   };
 
   const getBudgetType = (type: any) => {
@@ -230,7 +243,7 @@ const TripDetails = () => {
           onDelete={handleDelete}
         />
       </div>
-      {budgetIds && budgetIds.length > 0 && (
+      {budgetIds && budgetIds.length > 0 && budget && (
         <div className="trip-budget-main-container">
           <div className="trip-budget-information">
             <p className="trip-details-itinerary">Budgeting</p>

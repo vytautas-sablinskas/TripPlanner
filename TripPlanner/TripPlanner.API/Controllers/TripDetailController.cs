@@ -21,7 +21,7 @@ public class TripDetailController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetTripDetails(Guid tripId)
     {
-        var details = await _tripDetailsService.GetTripDetails(tripId);
+        var details = await _tripDetailsService.GetTripDetails(tripId, User.GetUserId());
 
         return Ok(details);
     }
