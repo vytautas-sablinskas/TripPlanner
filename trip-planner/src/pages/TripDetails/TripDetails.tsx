@@ -265,7 +265,7 @@ const TripDetails = () => {
             <div className="trip-budget-all-info-first-column">
               <div className="flex m-2 justify-between items-end">
                 <p className="spent-budget-currency">
-                  {budget.currency} {budget.spentAmount.toLocaleString()}
+                  {budget.currency} {budget.spentAmount.toFixed(2).toLocaleString()}
                 </p>
                 <p className="total-budget-amount">
                   Budget: {budget.currency}{" "}
@@ -313,7 +313,7 @@ const TripDetails = () => {
                     <div className="flex items-center">
                       <div className="flex flex-col items-end">
                         <p className="font-bold">
-                          {expense.currency} {expense.amount.toLocaleString()}
+                          {expense.currency} {expense.amount.toFixed(2).toLocaleString()}
                         </p>
                         <div className="expense-person-photo-container">
                           <div className="expense-person-image-name-container">

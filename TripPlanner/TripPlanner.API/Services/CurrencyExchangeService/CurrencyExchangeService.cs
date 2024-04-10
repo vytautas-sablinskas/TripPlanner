@@ -9,11 +9,13 @@ public class CurrencyExchangeService : ICurrencyExchangeService
 {
     private readonly IRepository<CurrencyExchangeRate> _currencyExchangeRateRepository;
     private readonly HttpClient _httpClient;
+    private readonly IConfiguration _configuration;
 
-    public CurrencyExchangeService(IRepository<CurrencyExchangeRate> currencyExchangeRateRepository, HttpClient httpClient)
+    public CurrencyExchangeService(IRepository<CurrencyExchangeRate> currencyExchangeRateRepository, HttpClient httpClient, IConfiguration configuration)
     {
         _currencyExchangeRateRepository = currencyExchangeRateRepository;
         _httpClient = httpClient;
+        _configuration = configuration;
     }
 
     public async Task<double> GetCurrencyInformation(DateTime date, string mainCurrency, string currencyToGet)
@@ -41,8 +43,9 @@ public class CurrencyExchangeService : ICurrencyExchangeService
     private async Task<double> FetchOpenExchangeAPIAndGetRate(DateTime date, string mainCurrency, string toCurrency)
     {
         double toCurrencyRate = 0;
+        var API_KEY = _configuration["OpenExchangeAPI:Key"];
 
-        HttpResponseMessage response = await _httpClient.GetAsync($"https://v6.exchangerate-api.com/v6/4149911c852b454f593fcab2/latest/{mainCurrency}");
+        HttpResponseMessage response = await _httpClient.GetAsync($"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{mainCurrency}");
 
         if (response.IsSuccessStatusCode)
         {
