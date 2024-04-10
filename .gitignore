@@ -411,3 +411,4 @@ trip-planner/.vite/deps/package.json
 trip-planner/.vite/deps/react.js
 trip-planner/.vite/deps/react.js.map
 /TripPlanner/TripPlanner.API/appsettings.json
+trip-planner/.env
