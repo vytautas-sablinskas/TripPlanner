@@ -24,20 +24,32 @@ import { CurrencySelector } from "../Budgets/CurrencySelector";
 import CurrencyInput from "react-currency-input-field";
 import { ActivityTypes } from "./ActivityTypes";
 import { ValueSelector } from "@/components/Extra/ValueSelector";
+import { Input } from "@/components/ui/input";
+import { checkTokenValidity } from "@/utils/jwtUtils";
+import { refreshAccessToken } from "@/api/AuthenticationService";
+import { toast } from "sonner";
+import Paths from "@/routes/Paths";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@/providers/user-provider/UserContext";
+import { editExpense } from "@/api/ExpensesService";
 
 const formSchema = z.object({
   currency: z.string(),
   amount: z.string().optional(),
   eventType: z.string(),
+  name: z.string().optional(),
 });
 
 const EditExpenseDialog = ({
   currencyValue,
   amount,
   eventType,
+  name,
   open,
   setOpen,
   handeEditSubmit,
+  budgetId,
+  expenseId,
 }: any) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,19 +57,28 @@ const EditExpenseDialog = ({
       currency: currencyValue,
       amount: amount || "0",
       eventType: eventType,
+      name: name || "",
     },
   });
 
+  const getTripId = () => {
+    const paths = location.pathname.split("/");
+    return paths[paths.length - 1];
+  };
+
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
 
   useEffect(() => {
     form.setValue("currency", currencyValue);
     form.setValue("amount", amount);
     form.setValue("eventType", eventType);
+    form.setValue("name", name);
   }, [open]);
 
-  const onSubmit = (formValues: any) => {
+  const onSubmit = async (formValues: any) => {
     if (!formValues.amount || formValues.amount === "0") {
       form.setError("amount", {
         message: "Expense amount has to be greater than 0",
@@ -65,11 +86,47 @@ const EditExpenseDialog = ({
       return;
     }
 
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
+          position: "top-center",
+        });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken
+      );
+    }
+
     setIsLoading(true);
-    handeEditSubmit(formValues);
+    const response = await editExpense(getTripId(), budgetId, expenseId, { currency: formValues.currency, type: Number(formValues.eventType), name: formValues.name, amount: Number(formValues.amount) })
+    if (!response.ok) {
+      toast.error("Failed to edit expense", {
+        position: "top-center",
+      });
+      setIsLoading(false);
+      return;
+    }
+    
+    const data = await response.json();
+
+    handeEditSubmit(formValues, data);
     setIsLoading(false);
   };
 
+  const handleCancel = (e : any) => {
+    e.preventDefault();
+    setOpen(false);
+  }
+ 
   return (
     <Dialog open={open} onOpenChange={() => !isLoading && setOpen(!open)}>
       <DialogContent
@@ -83,24 +140,6 @@ const EditExpenseDialog = ({
             <DialogHeader>
               <DialogTitle>Edit Expense</DialogTitle>
             </DialogHeader>
-            <FormField
-              control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel required>Currency</FormLabel>
-                  <FormControl>
-                    <CurrencySelector
-                      value={field.value}
-                      setValue={field.onChange}
-                      searchTerm={searchTerm}
-                      setSearchTerm={setSearchTerm}
-                      modal
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="eventType"
@@ -120,6 +159,38 @@ const EditExpenseDialog = ({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className=" mt-4">
+                  <FormLabel>Name</FormLabel>
+                  <FormControl className="w-full">
+                    <Input {...field} placeholder="Enter name of expense" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="currency"
+              render={({ field }) => (
+                <FormItem className="mt-4">
+                  <FormLabel required>Currency</FormLabel>
+                  <FormControl>
+                    <CurrencySelector
+                      value={field.value}
+                      setValue={field.onChange}
+                      searchTerm={searchTerm}
+                      setSearchTerm={setSearchTerm}
+                      modal
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="amount"
@@ -150,7 +221,7 @@ const EditExpenseDialog = ({
             />
             <DialogFooter className="flex flex-col mt-4">
               <DialogClose>
-                <Button className="w-full mb-4" disabled={isLoading}>
+                <Button className="w-full mb-4" disabled={isLoading} onClick={handleCancel}>
                   Cancel
                 </Button>
               </DialogClose>
