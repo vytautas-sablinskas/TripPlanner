@@ -41,13 +41,17 @@ public class TripBudgetsService : ITripBudgetsService
         return travellerMinimalDtos;
     }
 
-    public async Task<TripBudgetMainViewDto> GetTripBudgetById(Guid budgetId)
+    public async Task<TripBudgetMainViewDto> GetTripBudgetById(Guid budgetId, string userId)
     {
         var budget = await _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
             .Include(b => b.Expenses)
             .FirstOrDefaultAsync();
 
-        var expenses = budget.Expenses.Select(e => {
+        var expenses = budget.Expenses
+            .Where(e => budget.Type == BudgetTypes.IndividualWithFixedAmount ? e.UserId == userId : true);
+
+        var expensesDto = expenses
+            .Select(e => {
             var user = _appUserRepository.FindByCondition(t => t.Id == e.UserId)
                 .FirstOrDefault();
 
@@ -62,12 +66,22 @@ public class TripBudgetsService : ITripBudgetsService
             );   
         });
 
+        var spentAmount = budget.SpentAmount;
+        var totalBudget = budget.Budget;
+        if (budget.Type == BudgetTypes.IndividualWithFixedAmount)
+        {
+            spentAmount = expenses.Sum(e => e.Amount);
+            var member = await _tripBudgetMembersRepository.FindByCondition(m => m.TripBudgetId == budgetId && m.UserId == userId)
+                .FirstOrDefaultAsync();
+            totalBudget = member.Amount;
+        }
+
         return new TripBudgetMainViewDto(
             budget.Id,
             budget.MainCurrency,
-            budget.SpentAmount,
-            budget.Budget,
-            expenses
+            spentAmount,
+            totalBudget,
+            expensesDto
         );
     }
 
