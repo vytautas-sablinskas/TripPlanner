@@ -23,7 +23,6 @@ import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
-import PasswordInput from "@/components/Extra/PasswordInput";
 import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
 const MAX_FILE_SIZE = 2000000;
@@ -39,7 +38,7 @@ const formSchema = z.object({
     message: "Trip name must be at least 1 character.",
   }),
   destinationCountry: z.string().min(1, {
-    message: "This field is required.",
+    message: "Destination must be selected.",
   }),
   date: z
     .object({
@@ -195,6 +194,8 @@ const CreateTrip = () => {
                         onSelect={(place : any) => {
                           field.onChange(place.formatted_address);
                         }}
+                        types={["(cities)"]}
+                        fields={["formatted_address"]}
                         className="w-full"
                       />
                     </FormControl>

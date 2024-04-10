@@ -9,7 +9,7 @@
 .edit-trip-details-main-container {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 12px;
     width: 70%;
 }
 

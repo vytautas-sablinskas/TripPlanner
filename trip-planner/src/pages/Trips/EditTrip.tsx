@@ -38,7 +38,7 @@ const formSchema = z.object({
     message: "Trip name must be at least 1 character.",
   }),
   destinationCountry: z.string().min(1, {
-    message: "This field is required.",
+    message: "Destination must be selected.",
   }),
   date: z
     .object({
@@ -260,6 +260,8 @@ const EditTrip = () => {
                         onSelect={(place: any) => {
                           field.onChange(place.formatted_address);
                         }}
+                        types={["(cities)"]}
+                        fields={["formatted_address"]}
                         value={field.value}
                         className="w-full"
                       />
