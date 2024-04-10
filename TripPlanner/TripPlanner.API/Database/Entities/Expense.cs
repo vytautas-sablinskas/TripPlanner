@@ -16,6 +16,10 @@ public class Expense
 
     public double AmountInMainCurrency { get; set; }
 
+    public virtual TripBudget TripBudget { get; set; }
+
+    public Guid TripBudgetId { get; set; }
+
     public virtual AppUser User { get; set; }
 
     public string UserId { get; set; }

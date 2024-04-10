@@ -55,6 +55,9 @@ const ENDPOINTS = {
         ADD_NEW_DOCUMENT: `${BASE_URL}/trips/:tripId/tripDetails/:tripDetailId/documents`,
         EDIT_DOCUMENT: `${BASE_URL}/trips/:tripId/tripDetails/:tripDetailId/documents/:documentId`,
         DELETE_DOCUMENT: `${BASE_URL}/trips/:tripId/tripDetails/:tripDetailId/documents/:documentId`,
+    },
+    EXPENSES: {
+        ADD_EXPENSE: `${BASE_URL}/trips/:tripId/budgets/:budgetId/expenses`,
     }
 };
 

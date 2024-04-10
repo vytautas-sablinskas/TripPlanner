@@ -33,17 +33,17 @@ const formSchema = z.object({
 
 const EditExpenseDialog = ({
   currencyValue,
-  id,
   amount,
   eventType,
   open,
   setOpen,
+  handeEditSubmit,
 }: any) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       currency: currencyValue,
-      amount: amount || 0,
+      amount: amount || "0",
       eventType: eventType,
     },
   });
@@ -66,7 +66,7 @@ const EditExpenseDialog = ({
     }
 
     setIsLoading(true);
-
+    handeEditSubmit(formValues);
     setIsLoading(false);
   };
 

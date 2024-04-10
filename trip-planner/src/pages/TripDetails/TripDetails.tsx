@@ -24,6 +24,7 @@ import DeleteDialog from "@/components/Extra/DeleteDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import AddExpenseDialog from "./AddExpenseDialog";
 import { getTripBudget } from "@/api/TriBudgetsService";
+import exp from "constants";
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
@@ -137,6 +138,7 @@ const TripDetails = () => {
 
       const data = await response.json();
       setBudget(data);
+      setOpenId(data.id);
     }
 
     if (!selectedBudget) return;
@@ -192,9 +194,31 @@ const TripDetails = () => {
     console.log(openId);
   };
 
-  const handeEditSubmit = () => {
+  const handeEditSubmit = (formValues : any) => {
     console.log(openId);
+    console.log(formValues);
   };
+
+  const getSpentAmountPercentage = () => {
+    const percentage = (budget.spentAmount / budget.budgetAmount) * 100;
+    return percentage > 100 ? 100 : percentage;
+  }
+
+  const onExpenseAdd = (response : any, formValues : any) => {
+    setBudget({
+      ...budget,
+      spentAmount: response.amount,
+      expenses: [...budget.expenses, {
+        id: response.id,
+        name: formValues.name,
+        currency: formValues.currency,
+        amount: Number(formValues.amount),
+        type: Number(formValues.eventType),
+        personPhoto: response.personPhoto,
+        personName: response.personName,
+      }],
+    })
+  }
 
   return isLoading ? (
     <div>Loading</div>
@@ -265,14 +289,14 @@ const TripDetails = () => {
             <div className="trip-budget-all-info-first-column">
               <div className="flex m-2 justify-between items-end">
                 <p className="spent-budget-currency">
-                  {budget.currency} {budget.spentAmount.toLocaleString()}
+                  {budget.currency} {budget.spentAmount.toFixed(2).toLocaleString()}
                 </p>
                 <p className="total-budget-amount">
                   Budget: {budget.currency}{" "}
                   {budget.budgetAmount.toLocaleString()}
                 </p>
               </div>
-              <Progress value={50} className="h-2" />
+              <Progress value={getSpentAmountPercentage()} className="h-2" />
             </div>
             <div className="right-side-budget">
               <Separator orientation="vertical" className="separator-budget" />
@@ -313,7 +337,7 @@ const TripDetails = () => {
                     <div className="flex items-center">
                       <div className="flex flex-col items-end">
                         <p className="font-bold">
-                          {expense.currency} {expense.amount.toLocaleString()}
+                          {expense.currency} {expense.amount.toFixed(2).toLocaleString()}
                         </p>
                         <div className="expense-person-photo-container">
                           <div className="expense-person-image-name-container">
@@ -351,8 +375,11 @@ const TripDetails = () => {
             </AccordionItem>
           </Accordion>
           <AddExpenseDialog
+            mainCurrency={budget.currency}
             open={openAddExpenseDialog}
             setOpen={setOpenAddExpenseDialog}
+            onAdd={onExpenseAdd}
+            budgetId={openId}
           />
           <DeleteDialog
             title="Delete Expense"
@@ -374,6 +401,7 @@ const TripDetails = () => {
             open={openEditExpenseDialog}
             setOpen={setOpenEditExpenseDialog}
             id={openId}
+            handeEditSubmit={handeEditSubmit}
           />
         </div>
       )}

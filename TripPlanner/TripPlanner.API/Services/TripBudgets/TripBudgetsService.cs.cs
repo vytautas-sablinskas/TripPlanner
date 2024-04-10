@@ -207,9 +207,7 @@ public class TripBudgetsService : ITripBudgetsService
         var budgetDtos = _mapper.Map<IEnumerable<TripBudgetDto>>(budgets);
         budgetDtos = budgetDtos.Select((budget) =>
         {
-            var rnd = new Random();
-            // TODO: remake spent amount to whatever it's after expenses.
-            budget.SpentAmount = rnd.Next(0, (int)budget.Amount);
+            budget.SpentAmount = budget.SpentAmount;
 
             return budget;
         }).ToList();
