@@ -44,6 +44,15 @@ public class TripBudgetController : ControllerBase
         return Ok(budgets);
     }
 
+    [HttpGet("trips/{tripId}/budgets/{budgetId}")]
+    [Authorize]
+    public async Task<IActionResult> GetBudgetById(Guid budgetId)
+    {
+        var budget = await _tripBudgetsService.GetTripBudgetById(budgetId);
+
+        return Ok(budget);
+    }
+
     [HttpPost("trips/{tripId}/budgets")]
     [Authorize]
     public IActionResult CreateBudget(Guid tripId, AddTripBudgetDto dto)

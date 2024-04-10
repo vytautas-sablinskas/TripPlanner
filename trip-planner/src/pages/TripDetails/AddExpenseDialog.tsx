@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { z } from "zod";
@@ -19,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CurrencySelector } from "../Budgets/CurrencySelector";
 import CurrencyInput from "react-currency-input-field";
 import { ActivityTypes } from "./ActivityTypes";
@@ -31,31 +30,18 @@ const formSchema = z.object({
   eventType: z.string(),
 });
 
-const EditExpenseDialog = ({
-  currencyValue,
-  id,
-  amount,
-  eventType,
-  open,
-  setOpen,
-}: any) => {
+const AddExpenseDialog = ({ open, setOpen }: any) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      currency: currencyValue,
-      amount: amount || 0,
-      eventType: eventType,
+      currency: "EUR",
+      amount: "0",
+      eventType: "0",
     },
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-
-  useEffect(() => {
-    form.setValue("currency", currencyValue);
-    form.setValue("amount", amount);
-    form.setValue("eventType", eventType);
-  }, [open]);
 
   const onSubmit = (formValues: any) => {
     if (!formValues.amount || formValues.amount === "0") {
@@ -81,7 +67,7 @@ const EditExpenseDialog = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>Edit Expense</DialogTitle>
+              <DialogTitle>Add Expense</DialogTitle>
             </DialogHeader>
             <FormField
               control={form.control}
@@ -155,7 +141,7 @@ const EditExpenseDialog = ({
                 </Button>
               </DialogClose>
               <Button type="submit" className="mb-4" disabled={isLoading}>
-                Edit Expense
+                Add Expense
               </Button>
             </DialogFooter>
           </form>
@@ -165,4 +151,4 @@ const EditExpenseDialog = ({
   );
 };
 
-export default EditExpenseDialog;
+export default AddExpenseDialog;

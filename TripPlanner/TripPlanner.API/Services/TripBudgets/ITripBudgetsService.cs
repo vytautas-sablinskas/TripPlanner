@@ -9,6 +9,8 @@ namespace TripPlanner.API.Services.TripBudgets
 
         Task<IEnumerable<TripBudgetDto>> GetTripBudgets(Guid tripId, string userId);
 
+        Task<TripBudgetMainViewDto> GetTripBudgetById(Guid budgetId);
+
         Task<EditBudgetCurrentInfoDto> GetEditBudgetCurrentInfo(Guid tripId, Guid budgetId);
 
         Task DeleteTripBudget(Guid budgetId);

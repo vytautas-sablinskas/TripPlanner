@@ -10,7 +10,7 @@ public interface ITripDetailsService
 
     Task DeleteTripDetail(Guid id);
 
-    Task<TripDetailsDto> GetTripDetails(Guid tripId);
+    Task<TripDetailsDto> GetTripDetails(Guid tripId, string userId);
 
     GetEditTripDetailsDto GetTripDetailById(Guid tripId, Guid detailId);
 

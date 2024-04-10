@@ -21,6 +21,11 @@ public class TripBudget
 
     public string MainCurrency { get; set; }
 
+    public double SpentAmount { get; set; }
+
+    [DeleteBehavior(DeleteBehavior.Cascade)]
+    public virtual ICollection<Expense>? Expenses { get; set; }
+
     [DeleteBehavior(DeleteBehavior.Cascade)]
     public virtual ICollection<TripBudgetMember>? BudgetMembers { get; set; }
 

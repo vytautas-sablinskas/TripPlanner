@@ -18,7 +18,7 @@ import {
 import { CommandList } from "cmdk"
 import { supportedCurrencies } from "./currencies"
 
-export function CurrencySelector({ value, setValue, searchTerm, setSearchTerm } : any) {
+export function CurrencySelector({ value, setValue, searchTerm, setSearchTerm, modal } : any) {
   const [open, setOpen] = React.useState(false);
   const currencies = supportedCurrencies.map(([code, name]) => ({ code, name }));
 
@@ -28,7 +28,7 @@ export function CurrencySelector({ value, setValue, searchTerm, setSearchTerm } 
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal ? true : false}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
