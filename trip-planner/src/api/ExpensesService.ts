@@ -14,3 +14,17 @@ export const createExpense = async (tripId : any, budgetId : any, values : any) 
 
     return response;
 }
+
+export const deleteExpense = async (tripId : any, budgetId : any, expenseId : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.EXPENSES.DELETE_EXPENSE.replace(":tripId", tripId).replace(":budgetId", budgetId).replace(":expenseId", expenseId),
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+    return response;
+}
