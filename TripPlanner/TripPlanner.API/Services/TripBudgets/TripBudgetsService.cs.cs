@@ -6,6 +6,7 @@ using TripPlanner.API.Database.Enums;
 using TripPlanner.API.Dtos.Expenses;
 using TripPlanner.API.Dtos.TripBudgets;
 using TripPlanner.API.Dtos.TripTravellers;
+using TripPlanner.API.Services.CurrencyExchangeService;
 
 namespace TripPlanner.API.Services.TripBudgets;
 
@@ -15,14 +16,18 @@ public class TripBudgetsService : ITripBudgetsService
     private readonly IRepository<AppUser> _appUserRepository;
     private readonly IRepository<TripBudget> _tripBudgetRepository;
     private readonly IRepository<TripBudgetMember> _tripBudgetMembersRepository;
+    private readonly IRepository<Expense> _expenseRepository;
+    private readonly ICurrencyExchangeService _currencyExchangeService;
     private readonly IMapper _mapper;
 
-    public TripBudgetsService(IRepository<Traveller> travellerRepository, IRepository<AppUser> appUserRepository, IRepository<TripBudget> tripBudgetRepository, IRepository<TripBudgetMember> tripBudgetMembersRepository, IMapper mapper)
+    public TripBudgetsService(IRepository<Traveller> travellerRepository, IRepository<AppUser> appUserRepository, IRepository<TripBudget> tripBudgetRepository, IRepository<TripBudgetMember> tripBudgetMembersRepository, IRepository<Expense> expenseRepository, ICurrencyExchangeService currencyExchangeService, IMapper mapper)
     {
         _travellersRepository = travellerRepository;
         _appUserRepository = appUserRepository;
         _tripBudgetRepository = tripBudgetRepository;
         _tripBudgetMembersRepository = tripBudgetMembersRepository;
+        _expenseRepository = expenseRepository;
+        _currencyExchangeService = currencyExchangeService;
         _mapper = mapper;
     }
 
@@ -146,6 +151,18 @@ public class TripBudgetsService : ITripBudgetsService
             return;
         }
 
+        var newRate = await _currencyExchangeService.GetCurrencyInformation(DateTime.UtcNow, dto.MainCurrency, budget.MainCurrency);
+
+        double newSpentAmount = 0;
+        var expenses = await _expenseRepository.FindByCondition(e => e.TripBudgetId == budgetId)
+            .ToListAsync();
+        foreach (var expense in expenses)
+        {
+            expense.AmountInMainCurrency = newRate * expense.Amount;
+            newSpentAmount += expense.AmountInMainCurrency;
+            await _expenseRepository.Update(expense);
+        }
+
         budget.Name = dto.Name;
         budget.Description = dto.Description;
         budget.Type = dto.Type;
@@ -153,6 +170,7 @@ public class TripBudgetsService : ITripBudgetsService
         budget.Budget = dto.Budget;
         budget.MainCurrency = dto.MainCurrency;
         budget.BudgetMembers = new List<TripBudgetMember>();
+        budget.SpentAmount = newSpentAmount;
 
         await _tripBudgetRepository.Update(budget);
 

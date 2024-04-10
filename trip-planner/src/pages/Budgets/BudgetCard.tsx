@@ -94,7 +94,7 @@ const BudgetCard = ({ budget, setData } : any) => {
                             </>
                         ) : (
                             <>
-                                <span>{budget.spentAmount} / {budget.amount} {budget.mainCurrency} Spent</span>
+                                <span>{budget.spentAmount.toFixed(2)} / {budget.amount.toFixed(2)} {budget.mainCurrency} Spent</span>
                                 <Progress value={getSpentAmountPercentage()} className="w-full mt-1"/>
                             </>
                         )}

@@ -181,7 +181,7 @@ const CreateBudget = () => {
                   className="create-edit-budget-currency-input"
                   decimalSeparator="."
                   placeholder="Please enter a number"
-                  suffix={` ${value}`}
+                  prefix={`${value} `}
                   step={1}
                   value={selectedMemberBudgets[traveller.email] || 0}
                   allowNegativeValue={false}
@@ -439,13 +439,13 @@ const CreateBudget = () => {
                       id="input-example"
                       name="input-name"
                       placeholder="Please enter a number"
-                      suffix={` ${value}`}
+                      prefix={`${value} `}
                       value={totalBudget}
                       allowNegativeValue={false}
                       decimalsLimit={2}
                       onValueChange={(value, _name, _values) =>
                         setTotalBudget(
-                          value && Number(value) > 100000 ? 100000 : value || 0
+                          value && Number(value) > 100000 ? 100000 : value ?? 0
                         )
                       }
                     />

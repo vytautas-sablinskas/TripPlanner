@@ -370,7 +370,7 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
         <div className="sm:ml-auto mt-2 flex flex-col justify-end sm:items-end sm:flex-row w-full">
             <Button variant="outline" className="sm:mr-4 sm:w-auto w-full justify-start" onClick={() => navigate(Paths.TRIP_TRAVELLERS_CREATE.replace(":tripId", getTripId(location)))}>
                 <CirclePlus className="w-4 h-4 mr-2"/>
-                Add Traveller
+                Invite People
             </Button>
             <DropdownMenu>
             <DropdownMenuTrigger asChild className="mt-2 w-full sm:w-auto">

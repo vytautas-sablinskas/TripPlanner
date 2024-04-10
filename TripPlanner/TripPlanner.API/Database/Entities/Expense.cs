@@ -1,4 +1,5 @@
-﻿using TripPlanner.API.Database.Enums;
+﻿using Microsoft.EntityFrameworkCore;
+using TripPlanner.API.Database.Enums;
 
 namespace TripPlanner.API.Database.Entities;
 
@@ -16,11 +17,13 @@ public class Expense
 
     public double AmountInMainCurrency { get; set; }
 
+    [DeleteBehavior(DeleteBehavior.Restrict)]
     public virtual TripBudget TripBudget { get; set; }
 
     public Guid TripBudgetId { get; set; }
 
+    [DeleteBehavior(DeleteBehavior.Restrict)]
     public virtual AppUser User { get; set; }
-
+    
     public string UserId { get; set; }
 }
