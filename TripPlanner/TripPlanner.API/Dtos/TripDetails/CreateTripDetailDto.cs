@@ -14,6 +14,10 @@ public record CreateTripDetailDto(
 
     string? Notes,
 
+    string? Website,
+
+    string? PhoneNumber,
+
     DateTime StartTime,
 
     DateTime? EndTime,

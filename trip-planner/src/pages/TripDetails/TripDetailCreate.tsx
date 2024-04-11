@@ -28,6 +28,8 @@ import { getTripTime } from "@/api/TripService";
 import { addTripDetails } from "@/api/TripDetailService";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 import { getLocalTimeISOFromDate, getLocalTimeISOFromString } from "@/utils/date";
+import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -51,12 +53,15 @@ const formSchema = z.object({
       ),
     endDate: z.date().optional(),
   }),
+  phoneNumber: z.string().optional(),
+  website: z.string().optional(),
   notes: z.string().optional(),
 });
 
 const TripDetailCreate = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [autocompleteSearchType, setAutocompleteSearchType] = useState<any>("address");
   const [isDataSubmitting, setIsDataSubmitting] = useState(false);
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
     useUser();
@@ -120,6 +125,8 @@ const TripDetailCreate = () => {
         startDate: undefined,
         endDate: undefined,
       },
+      phoneNumber: "",
+      website: "",
     },
   });
 
@@ -193,6 +200,8 @@ const TripDetailCreate = () => {
       notes: data.notes,
       startTime: data.dates.startDate,
       endTime: data.dates.endDate,
+      phoneNumber: data.phoneNumber,
+      website: data.website,
       tripId,
     });
     if (!response || !response.ok) {
@@ -250,19 +259,6 @@ const TripDetailCreate = () => {
               />
               <FormField
                 control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl className="w-full mb-4">
-                      <Input placeholder="Enter Address" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="dates.startDate"
                 render={({ field }) => (
                   <FormItem>
@@ -297,6 +293,69 @@ const TripDetailCreate = () => {
               />
               <FormField
                 control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex justify-between items-end">
+                      <FormLabel className="mb-2">Destination</FormLabel>
+                      <div className="flex space-x-2">
+                        <Select onValueChange={setAutocompleteSearchType} value={autocompleteSearchType}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Destination Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="address">By Address</SelectItem>
+                              <SelectItem value="establishment">By Popular Places</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <FormControl>
+                      <GoogleAutocomplete
+                        onSelect={(place : any) => {
+                          field.onChange(place.formatted_address);
+                          form.setValue("website", place.website);
+                          form.setValue("phoneNumber", place.international_phone_number);
+                        }}
+                        fields={["formatted_address", "website", "international_phone_number"]}
+                        types={[autocompleteSearchType]}
+                        className="w-full"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="website"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Website</FormLabel>
+                    <FormControl className="w-full mb-4">
+                      <Input placeholder="Enter website" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl className="w-full mb-4">
+                      <Input placeholder="Enter Phone Number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
@@ -316,6 +375,7 @@ const TripDetailCreate = () => {
               <Button
                 disabled={isDataSubmitting}
                 onClick={() => navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()))}
+                type="button"
               >
                 Cancel
               </Button>

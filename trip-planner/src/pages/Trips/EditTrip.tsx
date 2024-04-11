@@ -23,6 +23,7 @@ import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
+import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
 const MAX_FILE_SIZE = 2000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -37,7 +38,7 @@ const formSchema = z.object({
     message: "Trip name must be at least 1 character.",
   }),
   destinationCountry: z.string().min(1, {
-    message: "This field is required.",
+    message: "Destination must be selected.",
   }),
   date: z
     .object({
@@ -198,8 +199,8 @@ const EditTrip = () => {
     formData.append("description", "f");
     formData.append("image", data.image || null);
     formData.append("destinationCountry", data.destinationCountry);
-    formData.append("startDate", dates.from || "");
-    formData.append("endDate", dates.to || "");
+    formData.append("startDate", dates.from || new Date().toString());
+    formData.append("endDate", dates.to || new Date().toString());
 
     try {
       const response = await editTrip(formData, getTripId());
@@ -253,9 +254,17 @@ const EditTrip = () => {
                 name="destinationCountry"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel required>Destination Country</FormLabel>
+                    <FormLabel required>Destination</FormLabel>
                     <FormControl className="w-full mb-4">
-                      <Input placeholder="Enter destination" {...field} />
+                      <GoogleAutocomplete
+                        onSelect={(place: any) => {
+                          field.onChange(place.formatted_address);
+                        }}
+                        types={["(cities)"]}
+                        fields={["formatted_address"]}
+                        value={field.value}
+                        className="w-full"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -307,6 +316,7 @@ const EditTrip = () => {
           <div className="submit-buttons-container">
             <Button
               disabled={loadingSubmit}
+              type="button"
               onClick={() => navigate(Paths.TRIPS)}
             >
               Cancel

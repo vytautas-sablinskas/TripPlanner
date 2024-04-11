@@ -89,7 +89,7 @@ const BudgetCard = ({ budget, setData } : any) => {
                         {budget.unlimitedBudget ? (
                             <>
                                 <p>Budget is unlimited.</p>
-                                <span>{budget.spentAmount} {budget.mainCurrency} Spent. </span>
+                                <span>{budget.spentAmount.toFixed(2)} {budget.mainCurrency} Spent. </span>
                                 <Progress value={0} className="w-full mt-1"/>
                             </>
                         ) : (

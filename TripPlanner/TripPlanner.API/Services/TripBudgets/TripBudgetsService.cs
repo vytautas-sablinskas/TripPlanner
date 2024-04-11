@@ -79,6 +79,7 @@ public class TripBudgetsService : ITripBudgetsService
         return new TripBudgetMainViewDto(
             budget.Id,
             budget.MainCurrency,
+            budget.UnlimitedBudget ?? false,
             spentAmount,
             totalBudget,
             expensesDto
@@ -120,10 +121,10 @@ public class TripBudgetsService : ITripBudgetsService
         return dto;
     }
 
-    public void AddTripBudget(Guid tripId, string userId, AddTripBudgetDto addBudgetDto)
+    public async Task AddTripBudget(Guid tripId, string userId, AddTripBudgetDto addBudgetDto)
     {
         var user = _appUserRepository.FindByCondition(t => t.Id == userId).FirstOrDefault();
-        
+
         var budget = new TripBudget
         {
             Name = addBudgetDto.Name,
@@ -133,10 +134,25 @@ public class TripBudgetsService : ITripBudgetsService
             Budget = addBudgetDto.Budget,
             TripId = tripId,
             MainCurrency = addBudgetDto.MainCurrency,
-            CreatorId = userId
+            CreatorId = userId,
         };
 
         var createdBudget = _tripBudgetRepository.Create(budget);
+        if (createdBudget.Type == BudgetTypes.Individual)
+        {
+            var members = new List<TripBudgetMember>
+            {
+                new()
+                {
+                    TripBudgetId = createdBudget.Id,
+                    UserId = userId,
+                    Amount = createdBudget.Budget
+                }
+            };
+
+            createdBudget.BudgetMembers = members;
+            await _tripBudgetRepository.Update(createdBudget);
+        }
 
         if (addBudgetDto.Members != null)
         {
@@ -165,14 +181,14 @@ public class TripBudgetsService : ITripBudgetsService
             return;
         }
 
-        var newRate = await _currencyExchangeService.GetCurrencyInformation(DateTime.UtcNow, dto.MainCurrency, budget.MainCurrency);
-
         double newSpentAmount = 0;
         var expenses = await _expenseRepository.FindByCondition(e => e.TripBudgetId == budgetId)
             .ToListAsync();
         foreach (var expense in expenses)
         {
-            expense.AmountInMainCurrency = newRate * expense.Amount;
+            var newRate = await _currencyExchangeService.GetCurrencyInformation(DateTime.UtcNow, dto.MainCurrency, expense.Currency);
+
+            expense.AmountInMainCurrency = expense.Amount * newRate;
             newSpentAmount += expense.AmountInMainCurrency;
             await _expenseRepository.Update(expense);
         }
