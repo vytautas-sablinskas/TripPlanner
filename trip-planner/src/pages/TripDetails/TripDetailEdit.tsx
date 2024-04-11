@@ -341,6 +341,7 @@ const TripDetailEdit = () => {
                           form.setValue("website", place.website);
                           form.setValue("phoneNumber", place.international_phone_number);
                         }}
+                        value={field.value}
                         fields={["place_id", "formatted_address", "website", "international_phone_number", "geometry.location"]}
                         types={[autocompleteSearchType]}
                         className="w-full"
