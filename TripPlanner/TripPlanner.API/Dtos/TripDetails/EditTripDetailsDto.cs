@@ -16,6 +16,10 @@ public record EditTripDetailDto(
 
     string? Notes,
 
+    string? Website,
+
+    string? PhoneNumber,
+
     DateTime StartTime,
 
     DateTime? EndTime

@@ -17,6 +17,10 @@ public class TripDetail
 
     public string? Notes { get; set; }
 
+    public string? Website { get; set; }
+
+    public string? PhoneNumber { get; set; }
+
     public DateTime StartTime { get; set; }
 
     public DateTime? EndTime { get; set; }

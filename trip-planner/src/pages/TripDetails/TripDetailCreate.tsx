@@ -200,6 +200,8 @@ const TripDetailCreate = () => {
       notes: data.notes,
       startTime: data.dates.startDate,
       endTime: data.dates.endDate,
+      phoneNumber: data.phoneNumber,
+      website: data.website,
       tripId,
     });
     if (!response || !response.ok) {
@@ -257,43 +259,6 @@ const TripDetailCreate = () => {
               />
               <FormField
                 control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem className="mb-4">
-                    <div className="flex justify-between items-end">
-                      <FormLabel className="mb-2">Destination</FormLabel>
-                      <div className="flex space-x-2">
-                        <Select onValueChange={setAutocompleteSearchType} value={autocompleteSearchType}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Destination Type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="address">By Address</SelectItem>
-                              <SelectItem value="establishment">By Popular Places</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <FormControl>
-                      <GoogleAutocomplete
-                        onSelect={(place : any) => {
-                          field.onChange(place.formatted_address);
-                          form.setValue("website", place.website);
-                          form.setValue("phoneNumber", place.international_phone_number);
-                        }}
-                        fields={["formatted_address", "website", "international_phone_number"]}
-                        types={[autocompleteSearchType]}
-                        className="w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="dates.startDate"
                 render={({ field }) => (
                   <FormItem>
@@ -323,6 +288,43 @@ const TripDetailCreate = () => {
                     </FormControl>
                     <FormMessage />
                     <FormDescription>Trip ends at {tripTime.endDate}</FormDescription>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex justify-between items-end">
+                      <FormLabel className="mb-2">Destination</FormLabel>
+                      <div className="flex space-x-2">
+                        <Select onValueChange={setAutocompleteSearchType} value={autocompleteSearchType}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Destination Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="address">By Address</SelectItem>
+                              <SelectItem value="establishment">By Popular Places</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <FormControl>
+                      <GoogleAutocomplete
+                        onSelect={(place : any) => {
+                          field.onChange(place.formatted_address);
+                          form.setValue("website", place.website);
+                          form.setValue("phoneNumber", place.international_phone_number);
+                        }}
+                        fields={["formatted_address", "website", "international_phone_number"]}
+                        types={[autocompleteSearchType]}
+                        className="w-full"
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

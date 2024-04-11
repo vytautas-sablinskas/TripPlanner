@@ -15,7 +15,7 @@ namespace TripPlanner.API.Services.TripBudgets
 
         Task DeleteTripBudget(Guid budgetId);
 
-        void AddTripBudget(Guid tripId, string userId, AddTripBudgetDto addBudgetDto);
+        Task AddTripBudget(Guid tripId, string userId, AddTripBudgetDto addBudgetDto);
 
         Task EditTripBudget(Guid budgetId, EditBudgetDto dto);
     }

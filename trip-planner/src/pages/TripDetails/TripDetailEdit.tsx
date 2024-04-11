@@ -27,6 +27,8 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { editTripDetails, getTripDetailById } from "@/api/TripDetailService";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 import { getLocalTimeISOFromDate, getLocalTimeISOFromString } from "@/utils/date";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -51,12 +53,15 @@ const formSchema = z.object({
     endDate: z.date().optional(),
   }),
   notes: z.string().optional(),
+  website: z.string().optional(),
+  phoneNumber: z.string().optional(),
 });
 
 const TripDetailEdit = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isDataSubmitting, setIsDataSubmitting] = useState(false);
+  const [autocompleteSearchType, setAutocompleteSearchType] = useState<any>("address");
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
     useUser();
   const location = useLocation();
@@ -114,6 +119,8 @@ const TripDetailEdit = () => {
           endDate,
         },
         notes: data.notes || "",
+        website: data.website || "",
+        phoneNumber: data.phoneNumber || "",
       });
 
       setTripTime({ startDate: data.tripStartTime + "Z", endDate: data.tripEndTime + "Z" });
@@ -133,6 +140,8 @@ const TripDetailEdit = () => {
         startDate: undefined,
         endDate: undefined,
       },
+      website: "",
+      phoneNumber: ""
     },
   });
 
@@ -207,6 +216,8 @@ const TripDetailEdit = () => {
       startTime: data.dates.startDate,
       endTime: data.dates.endDate,
       id: getTripDetailsId(),
+      phoneNumber: data.phoneNumber,
+      website: data.website,
     });
     if (!response || !response.ok) {
       toast.error("Unexpected error. Try again later", {
@@ -263,19 +274,6 @@ const TripDetailEdit = () => {
               />
               <FormField
                 control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl className="w-full mb-4">
-                      <Input placeholder="Enter Address" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="dates.startDate"
                 render={({ field }) => (
                   <FormItem>
@@ -310,6 +308,69 @@ const TripDetailEdit = () => {
               />
               <FormField
                 control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex justify-between items-end">
+                      <FormLabel className="mb-2">Destination</FormLabel>
+                      <div className="flex space-x-2">
+                        <Select onValueChange={setAutocompleteSearchType} value={autocompleteSearchType}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Destination Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="address">By Address</SelectItem>
+                              <SelectItem value="establishment">By Popular Places</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <FormControl>
+                      <GoogleAutocomplete
+                        onSelect={(place : any) => {
+                          field.onChange(place.formatted_address);
+                          form.setValue("website", place.website);
+                          form.setValue("phoneNumber", place.international_phone_number);
+                        }}
+                        fields={["place_id", "formatted_address", "website", "international_phone_number"]}
+                        types={[autocompleteSearchType]}
+                        className="w-full"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="website"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Website</FormLabel>
+                    <FormControl className="w-full mb-4">
+                      <Input placeholder="Enter website" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl className="w-full mb-4">
+                      <Input placeholder="Enter Phone Number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
@@ -329,6 +390,7 @@ const TripDetailEdit = () => {
               <Button
                 disabled={isDataSubmitting}
                 onClick={() => navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()))}
+                type="button"
               >
                 Cancel
               </Button>
