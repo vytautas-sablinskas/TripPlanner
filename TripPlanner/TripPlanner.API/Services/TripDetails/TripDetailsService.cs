@@ -93,7 +93,7 @@ public class TripDetailsService : ITripDetailsService
         }
 
         var documents = tripDetail.Documents.Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile));
-        var tripDetailViewDto = new TripDetailViewDto(documents);
+        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, documents);
 
         return (true, tripDetailViewDto);
     }

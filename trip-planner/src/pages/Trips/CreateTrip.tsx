@@ -194,7 +194,7 @@ const CreateTrip = () => {
                         onSelect={(place : any) => {
                           field.onChange(place.formatted_address);
                         }}
-                        types={["(cities)"]}
+                        types={["geocode"]}
                         fields={["formatted_address"]}
                         className="w-full"
                       />
