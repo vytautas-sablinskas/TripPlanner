@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { deleteTripDetail } from "@/api/TripDetailService";
 import { useState } from "react";
-import { Pencil } from "lucide-react";
+import { Backpack, BedDouble, CircleHelp, Pencil, PersonStanding, ShoppingCart, Utensils } from "lucide-react";
 
 const TripDetailCard = ({ detail, onDelete }: any) => {
   const startTime = detail.startTime ? new Date(detail.startTime + "Z") : null;
@@ -70,6 +70,26 @@ const TripDetailCard = ({ detail, onDelete }: any) => {
     onDelete();
   };
 
+  const getActivityImage = (type: any) => {
+    console.log(type);
+    switch (type) {
+      case 0:
+        return <PersonStanding className="w-4 h-4"/>;
+      case 1:
+        return <Backpack className="w-4 h-4" />;
+      case 2:
+        return <Utensils className="w-4 h-4" />;
+      case 3:
+        return <BedDouble className="w-4 h-4" />;
+      case 4:
+        return <ShoppingCart className="w-4 h-4" />;
+      case 5:
+        return <CircleHelp className="w-4 h-4" />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Card>
       <CardContent className="w-full min-h-[125px] min-w-[300px] p-[24px] pr-0 flex justify-between sm:p-2">
@@ -77,15 +97,11 @@ const TripDetailCard = ({ detail, onDelete }: any) => {
           <p className="">{startTime && formatTime(startTime)}</p>
           <p className="">{formatTimezoneOffset()}</p>
         </div>
-        <span className="event-image-container">
+        <span className="event-image-container justify-center">
           <Separator orientation="vertical" className="mx-5" />
-          <img
-            src="https://via.placeholder.com/40"
-            alt="activity"
-            className="activity-image"
-            height={40}
-            width={40}
-          />
+          <div className="w-[40px] h-[40px] rounded-full bg-gray-300 flex justify-center items-center">
+            {getActivityImage(detail.eventType)}
+          </div>
           <Separator orientation="vertical" className="mx-5" />
         </span>
         <div className="event-container-information">

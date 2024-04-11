@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import Paths from "@/routes/Paths";
 import { getTripDetails } from "@/api/TripDetailService";
 import { getFormattedDateRange, getLocalDate } from "@/utils/date";
-import { BarChart4, CirclePlus, CircleX, Pencil } from "lucide-react";
+import { Backpack, BarChart4, BedDouble, CircleHelp, CirclePlus, CircleX, Pencil, PersonStanding, ShoppingCart, Utensils } from "lucide-react";
 import { ValueSelector } from "@/components/Extra/ValueSelector";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -204,19 +204,19 @@ const TripDetails = () => {
   const getBudgetPhoto = (type: any) => {
     switch (type) {
       case 0:
-        return "/avatar-placeholder.png";
+        return <PersonStanding className="w-4 h-4"/>;
       case 1:
-        return "/avatar-placeholder.png";
+        return <Backpack className="w-4 h-4" />;
       case 2:
-        return "/avatar-placeholder.png";
+        return <Utensils className="w-4 h-4" />;
       case 3:
-        return "/avatar-placeholder.png";
+        return <BedDouble className="w-4 h-4" />;
       case 4:
-        return "/avatar-placeholder.png";
+        return <ShoppingCart className="w-4 h-4" />;
       case 5:
-        return "/avatar-placeholder.png";
+        return <CircleHelp className="w-4 h-4" />;
       default:
-        return "";
+        return null;
     }
   };
 
@@ -430,13 +430,10 @@ const TripDetails = () => {
                     key={expense.id}
                   >
                     <div className="flex items-center justify-center">
-                      <img
-                        src={getBudgetPhoto(expense.type)}
-                        height={32}
-                        width={32}
-                        alt=""
-                        className="rounded-full w-[32px] h-[32px] mr-3"
-                      />
+                      <div className="w-[32px] h-[32px] rounded-full mr-3 bg-gray-300 flex justify-center items-center">
+                        {getBudgetPhoto(expense.type)}
+                      </div>
+
                       <div className="flex flex-col justify-start">
                         <p className="font-bold">{expense.name}</p>
                         <p>{getBudgetType(expense.type)}</p>
