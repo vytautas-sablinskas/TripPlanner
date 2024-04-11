@@ -162,9 +162,17 @@ const TripDetails = () => {
   const getBudgetType = (type: any) => {
     switch (type) {
       case 0:
-        return "Food";
+        return "Activity";
       case 1:
-        return "Lodging";
+        return "Travel";
+      case 2:
+        return "Food";
+      case 3:
+        return "Lodging"
+      case 4:
+        return "Shopping"
+      case 5:
+        return "Other"
       default:
         return "";
     }
@@ -175,6 +183,14 @@ const TripDetails = () => {
       case 0:
         return "/avatar-placeholder.png";
       case 1:
+        return "/avatar-placeholder.png";
+      case 2:
+        return "/avatar-placeholder.png";
+      case 3:
+        return "/avatar-placeholder.png";
+      case 4:
+        return "/avatar-placeholder.png";
+      case 5:
         return "/avatar-placeholder.png";
       default:
         return "";
@@ -262,6 +278,7 @@ const TripDetails = () => {
   };
 
   const onExpenseAdd = (response: any, formValues: any) => {
+    console.log(formValues);
     setBudget({
       ...budget,
       spentAmount: response.amount,

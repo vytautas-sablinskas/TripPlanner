@@ -102,11 +102,11 @@ const TripAddTraveller = () => {
                         onClick={() => navigate(Paths.TRIP_TRAVELLERS_VIEW.replace(":tripId", getTripId()))}
                     >
                         <ArrowLeft className="mr-2" />
-                        <p>Back To Trip Travellers</p>
+                        <p>Back To Trip Participants</p>
                     </span>
                 <Card className="trip-add-traveller-information-container">
                     <CardContent>
-                        <h1 className="font-bold text-2xl text-center mb-4 pt-6">Invite Travellers To Trip</h1>
+                        <h1 className="font-bold text-2xl text-center mb-4 pt-6">Invite People To Trip</h1>
                         <FormField
                             control={form.control}
                             name="invites"
@@ -117,7 +117,7 @@ const TripAddTraveller = () => {
                                   <MultipleSelector
                                         defaultOptions={field.value}
                                         onChange={field.onChange}
-                                        placeholder="Enter email of traveller"
+                                        placeholder="Enter email of person"
                                         creatable
                                         isEmail
                                         createErrorMessage="Email is already selected."
