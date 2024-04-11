@@ -59,6 +59,7 @@ public class TripBudgetsService : ITripBudgetsService
                 e.Id,
                 e.Currency,
                 e.Amount,
+                e.AmountInMainCurrency,
                 e.Name,
                 e.Type,
                 user.PhotoUri,

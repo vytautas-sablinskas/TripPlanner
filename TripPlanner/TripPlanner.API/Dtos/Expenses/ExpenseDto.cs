@@ -6,6 +6,7 @@ public record ExpenseDto(
     Guid Id,
     string Currency,
     double Amount,
+    double AmountInMainCurrency,
     string Name,
     BudgetTypes Type,
     string PersonPhoto,

@@ -26,6 +26,7 @@ import AddExpenseDialog from "./AddExpenseDialog";
 import { getTripBudget } from "@/api/TriBudgetsService";
 import { deleteExpense } from "@/api/ExpensesService";
 import GoogleMapExtension from "@/components/Extra/GoogleMapExtension";
+import TripBudgetBreakdownDialog from "./TripBudgetBreakdownDialog";
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
@@ -44,6 +45,8 @@ const TripDetails = () => {
     useState(false);
   const [budget, setBudget] = useState<any>(null);
   const [mapInformation, setMapInformation] = useState<any>([]);
+  const [isBreakdownOpen, setIsBreakdownOpen] = useState<any>(false);
+  const [breakdownTrips, setBreakdownTrips] = useState<any>([]);
 
   const getTripId = () => {
     const paths = location.pathname.split("/");
@@ -120,10 +123,9 @@ const TripDetails = () => {
       tripInformation: data.tripInformation,
       data: tripDetailsByDay,
     };
-
+  
     setIsLoading(false);
     setTripDetails(tripDetails);
-    console.log(data);
 
     if (!data.budgets || data.budgets.length === 0) return;
 
@@ -407,7 +409,7 @@ const TripDetails = () => {
             <div className="right-side-budget">
               <Separator orientation="vertical" className="separator-budget" />
               <div className="">
-                <Button variant="ghost" className="breakdown-button">
+                <Button variant="ghost" className="breakdown-button ml-2" onClick={() => setIsBreakdownOpen(true)}>
                   <BarChart4 className="mr-2 text-sm" />
                   View Breakdown
                 </Button>
@@ -513,6 +515,14 @@ const TripDetails = () => {
             handeEditSubmit={handeEditSubmit}
             name={budget.expenses.find((e: any) => e.id === openId)?.name}
             budgetId={selectedBudget}
+          />
+          <TripBudgetBreakdownDialog 
+            open={isBreakdownOpen}
+            setOpen={setIsBreakdownOpen}
+            trips={budget.expenses}
+            tripStartDate={tripDetails.tripInformation.startDate}
+            tripEndDate={tripDetails.tripInformation.endDate}
+            mainCurrency={budget.currency}
           />
         </div>
       )}
