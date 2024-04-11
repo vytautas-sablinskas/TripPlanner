@@ -6,9 +6,10 @@ import {
   useMap,
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
+import "./styles/google-map-extensions.css";
 
 import { Button } from "../ui/button";
-import { Search } from "lucide-react";
+import { MapPin, Route, Search, Waypoints } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -39,49 +40,7 @@ const mapOptions = {
   ],
 };
 
-const mapLocations: any = {
-  "Day 1": [
-    {
-      id: 1,
-      lat: -3.755,
-      lng: -38.533,
-      title: "Location 1",
-      info: "Test for Day 1",
-    },
-    {
-      id: 2,
-      lat: -3.765,
-      lng: -38.543,
-      title: "Location 2",
-      info: "Test2 for Day 1",
-    },
-  ],
-  "Day 2": [
-    {
-      id: 3,
-      lat: -3.745,
-      lng: -38.523,
-      title: "Location 3",
-      info: "Test for Day 2",
-    },
-    {
-      id: 4,
-      lat: -3.755,
-      lng: -38.533,
-      title: "Location 4",
-      info: "Test2 for Day 2",
-    },
-    {
-      id: 5,
-      lat: -3.955,
-      lng: -38.533,
-      title: "Location 4",
-      info: "Test2 for Day 2",
-    },
-  ],
-};
-
-function MyComponent() {
+function MyComponent({ mapLocations } : any) {
   const map = useMap();
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [selectedDay, setSelectedDay] = useState<any>(
@@ -89,6 +48,7 @@ function MyComponent() {
   );
   const [shouldRender, setShouldRender] = useState<any>(false);
   const [isGetRoutesDisabled, setIsGetRoutesDisabled] = useState<any>(false);
+  const [travelMode, setTravelMode] = useState<any>("DRIVING");
  
   const handleMarkerClick = (marker: any) => {
     const newPosition = { lat: marker.lat, lng: marker.lng };
@@ -102,6 +62,10 @@ function MyComponent() {
   };
 
   const getBounds = () => {
+    if (!window.google || !window.google.maps || !window.google.maps.LatLngBounds) {
+      return null;
+    }
+
     const bounds = new window.google.maps.LatLngBounds();
     mapLocations[selectedDay].forEach((location: any) => {
       bounds.extend(new window.google.maps.LatLng(location.lat, location.lng));
@@ -116,7 +80,10 @@ function MyComponent() {
   };
 
   const rezoomToStartPosition = () => {
-    map?.fitBounds(getBounds());
+    const bounds = getBounds();
+    if (!bounds) return;
+
+    map?.fitBounds(bounds);
   };
 
   function smoothZoom(map: any, max: any, cnt: any) {
@@ -140,15 +107,61 @@ function MyComponent() {
   useEffect(() => {
     if (selectedDay && map) {
       setSelectedMarker(null);
-      map?.fitBounds(getBounds());
+      const bounds = getBounds();
+      if (!bounds) return;
+
+      map?.fitBounds(bounds);
     }
   }, [selectedDay, map]);
 
+
+  const bounds = getBounds() || { east: 0, north: 0, south: 0, west: 0 };
+
+  function formatMode(mode : any) {
+    switch (mode) {
+      case 'DRIVING':
+        return 'Driving';
+      case 'WALKING':
+        return 'Walking';
+      case 'BICYCLING':
+        return 'Bicycling';
+      default:
+        return mode;
+    }
+  }
+
   return (
     <div>
-      <div className="flex justify-end">
+      <div>
+        <div className="map-filter-options">
+          <Select value={travelMode} onValueChange={setTravelMode}>
+            <SelectTrigger className="max-w-[150px] mb-2">
+              <SelectValue placeholder="Select Travel Mode" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Travel Mode</SelectLabel>
+                {Object.keys(google.maps.TravelMode)
+                  .filter(mode => mode !== "TWO_WHEELER" && mode !== "TRANSIT")
+                  .map((mode: any) => (
+                    <SelectItem value={mode} key={mode}>
+                      {formatMode(mode)}
+                    </SelectItem>
+                  ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Button className="ml-2 mb-2" onClick={() => setShouldRender(true)} disabled={isGetRoutesDisabled}>
+            <Route className="h-4 w-4 mr-2" />
+            Get Directions
+          </Button>
+          <Button onClick={() => rezoomToStartPosition()} className="ml-2 mb-2">
+            <Search className="h-4 w-4 mr-2" />
+            Fit all places on map
+          </Button>
+        </div>
         <Select value={selectedDay} onValueChange={setSelectedDay}>
-          <SelectTrigger>
+          <SelectTrigger className="mb-2">
             <SelectValue placeholder="Select Day" />
           </SelectTrigger>
           <SelectContent>
@@ -162,14 +175,7 @@ function MyComponent() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Button className="ml-2 mr-2" onClick={() => setShouldRender(true)} disabled={isGetRoutesDisabled}>
-          <Search className="h-4 w-4 mr-2" />
-          Get Routes
-        </Button>
-        <Button onClick={() => rezoomToStartPosition()} className="ml-2 mb-2">
-          <Search className="h-4 w-4 mr-2" />
-          Fit all places on map
-        </Button>
+        
       </div>
       <Map
         defaultCenter={center}
@@ -178,10 +184,7 @@ function MyComponent() {
         scrollwheel={true}
         fullscreenControl={true}
         defaultBounds={{
-          east: getBounds().east,
-          north: getBounds().north,
-          south: getBounds().south,
-          west: getBounds().west,
+          ...bounds
         }}
       >
         <Directions 
@@ -191,6 +194,7 @@ function MyComponent() {
         setShouldRender={setShouldRender}
         zoomToPlace={getBounds}
         setIsGetRoutesDisabled={setIsGetRoutesDisabled}
+        travelMode={travelMode}
         />
         {mapLocations[selectedDay].map((location: any, index: any) => {
           return (
@@ -220,7 +224,7 @@ function MyComponent() {
   );
 }
 
-function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, zoomToPlace, setIsGetRoutesDisabled } : any) {
+function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, zoomToPlace, setIsGetRoutesDisabled, travelMode } : any) {
   const map = useMap();
   const routesLibrary = useMapsLibrary("routes");
   const [directionsRenderers, setDirectionsRenderers] = useState<any>([]);
@@ -233,7 +237,7 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
 
     setIsGetRoutesDisabled(false);
     setRoutes([]);
-  }, [selectedDay]);
+  }, [selectedDay, travelMode]);
 
   useEffect(() => {
     if (!routesLibrary || !map || !shouldRender) return;
@@ -261,7 +265,7 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
         {
           origin,
           destination,
-          travelMode: google.maps.TravelMode.DRIVING,
+          travelMode,
           provideRouteAlternatives: true,
         },
         (response: any, status: any) => {

@@ -203,8 +203,8 @@ const TripDetailCreate = () => {
       endTime: data.dates.endDate,
       phoneNumber: data.phoneNumber,
       website: data.website,
-      lng: geometry?.lng,
-      lat: geometry?.lat,
+      longitude: geometry?.longitude,
+      latitude: geometry?.latitude,
       tripId,
     });
     if (!response || !response.ok) {

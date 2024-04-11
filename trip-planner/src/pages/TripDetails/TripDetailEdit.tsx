@@ -66,6 +66,7 @@ const TripDetailEdit = () => {
     useUser();
   const location = useLocation();
   const [tripTime, setTripTime] = useState<any>();
+  const [geometry, setGeometry] = useState<any>(null);
 
   const getTripDetailsId = () => {
     const path = location.pathname.split("/");
@@ -218,6 +219,8 @@ const TripDetailEdit = () => {
       id: getTripDetailsId(),
       phoneNumber: data.phoneNumber,
       website: data.website,
+      longitude: geometry?.longitude || data.longitude || null,
+      latitude: geometry?.latitude || data.latitude || null,
     });
     if (!response || !response.ok) {
       toast.error("Unexpected error. Try again later", {
@@ -330,11 +333,15 @@ const TripDetailEdit = () => {
                     <FormControl>
                       <GoogleAutocomplete
                         onSelect={(place : any) => {
+                          setGeometry({
+                            latitude: place?.geometry?.location?.lat(),
+                            longitude: place?.geometry?.location?.lng(),
+                          })
                           field.onChange(place.formatted_address);
                           form.setValue("website", place.website);
                           form.setValue("phoneNumber", place.international_phone_number);
                         }}
-                        fields={["place_id", "formatted_address", "website", "international_phone_number"]}
+                        fields={["place_id", "formatted_address", "website", "international_phone_number", "geometry.location"]}
                         types={[autocompleteSearchType]}
                         className="w-full"
                       />

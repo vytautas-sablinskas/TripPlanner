@@ -28,9 +28,9 @@ public class TripDetailController : ControllerBase
 
     [HttpGet("trips/{tripId}/tripDetails/{detailId}")]
     [Authorize]
-    public IActionResult GetTripDetailById(Guid tripId, Guid detailId)
+    public async Task<IActionResult> GetTripDetailById(Guid tripId, Guid detailId)
     {
-        var detailById = _tripDetailsService.GetTripDetailById(tripId, detailId);
+        var detailById = await _tripDetailsService.GetTripDetailById(tripId, detailId);
 
         return Ok(detailById);
     }

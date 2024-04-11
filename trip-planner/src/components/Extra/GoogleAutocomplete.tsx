@@ -20,7 +20,7 @@ const GoogleAutocomplete = ({ className, onSelect, value, types, fields } : any)
     }, [types, fields])
 
     return (
-        <Autocomplete 
+        <Autocomplete
             apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
             key={options.types}
             onPlaceSelected={(place) => {

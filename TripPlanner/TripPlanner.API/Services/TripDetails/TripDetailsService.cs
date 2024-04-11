@@ -34,8 +34,8 @@ public class TripDetailsService : ITripDetailsService
 
     public async Task EditTripDetail(EditTripDetailDto tripDto)
     {
-        var trip = _tripDetailsRepository.FindByCondition(c => c.Id == tripDto.Id)
-            .FirstOrDefault();
+        var trip = await _tripDetailsRepository.FindByCondition(c => c.Id == tripDto.Id)
+            .FirstOrDefaultAsync();
         _mapper.Map(tripDto, trip);
 
         await _tripDetailsRepository.Update(trip);
@@ -66,13 +66,13 @@ public class TripDetailsService : ITripDetailsService
         return new TripDetailsDto(detailsDto, tripDto, budgetIds);
     }
 
-    public GetEditTripDetailsDto GetTripDetailById(Guid tripId, Guid detailId)
+    public async Task<GetEditTripDetailsDto> GetTripDetailById(Guid tripId, Guid detailId)
     {
-        var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
-            .FirstOrDefault();
+        var trip = await _tripRepository.FindByCondition(t => t.Id == tripId)
+            .FirstOrDefaultAsync();
 
-        var detail = _tripDetailsRepository.FindByCondition(t => t.Id == detailId)
-            .FirstOrDefault();
+        var detail = await _tripDetailsRepository.FindByCondition(t => t.Id == detailId)
+            .FirstOrDefaultAsync();
 
         var editDetailsDto = _mapper.Map<GetEditTripDetailsDto>(detail);
         editDetailsDto.TripStartTime = trip.StartDate;
