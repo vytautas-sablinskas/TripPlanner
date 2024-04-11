@@ -18,6 +18,10 @@ public record CreateTripDetailDto(
 
     string? PhoneNumber,
 
+    double? Latitude,
+
+    double? Longitude,
+
     DateTime StartTime,
 
     DateTime? EndTime,

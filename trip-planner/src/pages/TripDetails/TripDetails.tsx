@@ -26,6 +26,7 @@ import AddExpenseDialog from "./AddExpenseDialog";
 import { getTripBudget } from "@/api/TriBudgetsService";
 import exp from "constants";
 import { deleteExpense } from "@/api/ExpensesService";
+import GoogleMapExtension from "@/components/Extra/GoogleMapExtension";
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
@@ -322,6 +323,10 @@ const TripDetails = () => {
           className="image trip-information-image"
         />
       </div>
+      <div className="map-container">
+        <GoogleMapExtension />
+      </div>
+
       <div className="trip-details-main-container">
         <div className="trip-details-information">
           <p className="trip-details-itinerary">Itinerary</p>

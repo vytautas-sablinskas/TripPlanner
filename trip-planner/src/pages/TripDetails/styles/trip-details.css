@@ -128,10 +128,25 @@
     display: flex;
     gap: 8px;
     font-weight: 500;
+    align-items: center;
+}
+
+.expense-person-image-name-container {
+    text-align: end;
+}
+
+.map-container {
+    width: 80%;
+    min-height: 400px;
+    padding: 24px;
 }
 
 @media screen and (max-width: 550px) {
     .trip-information-container {
+        width: 100%;
+    }
+
+    .map-container {
         width: 100%;
     }
 
