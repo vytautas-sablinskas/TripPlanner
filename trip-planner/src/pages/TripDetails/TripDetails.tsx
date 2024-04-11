@@ -24,8 +24,8 @@ import DeleteDialog from "@/components/Extra/DeleteDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import AddExpenseDialog from "./AddExpenseDialog";
 import { getTripBudget } from "@/api/TriBudgetsService";
-import exp from "constants";
 import { deleteExpense } from "@/api/ExpensesService";
+import GoogleMapExtension from "@/components/Extra/GoogleMapExtension";
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
@@ -40,10 +40,10 @@ const TripDetails = () => {
   const [openDeleteExpenseDialog, setOpenDeleteExpenseDialog] = useState(false);
   const [openEditExpenseDialog, setOpenEditExpenseDialog] = useState(false);
   const [openAddExpenseDialog, setOpenAddExpenseDialog] = useState(false);
-  const [isEditSubmitting, setIsEditSubmitting] = useState(false);
   const [isDeleteExpenseSubmitting, setIsDeleteExpenseSubmitting] =
     useState(false);
   const [budget, setBudget] = useState<any>(null);
+  const [mapInformation, setMapInformation] = useState<any>([]);
 
   const getTripId = () => {
     const paths = location.pathname.split("/");
@@ -96,6 +96,26 @@ const TripDetails = () => {
       {}
     );
 
+    const tripMapInformation: Record<string, { lat: number; lng: number }[]> = {};
+
+    Object.keys(tripDetailsByDay).forEach((day: string) => {
+      const detailsForDay = tripDetailsByDay[day];
+      const latLngArray = detailsForDay
+        .filter((detail: any) => detail.latitude !== null && detail.longitude !== null)
+        .map((detail: any) => ({
+          lat: detail.latitude,
+          lng: detail.longitude,
+          title: detail.name,
+          info: detail.description
+        }));
+
+      tripMapInformation[day] = latLngArray;
+    });
+
+    console.log(tripMapInformation);
+
+    setMapInformation(tripMapInformation);
+
     const tripDetails = {
       tripInformation: data.tripInformation,
       data: tripDetailsByDay,
@@ -103,6 +123,7 @@ const TripDetails = () => {
 
     setIsLoading(false);
     setTripDetails(tripDetails);
+    console.log(data);
 
     if (!data.budgets || data.budgets.length === 0) return;
 
@@ -322,6 +343,10 @@ const TripDetails = () => {
           className="image trip-information-image"
         />
       </div>
+      <div className="map-container">
+        <GoogleMapExtension mapLocations={mapInformation}/>
+      </div>
+
       <div className="trip-details-main-container">
         <div className="trip-details-information">
           <p className="trip-details-itinerary">Itinerary</p>

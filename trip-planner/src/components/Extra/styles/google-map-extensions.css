@@ -1,0 +1,11 @@
+.map-filter-options {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap-reverse;
+}
+
+@media screen and (max-width: 398px) {
+    .map-filter-options {
+        flex-wrap: wrap;
+    }
+}

@@ -14,6 +14,10 @@ public record TripDetailMinimalDto (
 
     string? Address,
 
+    double? Latitude,
+
+    double? Longitude,
+
     DateTime? StartTime,
 
     DateTime? EndTime

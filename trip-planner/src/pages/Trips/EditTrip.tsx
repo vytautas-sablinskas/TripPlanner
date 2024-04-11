@@ -260,7 +260,7 @@ const EditTrip = () => {
                         onSelect={(place: any) => {
                           field.onChange(place.formatted_address);
                         }}
-                        types={["(cities)"]}
+                        types={["geocode"]}
                         fields={["formatted_address"]}
                         value={field.value}
                         className="w-full"

@@ -91,6 +91,12 @@ const TripAddTraveller = () => {
         return path[path.length - 3];
     };
 
+    const mapLocations = [
+        {
+            
+        }
+    ]
+
     return (
         <Form {...form}>
             <form 

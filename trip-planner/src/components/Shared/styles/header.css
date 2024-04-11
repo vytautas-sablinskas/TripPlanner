@@ -68,3 +68,13 @@
     background: red;
     color: white;
   }
+
+@media screen and (max-width: 1100px) {
+    .left-side-header:first-child {
+        margin-left: 0;
+    }
+
+    .right-side-header:last-child  {
+        margin-right: 0;
+    }
+}

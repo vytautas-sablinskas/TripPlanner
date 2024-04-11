@@ -67,6 +67,7 @@ const TripDetailCreate = () => {
     useUser();
   const location = useLocation();
   const [tripTime, setTripTime] = useState<any>(null);
+  const [geometry, setGeometry] = useState<any>(null);
 
   const getTripId = () => {
     const path = location.pathname.split("/");
@@ -202,6 +203,8 @@ const TripDetailCreate = () => {
       endTime: data.dates.endDate,
       phoneNumber: data.phoneNumber,
       website: data.website,
+      longitude: geometry?.longitude,
+      latitude: geometry?.latitude,
       tripId,
     });
     if (!response || !response.ok) {
@@ -315,11 +318,15 @@ const TripDetailCreate = () => {
                     <FormControl>
                       <GoogleAutocomplete
                         onSelect={(place : any) => {
+                          setGeometry({
+                            latitude: place?.geometry?.location?.lat(),
+                            longitude: place?.geometry?.location?.lng(),
+                          })
                           field.onChange(place.formatted_address);
                           form.setValue("website", place.website);
                           form.setValue("phoneNumber", place.international_phone_number);
                         }}
-                        fields={["formatted_address", "website", "international_phone_number"]}
+                        fields={["formatted_address", "website", "international_phone_number", "geometry.location"]}
                         types={[autocompleteSearchType]}
                         className="w-full"
                       />

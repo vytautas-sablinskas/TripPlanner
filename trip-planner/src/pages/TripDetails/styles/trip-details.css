@@ -6,7 +6,7 @@
 }
 
 .trip-information-container {
-    width: 80%;
+    width: 90%;
     display: flex;
     justify-content: space-between;
 }
@@ -34,7 +34,7 @@
 
 .trip-details-main-container {
     padding: 24px 24px 0 24px;
-    width: 80%;
+    width: 90%;
 }
 
 .trip-details-information {
@@ -50,13 +50,13 @@
 }
 
 .events-container {
-    width: 80%;
+    width: 90%;
     padding: 0 24px 24px 24px;
 }
 
 .trip-budget-main-container {
     padding: 24px 24px 0 24px;
-    width: 80%;
+    width: 90%;
 }
 
 .trip-budget-information {
@@ -128,10 +128,25 @@
     display: flex;
     gap: 8px;
     font-weight: 500;
+    align-items: center;
+}
+
+.expense-person-image-name-container {
+    text-align: end;
+}
+
+.map-container {
+    width: 90%;
+    min-height: 400px;
+    padding: 24px;
 }
 
 @media screen and (max-width: 550px) {
     .trip-information-container {
+        width: 100%;
+    }
+
+    .map-container {
         width: 100%;
     }
 

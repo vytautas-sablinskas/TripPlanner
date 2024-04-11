@@ -20,6 +20,10 @@ public record EditTripDetailDto(
 
     string? PhoneNumber,
 
+    double? Longitude,
+
+    double? Latitude,
+
     DateTime StartTime,
 
     DateTime? EndTime

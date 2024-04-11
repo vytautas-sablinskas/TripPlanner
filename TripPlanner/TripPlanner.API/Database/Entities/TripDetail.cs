@@ -23,6 +23,10 @@ public class TripDetail
 
     public DateTime StartTime { get; set; }
 
+    public double? Latitude { get; set; }
+
+    public double? Longitude { get; set; }
+
     public DateTime? EndTime { get; set; }
 
     [DeleteBehavior(DeleteBehavior.Restrict)]
