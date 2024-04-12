@@ -62,8 +62,10 @@ function MyComponent({ mapLocations } : any) {
   };
 
   const getBounds = () => {
-    if (!window.google || !window.google.maps || !window.google.maps.LatLngBounds) {
-      return null;
+    const defaultValues = { east: 0, north: 0, south: 0, west: 0 };
+
+    if (!window.google || !window.google.maps || !window.google.maps.LatLngBounds || !selectedDay || !mapLocations || !mapLocations[selectedDay]) {
+      return defaultValues;
     }
 
     const bounds = new window.google.maps.LatLngBounds();
@@ -196,10 +198,10 @@ function MyComponent({ mapLocations } : any) {
         setIsGetRoutesDisabled={setIsGetRoutesDisabled}
         travelMode={travelMode}
         />
-        {mapLocations[selectedDay].map((location: any, index: any) => {
+        {mapLocations[selectedDay] && mapLocations[selectedDay].map((location: any, index: any) => {
           return (
             <Marker
-              key={location.id}
+              key={index}
               position={{ lat: location.lat, lng: location.lng }}
               title={location.title}
               onClick={() => handleMarkerClick(location)}

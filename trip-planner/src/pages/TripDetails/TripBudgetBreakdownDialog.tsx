@@ -83,8 +83,11 @@ const TripBudgetBreakdownDialog = ({ open, setOpen, trips, tripStartDate, tripEn
     },
   ];
 
-  const dataFormatter = (number: number) =>
-    Intl.NumberFormat("us").format(number).toString();
+  const dataFormatter = (number: number) => {
+    const numberFixed = Number(number.toFixed(2));
+  
+    return Intl.NumberFormat("us").format(numberFixed);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -1,0 +1,38 @@
+.export-information-main-container {
+    width: 100%;
+    padding: 20px 80px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.print-button-container {
+    width: 100%;
+    padding: 0px 80px;
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+@media print {
+    @page {
+      margin-top: 80px;
+    }
+  }
+
+@media screen and (max-width: 768px) {
+    .export-information-main-container {
+        padding: 10px 20px;
+    }
+
+    .print-button-container {
+        padding: 0px 20px;
+    }
+}

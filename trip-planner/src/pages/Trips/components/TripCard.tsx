@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, CircleEllipsis, CircleX, Pencil, Users, Wallet } from "lucide-react";
+import { ChevronDown, CircleEllipsis, CircleX, File, Pencil, Printer, Users, Wallet } from "lucide-react";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 
 const TripCard = ({ trip, onDelete }: any) => {
@@ -125,6 +125,10 @@ const TripCard = ({ trip, onDelete }: any) => {
                   <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.BUDGETS.replace(":tripId", trip.id))}>
                     <Wallet className="mr-2 h-4 w-4"/>
                     Manage Trip Budgets
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.EXPORT_TRIP.replace(":tripId", trip.id))}>
+                    <Printer className="mr-2 h-4 w-4"/>
+                    Print Trip
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onSelect={(e) => e.preventDefault()}
