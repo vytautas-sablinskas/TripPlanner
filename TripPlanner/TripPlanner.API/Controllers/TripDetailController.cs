@@ -39,7 +39,7 @@ public class TripDetailController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetTripDetailForView(Guid tripId, Guid detailId)
     {
-        var (isSuccess, dto) = await _tripDetailsService.GetTripDetailView(tripId, detailId);
+        var (isSuccess, dto) = await _tripDetailsService.GetTripDetailView(User.GetUserId(), tripId, detailId);
         if (!isSuccess)
         {
             return BadRequest();
