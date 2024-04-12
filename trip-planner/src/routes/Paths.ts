@@ -16,6 +16,7 @@ const Paths = {
     TRIP_TRAVELLERS_CREATE: '/trips/:tripId/participants/create',
     NOTIFICATIONS: '/notifications',
     PROFILE: '/profile',
+    EXPORT_TRIP: '/trips/:tripId/export',
 }
 
 export default Paths

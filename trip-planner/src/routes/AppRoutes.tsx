@@ -18,6 +18,7 @@ import TripAddTraveller from "@/pages/TripTravellers/TripAddTraveller";
 import Notifications from "@/pages/Notifications/Notifications";
 import EditBudget from "@/pages/Budgets/EditBudget";
 import Profile from "@/pages/Profile/Profile";
+import ExportInformationTrip from "@/pages/TripDetails/ExportInformationTrip";
 
 const AppRoutes = [
   {
@@ -92,6 +93,10 @@ const AppRoutes = [
   {
     path: Paths.PROFILE,
     element: <Profile />
+  },
+  {
+    path: Paths.EXPORT_TRIP,
+    element: <ExportInformationTrip />
   }
 ];
 
