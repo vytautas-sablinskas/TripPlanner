@@ -82,6 +82,7 @@ public static class Program
         services.AddScoped<IRepository<TripDocument>, Repository<TripDocument>>();
         services.AddScoped<IRepository<Expense>, Repository<Expense>>();
         services.AddScoped<IRepository<CurrencyExchangeRate>, Repository<CurrencyExchangeRate>>();
+        services.AddScoped<IRepository<TripDocumentMember>, Repository<TripDocumentMember>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITripService, TripService>();

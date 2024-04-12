@@ -44,6 +44,7 @@ const TripDetailView = () => {
     useState(false);
   const [documents, setDocuments] = useState<any>([]);
   const [tripDetail, setTripDetail] = useState<any>({});
+  const [travellers, setTravellers] = useState<any>([]);
 
   const getTripId = () => {
     const path = location.pathname.split("/");
@@ -99,6 +100,7 @@ const TripDetailView = () => {
         website: data.website,
         notes: data.notes,
       });
+      setTravellers(data.travellers);
       setIsLoading(false);
     };
 
@@ -164,6 +166,9 @@ const TripDetailView = () => {
     const form = new FormData();
     form.append("document", formValues.file);
     form.append("name", formValues.name);
+    form.append("memberIds", JSON.stringify(formValues.memberIds))
+    form.append("isPrivate", formValues.isPrivate)
+
     const response = await addTripDocument(
       getTripId(),
       getTripDetailId(),
@@ -246,12 +251,12 @@ const TripDetailView = () => {
       );
     }
 
-    console.log(formValues);
+    const members = formValues.isPrivate ? formValues.memberIds : [];
     const response = await editTripDocument(
       getTripId(),
       getTripDetailId(),
       formValues.id,
-      { name: formValues.name }
+      { name: formValues.name, memberIds: members, isPrivate: formValues.isPrivate }
     );
     if (!response.ok) {
       toast.error("Unexpected error. Try again later", {
@@ -384,6 +389,7 @@ const TripDetailView = () => {
               isDeleteLoading={isDeleteDocumentDeleting}
               onEdit={handleEditDocument}
               isEditLoading={isEditDocumentSubmitting}
+              members={travellers}
             />
           ))}
         </div>
@@ -392,6 +398,7 @@ const TripDetailView = () => {
           isLoading={isAddDocumentSubmitting}
           open={isAddDocumentDialogOpen}
           setOpen={setIsAddDocumentDialogOpen}
+          travellers={travellers}
         />
       </Card>
     </div>

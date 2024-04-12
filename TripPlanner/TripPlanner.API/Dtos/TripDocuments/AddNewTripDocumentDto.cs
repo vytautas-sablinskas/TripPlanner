@@ -2,5 +2,7 @@
 
 public record AddNewTripDocumentDto (
     string Name,
-    IFormFile Document
+    IFormFile Document,
+    string MemberIds,
+    bool IsPrivate
 );

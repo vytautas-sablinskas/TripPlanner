@@ -37,9 +37,9 @@ public class TripDetailController : ControllerBase
 
     [HttpGet("trips/{tripId}/tripDetails/{detailId}/view")]
     [Authorize]
-    public async Task<IActionResult> GetTripDetailForView(Guid detailId)
+    public async Task<IActionResult> GetTripDetailForView(Guid tripId, Guid detailId)
     {
-        var (isSuccess, dto) = await _tripDetailsService.GetTripDetailView(detailId);
+        var (isSuccess, dto) = await _tripDetailsService.GetTripDetailView(tripId, detailId);
         if (!isSuccess)
         {
             return BadRequest();
