@@ -30,6 +30,15 @@ public class TripDocumentController : ControllerBase
         return Ok(successDto);
     }
 
+    [HttpGet("trips/{tripId}/tripDetails/{tripDetailId}/documents/{documentId}")]
+    [Authorize]
+    public async Task<IActionResult> GetTripDocument(Guid documentId)
+    {
+        var members = await _tripDocumentService.GetDocumentMembers(documentId);
+
+        return Ok(members);
+    }
+
     [HttpPut("trips/{tripId}/tripDetails/{tripDetailId}/documents/{documentId}")]
     [Authorize]
     public async Task<IActionResult> EditDocument(Guid documentId, [FromBody] EditDocumentDto dto)

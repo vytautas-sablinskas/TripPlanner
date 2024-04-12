@@ -6,6 +6,7 @@ using TripPlanner.API.Dtos.TripBudgets;
 using TripPlanner.API.Dtos.TripDetails;
 using TripPlanner.API.Dtos.TripDocuments;
 using TripPlanner.API.Dtos.Trips;
+using TripPlanner.API.Dtos.TripTravellers;
 
 namespace TripPlanner.API.Services.TripDetails;
 
@@ -14,13 +15,15 @@ public class TripDetailsService : ITripDetailsService
     private readonly IRepository<TripDetail> _tripDetailsRepository;
     private readonly IRepository<Trip> _tripRepository;
     private readonly IRepository<TripBudget> _tripBudgetRepository;
+    private readonly IRepository<Traveller> _travellerRepository;
     private readonly IMapper _mapper;
 
-    public TripDetailsService(IRepository<TripDetail> tripDetailsRepository, IRepository<Trip> tripRepository, IRepository<TripBudget> tripBudgetRepository, IMapper mapper)
+    public TripDetailsService(IRepository<TripDetail> tripDetailsRepository, IRepository<Trip> tripRepository, IRepository<TripBudget> tripBudgetRepository, IRepository<Traveller> travellerRepository, IMapper mapper)
     {
         _tripDetailsRepository = tripDetailsRepository;
         _tripRepository = tripRepository;
         _tripBudgetRepository = tripBudgetRepository;
+        _travellerRepository = travellerRepository;
         _mapper = mapper;
     }
 
@@ -81,10 +84,11 @@ public class TripDetailsService : ITripDetailsService
         return editDetailsDto;
     }
 
-    public async Task<(bool, TripDetailViewDto)> GetTripDetailView(Guid detailId)
+    public async Task<(bool, TripDetailViewDto)> GetTripDetailView(string userId, Guid tripId, Guid detailId)
     {
         var tripDetail = await _tripDetailsRepository.FindByCondition(t => t.Id == detailId)
             .Include(t => t.Documents)
+            .ThenInclude(t => t.Members)
             .FirstOrDefaultAsync();
 
         if (tripDetail == null)
@@ -92,8 +96,14 @@ public class TripDetailsService : ITripDetailsService
             return (false, null);
         }
 
-        var documents = tripDetail.Documents.Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile));
-        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, documents);
+        var travellers = _travellerRepository.FindByCondition(t => t.TripId == tripId)
+            .Include(t => t.User);
+        var travellerMinimalDtos = await travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}", t.User.PhotoUri))
+            .ToListAsync();
+        var documents = tripDetail.Documents
+            .Where(d => !d.IsPrivateDocument || d.CreatorId == userId || d.Members.Any(m => m.MemberId == userId))
+            .Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile));
+        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, documents, travellerMinimalDtos);
 
         return (true, tripDetailViewDto);
     }

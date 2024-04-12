@@ -14,5 +14,5 @@ public interface ITripDetailsService
 
     Task<GetEditTripDetailsDto> GetTripDetailById(Guid tripId, Guid detailId);
 
-    Task<(bool, TripDetailViewDto)> GetTripDetailView(Guid detailId);
+    Task<(bool, TripDetailViewDto)> GetTripDetailView(string userId, Guid tripId, Guid detailId);
 }

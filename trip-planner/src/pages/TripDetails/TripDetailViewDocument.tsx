@@ -5,7 +5,7 @@ import { useState } from "react";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import EditDocumentDialog from "./TripDocuments/EditDocumentDialog";
 
-const TripDetailViewDocument = ({ document, onDelete, isDeleteLoading, onEdit, isEditLoading } : any) => {
+const TripDetailViewDocument = ({ document, onDelete, isDeleteLoading, onEdit, isEditLoading, members } : any) => {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
@@ -42,6 +42,7 @@ const TripDetailViewDocument = ({ document, onDelete, isDeleteLoading, onEdit, i
                     open={isEditDialogOpen}
                     setOpen={setIsEditDialogOpen}
                     document={document}
+                    members={members}
                 />
             </div>
         </div>

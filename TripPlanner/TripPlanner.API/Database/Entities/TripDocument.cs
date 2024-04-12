@@ -19,8 +19,13 @@ public class TripDocument
 
     public Guid TripDetailId { get; set; }
 
+    public bool IsPrivateDocument { get; set; }
+
     [DeleteBehavior(DeleteBehavior.Restrict)]
     public virtual AppUser Creator { get; set; }
 
     public string CreatorId { get; set; }
+
+    [DeleteBehavior(DeleteBehavior.Restrict)]
+    public virtual ICollection<TripDocumentMember> Members { get; set; }
 }

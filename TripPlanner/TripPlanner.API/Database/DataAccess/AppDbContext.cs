@@ -26,6 +26,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<CurrencyExchangeRate> CurrencyExchangeRates { get; set; }
 
+    public DbSet<TripDocumentMember> TripDocumentMembers { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
     {
