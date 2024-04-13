@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TripPlanner.API.Dtos.TripPlaceRecommendations;
-using TripPlanner.API.Services.TripPlaceRecommendations;
 using TripPlanner.API.Services.TripPLaceRecommendations;
 
 namespace TripPlanner.API.Controllers;
@@ -16,8 +15,8 @@ public class TripPlaceRecommendationController : ControllerBase
         _tripPlaceRecommendationService = tripPlaceRecommendationService;
     }
 
-    [HttpGet("recommendations")]
-    public async Task<IActionResult> GetTripPlaceRecommendations([FromQuery] TripPlaceRecommendationRequestDto dto)
+    [HttpPost("recommendations")]
+    public async Task<IActionResult> GetTripPlaceRecommendations([FromBody] TripPlaceRecommendationRequestDto dto)
     {
         var recommendations = await _tripPlaceRecommendationService.GetRecommendations(dto);
         return Ok(recommendations);

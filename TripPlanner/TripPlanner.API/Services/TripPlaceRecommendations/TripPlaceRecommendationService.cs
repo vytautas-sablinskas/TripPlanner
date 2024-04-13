@@ -22,7 +22,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
     public async Task<IEnumerable<CategoryRecommendation>> GetRecommendations(TripPlaceRecommendationRequestDto dto)
     {
         _httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", _googleApiKey);
-        _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "places.rating,places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri,places.photos.name");
+        _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "places.rating,places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri,places.photos.name,places.displayName.text,places.formattedAddress,places.internationalPhoneNumber");
 
         var allCategoryRecommendations = new List<CategoryRecommendation>();
         foreach (var category in dto.Categories)
@@ -30,6 +30,12 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             var response = await FetchPlacesByCategory(dto, category);
             if (response == null || !response.Places.Any())
             {
+                allCategoryRecommendations.Add(new CategoryRecommendation
+                {
+                    Category = category.ToString(),
+                    Recommendations = new List<PlaceRecommendation>()
+                });
+
                 continue;
             }
 
@@ -41,7 +47,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             });
         }
 
-        // await FetchAndAssignPhotos(allCategoryRecommendations);
+        await FetchAndAssignPhotos(allCategoryRecommendations);
 
         return allCategoryRecommendations;
     }
@@ -78,6 +84,11 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             }
 
             var responseBody = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(responseBody))
+            {
+                return null;
+            }
+
             var placesResponse = JsonConvert.DeserializeObject<PlacesResponse>(responseBody);
 
             return placesResponse;
@@ -90,8 +101,8 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
 
     private static IEnumerable<PlaceRecommendation> GenerateRecommendations(IEnumerable<Place> places, TripPlaceRecommendationRequestDto dto)
     {
-        double maxRating = places.Max(p => p.Rating ?? 0);
-        double maxUserRatingCount = places.Max(p => p.UserRatingCount ?? 0);
+        double maxRating = places.Max(p => p.Rating ?? 1);
+        double maxUserRatingCount = places.Max(p => p.UserRatingCount ?? 1);
 
         var totalCount = places.Count();
         var recommendations = places.Select((place, index) => new PlaceRecommendation
@@ -102,6 +113,9 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 Rating = place.Rating,
                 Types = place.Types,
                 UserRatingCount = place.UserRatingCount,
+                FormattedAddress = place.FormattedAddress,
+                InternationalPhoneNumber = place.InternationalPhoneNumber,
+                DisplayName = place.DisplayName?.Text,
             },
             Score = (dto.RatingWeight * (place.Rating.GetValueOrDefault() / maxRating)) +
                     (dto.RatingCountWeight * (place.UserRatingCount.GetValueOrDefault() / maxUserRatingCount)) +
@@ -119,6 +133,8 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
 
     private static double CalculatePositionScoreBeforeWeight(int index, int totalCount)
     {
+        if (totalCount == 0) return 0;
+
         return (totalCount - index) / (double)totalCount;
     }
 

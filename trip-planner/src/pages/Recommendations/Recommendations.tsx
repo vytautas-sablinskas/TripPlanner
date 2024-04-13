@@ -4,6 +4,14 @@ import FirstStepCard from "./FirstStepCard";
 import SecondStepCard from "./SecondStepCard";
 import FinalStepCard from "./FinalStepCard";
 import { useEffect, useState } from "react";
+import { CreateEditLoadingButton } from "@/components/Extra/LoadingButton";
+import { checkTokenValidity } from "@/utils/jwtUtils";
+import { refreshAccessToken } from "@/api/AuthenticationService";
+import { toast } from "sonner";
+import { useUser } from "@/providers/user-provider/UserContext";
+import { useNavigate } from "react-router-dom";
+import Paths from "@/routes/Paths";
+import { getRecommendations } from "@/api/RecommendationService";
 
 const steps = [
   { label: "Select Location" },
@@ -16,12 +24,14 @@ export default function Recommendations() {
   const [address, setAddress] = useState<any>(null);
   const [addressError, setAddressError] = useState<any>(null);
   const [categoryError, setCategoryError] = useState<any>(null);
-  const [radius, setRadius] = useState(500);
+  const [radius, setRadius] = useState<any>(500);
   const [categories, setCategories] = useState<any>([]);
   const [selectedRating, setSelectedRating] = useState<any>("60");
   const [selectedRatingCount, setSelectedRatingCount] = useState<any>("60");
   const [selectedDistance, setSelectedDistance] = useState<any>("60");
-
+  const [isDataLoading, setIsDataLoading] = useState<any>(false);
+  const [recommendations, setRecommendations] = useState<any>([]);
+  console.log(recommendations);
   const getStepCard = (index: number) => {
     switch (index) {
       case 0:
@@ -48,7 +58,7 @@ export default function Recommendations() {
             setSelectedDistance={setSelectedDistance}
         />;
       case 2:
-        return <FinalStepCard />;
+        return <FinalStepCard recommendations={recommendations}/>;
       default:
         return null;
     }
@@ -56,8 +66,8 @@ export default function Recommendations() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="flex sm:min-w-[600px] flex-col gap-4">
-        <Stepper initialStep={1} steps={steps}>
+      <div className="flex flex-col gap-4">
+        <Stepper initialStep={0} steps={steps}>
           {steps.map((stepProps, index) => {
             return (
               <Step key={stepProps.label} {...stepProps}>
@@ -72,14 +82,17 @@ export default function Recommendations() {
             setCategoryError={setCategoryError}
             setAddressError={setAddressError}
             dto={{
-              ratingWeight: Number(selectedRating),
-              ratingCountWeight: Number(selectedRatingCount),
-              distanceWeight: Number(selectedDistance),
-              categories,
+              ratingWeight: Number(selectedRating) / 100,
+              ratingCountWeight: Number(selectedRatingCount) / 100,
+              distanceWeight: Number(selectedDistance) / 100,
+              categories: categories.map((category: any) => Number(category)),
               latitude: geometry?.latitude,
               longitude: geometry?.longitude,
-              radius
+              radius: radius[0]
             }}
+            isDataLoading={isDataLoading}
+            setIsDataLoading={setIsDataLoading}
+            setRecommendations={setRecommendations}
           />
         </Stepper>
       </div>
@@ -87,7 +100,7 @@ export default function Recommendations() {
   );
 }
 
-const Footer = ({ geometry, address, setAddressError, categories, setCategoryError, dto } : any) => {
+const Footer = ({ geometry, address, setAddressError, categories, setCategoryError, dto, isDataLoading, setIsDataLoading, setRecommendations } : any) => {
   const {
     nextStep,
     prevStep,
@@ -98,22 +111,68 @@ const Footer = ({ geometry, address, setAddressError, categories, setCategoryErr
     isDisabledStep,
     currentStep,
   } = useStepper();
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+  const navigate = useNavigate();
 
-  const onNextStep = () => {
+  const tryGettingRecommendations = async () => {
+    setIsDataLoading(true);
+      const accessToken = localStorage.getItem("accessToken");
+
+      if (!checkTokenValidity(accessToken || "")) {
+        const result = await refreshAccessToken();
+        if (!result.success) {
+          toast.error("Session has expired. Login again!", {
+            position: "top-center",
+          });
+
+          changeUserInformationToLoggedOut();
+          navigate(Paths.LOGIN);
+          return false;
+        }
+
+        changeUserInformationToLoggedIn(
+          result.data.accessToken,
+          result.data.refreshToken,
+          result.data.id
+        );
+      }
+      
+      const response = await getRecommendations(dto);
+      if (!response.ok) {
+        toast.error("Failed to get recommendations", {
+          position: "top-center",
+        });
+        setIsDataLoading(false);
+        return false;
+      }
+
+      const data = await response.json();
+      setRecommendations(data);
+      setIsDataLoading(false);
+
+      return true;
+  }
+
+  const onNextStep = async () => {
     if (currentStep.label === "Select Location" && (!geometry || !address || address.length === 0)) {
       setAddressError("Please select a location");
+      return;
     }
 
     if (currentStep.label === "Select Filters" && (!categories || categories.length === 0)) {
       setCategoryError("Please select at least one category");
+      return;
     }
 
-    if (currentStep.label === "Select Filters") {
-      console.log(dto);
-    }
-
-    
     setAddressError(null);
+    if (currentStep.label === "Select Filters") {
+      var success = await tryGettingRecommendations();
+      // var success = true;
+      if (!success) {
+        return;
+      }
+    }
+
     nextStep();
   };
 
@@ -140,9 +199,12 @@ const Footer = ({ geometry, address, setAddressError, categories, setCategoryErr
             >
               Prev
             </Button>
-            <Button size="sm" onClick={onNextStep}>
-              {isLastStep ? "Finish" : isOptionalStep ? "Skip" : "Next"}
-            </Button>
+            <CreateEditLoadingButton
+              loading={isDataLoading}
+              text={isLastStep ? "Finish" : isOptionalStep ? "Skip" : "Next"}
+              size="sm"
+              onClick={onNextStep}
+            />
           </>
         )}
       </div>

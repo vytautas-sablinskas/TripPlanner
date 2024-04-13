@@ -1,4 +1,6 @@
-﻿namespace TripPlanner.API.Services.TripPlaceRecommendations;
+﻿using Newtonsoft.Json;
+
+namespace TripPlanner.API.Services.TripPlaceRecommendations;
 
 public class Place
 {
@@ -10,4 +12,11 @@ public class Place
     public int? UserRatingCount { get; set; }
 
     public List<PhotosField> Photos { get; set; } = new List<PhotosField>();
+
+    [JsonProperty("displayName")]
+    public PlaceDisplayName? DisplayName { get; set; }
+
+    public string? FormattedAddress { get; set; }
+
+    public string? InternationalPhoneNumber { get; set; }
 }

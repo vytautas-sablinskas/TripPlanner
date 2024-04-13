@@ -7,5 +7,12 @@ public class PlaceMinimal
     public string? GoogleMapsUri { get; set; }
 
     public double? Rating { get; set; }
+
     public int? UserRatingCount { get; set; }
+
+    public string? FormattedAddress { get; set; }
+
+    public string? InternationalPhoneNumber { get; set; }
+
+    public string? DisplayName { get; set; }
 }
