@@ -96,7 +96,13 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         var totalCount = places.Count();
         var recommendations = places.Select((place, index) => new PlaceRecommendation
         {
-            Place = place,
+            Place = new PlaceMinimal
+            {
+                GoogleMapsUri = place.GoogleMapsUri,
+                Rating = place.Rating,
+                Types = place.Types,
+                UserRatingCount = place.UserRatingCount,
+            },
             Score = (dto.RatingWeight * (place.Rating.GetValueOrDefault() / maxRating)) +
                     (dto.RatingCountWeight * (place.UserRatingCount.GetValueOrDefault() / maxUserRatingCount)) +
                     (dto.DistanceWeight * CalculatePositionScoreBeforeWeight(index, totalCount)),
