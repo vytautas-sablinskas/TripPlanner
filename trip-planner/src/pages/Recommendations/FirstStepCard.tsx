@@ -7,7 +7,7 @@ const FirstStepCard = ({ setGeometry, address, setAddress, radius, setRadius, ad
   const [autocompleteSearchType, setAutocompleteSearchType] = useState("geocode");
 
   return (
-    <div className="flex flex-col my-2 border bg-secondary text-primary rounded-md">
+    <div className="sm:w-[600px] flex flex-col my-2 border bg-secondary text-primary rounded-md">
       <div className="w-full p-8">
         <Label required>Enter Location</Label>
         <GoogleAutocomplete

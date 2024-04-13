@@ -3,7 +3,7 @@ import { Step, Stepper, useStepper } from "@/components/ui/stepper";
 import FirstStepCard from "./FirstStepCard";
 import SecondStepCard from "./SecondStepCard";
 import FinalStepCard from "./FinalStepCard";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CreateEditLoadingButton } from "@/components/Extra/LoadingButton";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
@@ -12,11 +12,11 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import { getRecommendations } from "@/api/RecommendationService";
+import { set } from "date-fns";
 
 const steps = [
   { label: "Select Location" },
   { label: "Select Filters" },
-  { label: "Recommendations" },
 ];
 
 export default function Recommendations() {
@@ -57,12 +57,24 @@ export default function Recommendations() {
             selectedDistance={selectedDistance}
             setSelectedDistance={setSelectedDistance}
         />;
-      case 2:
-        return <FinalStepCard recommendations={recommendations}/>;
       default:
         return null;
     }
   };
+
+  const onFormReset = () => {
+    setGeometry(null);
+    setAddress(null);
+    setAddressError(null);
+    setCategoryError(null);
+    setCategories([]);
+    setRadius(500);
+    setSelectedRating("60");
+    setSelectedRatingCount("60");
+    setSelectedDistance("60");
+    setIsDataLoading(false);
+    setRecommendations([]);
+  }
 
   return (
     <div className="w-full flex justify-center">
@@ -92,7 +104,9 @@ export default function Recommendations() {
             }}
             isDataLoading={isDataLoading}
             setIsDataLoading={setIsDataLoading}
+            recommendations={recommendations}
             setRecommendations={setRecommendations}
+            onFormReset={onFormReset}
           />
         </Stepper>
       </div>
@@ -100,7 +114,7 @@ export default function Recommendations() {
   );
 }
 
-const Footer = ({ geometry, address, setAddressError, categories, setCategoryError, dto, isDataLoading, setIsDataLoading, setRecommendations } : any) => {
+const Footer = ({ geometry, address, setAddressError, categories, setCategoryError, dto, isDataLoading, setIsDataLoading, recommendations, setRecommendations, onFormReset } : any) => {
   const {
     nextStep,
     prevStep,
@@ -176,17 +190,20 @@ const Footer = ({ geometry, address, setAddressError, categories, setCategoryErr
     nextStep();
   };
 
+  const onReset = () => {
+    onFormReset();
+    resetSteps();
+  }
+
   return (
     <>
       {hasCompletedAllSteps && (
-        <div className="h-40 flex items-center justify-center my-2 border bg-secondary text-primary rounded-md">
-          <h1 className="text-xl">Woohoo! All steps completed! 🎉</h1>
-        </div>
+        <FinalStepCard recommendations={recommendations}/>
       )}
       <div className="w-full flex justify-end gap-2">
         {hasCompletedAllSteps ? (
-          <Button size="sm" onClick={resetSteps}>
-            Reset
+          <Button size="sm" onClick={onReset}>
+            Try Again
           </Button>
         ) : (
           <>

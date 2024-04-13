@@ -62,8 +62,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             var jsonPayload = @$"
             {{
                 ""includedTypes"": [""{categoryFormatted}""],
-                ""maxResultCount"": 10,
-                ""rankPreference"": ""DISTANCE"",
+                ""maxResultCount"": 20,
                 ""locationRestriction"": {{
                     ""circle"": {{
                         ""center"": {{
@@ -101,8 +100,8 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
 
     private static IEnumerable<PlaceRecommendation> GenerateRecommendations(IEnumerable<Place> places, TripPlaceRecommendationRequestDto dto)
     {
-        double maxRating = places.Max(p => p.Rating ?? 1);
-        double maxUserRatingCount = places.Max(p => p.UserRatingCount ?? 1);
+        var ratingPlacesOrdered = places.OrderByDescending(r => r.Rating).ToList();
+        var ratingCountPlacesOrdered = places.OrderByDescending(r => r.UserRatingCount).ToList();
 
         var totalCount = places.Count();
         var recommendations = places.Select((place, index) => new PlaceRecommendation
@@ -117,8 +116,8 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 InternationalPhoneNumber = place.InternationalPhoneNumber,
                 DisplayName = place.DisplayName?.Text,
             },
-            Score = (dto.RatingWeight * (place.Rating.GetValueOrDefault() / maxRating)) +
-                    (dto.RatingCountWeight * (place.UserRatingCount.GetValueOrDefault() / maxUserRatingCount)) +
+            Score = (dto.RatingWeight * GetScoreFromOrderedList(ratingPlacesOrdered, place)) +
+                    (dto.RatingCountWeight * GetScoreFromOrderedList(ratingCountPlacesOrdered, place)) +
                     (dto.DistanceWeight * CalculatePositionScoreBeforeWeight(index, totalCount)),
             PhotoUri = place.Photos.Count > 0 ? place.Photos[0].Name : null,
         }).ToList();
@@ -129,6 +128,13 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             .ToList();
 
         return recommendations;
+    }
+
+    private static double GetScoreFromOrderedList(List<Place> orderedList, Place place)
+    {
+        var placeIndex = orderedList.FindIndex(p => p == place);
+
+        return CalculatePositionScoreBeforeWeight(placeIndex, orderedList.Count);
     }
 
     private static double CalculatePositionScoreBeforeWeight(int index, int totalCount)
