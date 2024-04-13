@@ -21,6 +21,7 @@ using TripPlanner.API.Services.Profile;
 using TripPlanner.API.Services.TripBudgets;
 using TripPlanner.API.Services.TripDetails;
 using TripPlanner.API.Services.TripDocuments;
+using TripPlanner.API.Services.TripPLaceRecommendations;
 using TripPlanner.API.Services.Trips;
 using TripPlanner.API.Services.TripTravellers;
 using TripPlanner.API.Services.User;
@@ -99,6 +100,7 @@ public static class Program
         services.AddScoped<ITripDocumentService, TripDocumentService>();
         services.AddScoped<ICurrencyExchangeService, CurrencyExchangeService>();
         services.AddScoped<IExpenseService, ExpenseService>();
+        services.AddScoped<ITripPlaceRecommendationService, TripPlaceRecommendationService>();
 
         services.AddAutoMapper(typeof(Program));
 

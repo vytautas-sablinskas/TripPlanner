@@ -17,20 +17,20 @@ public class AuthenticationService : IAuthenticationService
         _jwtTokenService = jwtTokenService;
     }
 
-    public async Task<Result<SuccessfulLoginDto>> Login(LoginDto loginDto)
+    public async Task<Result<SuccessfulLoginWithUserInfoDto>> Login(LoginDto loginDto)
     {
         var user = await _userManager.FindByEmailAsync(loginDto.Email);
         if (user == null)
-            return new Result<SuccessfulLoginDto>(Success: false, Message: "Username or password is invalid", Data: null);
+            return new Result<SuccessfulLoginWithUserInfoDto>(Success: false, Message: "Username or password is invalid", Data: null);
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginDto.Password);
         if (!isPasswordValid)
-            return new Result<SuccessfulLoginDto>(Success: false, Message: "Username or password is invalid", Data: null);
+            return new Result<SuccessfulLoginWithUserInfoDto>(Success: false, Message: "Username or password is invalid", Data: null);
 
         var roles = await _userManager.GetRolesAsync(user);
         var (accessToken, refreshToken) = _jwtTokenService.CreateTokens(user.UserName, user.Id, roles);
 
-        return new Result<SuccessfulLoginDto>(Success: true, Message: "", Data: new SuccessfulLoginDto(accessToken, refreshToken));
+        return new Result<SuccessfulLoginWithUserInfoDto>(Success: true, Message: "", Data: new SuccessfulLoginWithUserInfoDto(accessToken, refreshToken, user.Id));
     }
 
     public async Task<Result<UserDto>> Register(RegisterUserDto userDto)

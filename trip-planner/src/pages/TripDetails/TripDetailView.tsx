@@ -75,7 +75,8 @@ const TripDetailView = () => {
 
         changeUserInformationToLoggedIn(
           result.data.accessToken,
-          result.data.refreshToken
+          result.data.refreshToken,
+          result.data.id
         );
       }
 
@@ -125,7 +126,8 @@ const TripDetailView = () => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 
@@ -159,7 +161,8 @@ const TripDetailView = () => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 
@@ -207,7 +210,8 @@ const TripDetailView = () => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 
@@ -247,7 +251,8 @@ const TripDetailView = () => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 

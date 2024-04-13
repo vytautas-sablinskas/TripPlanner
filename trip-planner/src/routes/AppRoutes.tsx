@@ -19,6 +19,7 @@ import Notifications from "@/pages/Notifications/Notifications";
 import EditBudget from "@/pages/Budgets/EditBudget";
 import Profile from "@/pages/Profile/Profile";
 import ExportInformationTrip from "@/pages/TripDetails/ExportInformationTrip";
+import Recommendations from "@/pages/Recommendations/Recommendations";
 
 const AppRoutes = [
   {
@@ -97,6 +98,10 @@ const AppRoutes = [
   {
     path: Paths.EXPORT_TRIP,
     element: <ExportInformationTrip />
+  },
+  {
+    path: Paths.RECOMMENDATIONS,
+    element: <Recommendations />
   }
 ];
 

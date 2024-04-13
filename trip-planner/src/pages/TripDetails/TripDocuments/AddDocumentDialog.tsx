@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import MultipleSelector from "@/components/ui/multiple-selector";
+import { useUser } from "@/providers/user-provider/UserContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -61,6 +62,7 @@ const AddDocumentDialog = ({
   );
   const [isPrivateDocument, setIsPrivateDocument] = useState<any>(false);
   const [selectedMembers, setSelectedMembers] = useState<any>([]);
+  const { id } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -182,7 +184,7 @@ const AddDocumentDialog = ({
                 <MultipleSelector
                   value={selectedMembers}
                   onChange={setSelectedMembers}
-                  defaultOptions={travellers.map((traveller: any) => ({
+                  defaultOptions={travellers.filter((member : any) => member.id !== id).map((traveller: any) => ({
                     label: `${traveller.fullName} - ${traveller.email}`,
                     value: traveller.id,
                   }))}

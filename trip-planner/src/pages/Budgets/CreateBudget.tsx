@@ -107,7 +107,8 @@ const CreateBudget = () => {
 
         changeUserInformationToLoggedIn(
           result.data.accessToken,
-          result.data.refreshToken
+          result.data.refreshToken,
+          result.data.id
         );
       }
 
@@ -297,7 +298,8 @@ const CreateBudget = () => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 

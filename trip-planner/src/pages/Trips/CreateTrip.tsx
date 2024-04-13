@@ -117,7 +117,8 @@ const CreateTrip = () => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 

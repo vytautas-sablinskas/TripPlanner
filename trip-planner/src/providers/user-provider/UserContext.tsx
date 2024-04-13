@@ -4,9 +4,10 @@ const UserContext = React.createContext({
     isAuthenticated: false,
     role: 'none',
     hasNotifications: false,
-    changeUserInformationToLoggedIn: (_newAccessToken: string, _newRefreshToken: string) => { },
+    id: '',
+    changeUserInformationToLoggedIn: (_newAccessToken: string, _newRefreshToken: string, _id: string) => { },
     changeUserInformationToLoggedOut: () => { },
-    changeHasNotifications: (_hasNotifications: boolean) => { }
+    changeHasNotifications: (_hasNotifications: boolean) => { },
 });
 
 export const useUser = () => {

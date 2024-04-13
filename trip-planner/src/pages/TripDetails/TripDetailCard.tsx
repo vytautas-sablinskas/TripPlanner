@@ -64,7 +64,8 @@ const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 
