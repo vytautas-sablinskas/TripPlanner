@@ -93,6 +93,9 @@ const Header = () => {
             <Link to={Paths.TRIPS} className="link font-bold !mr-1">
               Trips
             </Link>
+            <Link to={Paths.RECOMMENDATIONS} className="link font-bold !mr-1">
+              Recommendations
+            </Link>
             <Link to={Paths.NOTIFICATIONS} className="link mr-3 notification">
               <BellDot className="w-5 h-5" />
               <span className={hasNotifications ? "badge" : ""} />

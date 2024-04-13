@@ -17,6 +17,7 @@ const Paths = {
     NOTIFICATIONS: '/notifications',
     PROFILE: '/profile',
     EXPORT_TRIP: '/trips/:tripId/export',
+    RECOMMENDATIONS: '/recommendations',
 }
 
 export default Paths

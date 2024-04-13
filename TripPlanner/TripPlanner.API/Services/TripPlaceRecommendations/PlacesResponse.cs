@@ -2,5 +2,5 @@
 
 public class PlacesResponse
 {
-    public IEnumerable<Place> Places { get; set; }
+    public IEnumerable<Place> Places { get; set; } = new List<Place>();
 }

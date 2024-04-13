@@ -33,7 +33,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 continue;
             }
 
-            var recommendations = GenerateRecommendations(response.Places);
+            var recommendations = GenerateRecommendations(response.Places, dto);
             allCategoryRecommendations.Add(new CategoryRecommendation
             {
                 Category = category.ToString(),
@@ -88,22 +88,18 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         }
     }
 
-    private static IEnumerable<PlaceRecommendation> GenerateRecommendations(IEnumerable<Place> places)
+    private static IEnumerable<PlaceRecommendation> GenerateRecommendations(IEnumerable<Place> places, TripPlaceRecommendationRequestDto dto)
     {
         double maxRating = places.Max(p => p.Rating ?? 0);
         double maxUserRatingCount = places.Max(p => p.UserRatingCount ?? 0);
 
-        double ratingWeight = 0.3;
-        double userRatingCountWeight = 0.5;
-        double positionWeight = 0.2;
         var totalCount = places.Count();
-
         var recommendations = places.Select((place, index) => new PlaceRecommendation
         {
             Place = place,
-            Score = (ratingWeight * (place.Rating.GetValueOrDefault() / maxRating)) +
-                    (userRatingCountWeight * (place.UserRatingCount.GetValueOrDefault() / maxUserRatingCount)) +
-                    (positionWeight * CalculatePositionScoreBeforeWeight(index, totalCount)),
+            Score = (dto.RatingWeight * (place.Rating.GetValueOrDefault() / maxRating)) +
+                    (dto.RatingCountWeight * (place.UserRatingCount.GetValueOrDefault() / maxUserRatingCount)) +
+                    (dto.DistanceWeight * CalculatePositionScoreBeforeWeight(index, totalCount)),
             PhotoUri = place.Photos.Count > 0 ? place.Photos[0].Name : null,
         }).ToList();
 

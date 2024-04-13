@@ -17,10 +17,9 @@ public class TripPlaceRecommendationController : ControllerBase
     }
 
     [HttpGet("recommendations")]
-    public async Task<IActionResult> GetTripPlaceRecommendations()
+    public async Task<IActionResult> GetTripPlaceRecommendations([FromQuery] TripPlaceRecommendationRequestDto dto)
     {
-        var recommendations = await _tripPlaceRecommendationService.GetRecommendations(new TripPlaceRecommendationRequestDto(500, -122.3965, 37.7937, 0.5, 0.5, 0.5, new List<RecommendationCategories> { RecommendationCategories.Restaurant, RecommendationCategories.Supermarket }));
-
+        var recommendations = await _tripPlaceRecommendationService.GetRecommendations(dto);
         return Ok(recommendations);
     }
 }
