@@ -71,7 +71,8 @@ const TripDetails = () => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 
@@ -151,7 +152,8 @@ const TripDetails = () => {
 
         changeUserInformationToLoggedIn(
           result.data.accessToken,
-          result.data.refreshToken
+          result.data.refreshToken,
+          result.data.id
         );
       }
 
@@ -247,7 +249,8 @@ const TripDetails = () => {
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 

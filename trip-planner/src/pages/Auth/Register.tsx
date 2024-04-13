@@ -137,11 +137,11 @@ const Register = () => {
           <CardContent className="login-container">
             <div className="login-image-container">
               <img
-                src="https://via.placeholder.com/150"
+                src="/logo.png"
                 alt="Logo"
                 height={72}
                 width={150}
-                className="login-image"
+                className="h-[150px]"
               />
             </div>
             <FormField

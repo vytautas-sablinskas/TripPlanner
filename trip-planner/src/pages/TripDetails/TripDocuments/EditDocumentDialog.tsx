@@ -26,6 +26,7 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import Paths from "@/routes/Paths";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { tr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +59,7 @@ const EditDocumentDialog = ({
     },
   });
   const navigate = useNavigate();
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, id } =
     useUser();
   const [selectedMembers, setSelectedMembers] = useState<any>([]);
   const [isLoadingMembers, setIsLoading] = useState<any>(false);
@@ -93,7 +94,8 @@ const EditDocumentDialog = ({
 
         changeUserInformationToLoggedIn(
           result.data.accessToken,
-          result.data.refreshToken
+          result.data.refreshToken,
+          result.data.id
         );
       }
 
@@ -183,7 +185,7 @@ const EditDocumentDialog = ({
                 <MultipleSelector
                   value={selectedMembers}
                   onChange={setSelectedMembers}
-                  defaultOptions={members.map((traveller: any) => ({
+                  defaultOptions={members.filter((member : any) => member.id !== id).map((traveller: any) => ({
                     label: `${traveller.fullName} - ${traveller.email}`,
                     value: traveller.id,
                   }))}
@@ -193,7 +195,7 @@ const EditDocumentDialog = ({
                   <Card className="p-2 mt-2 max-h-[150px] overflow-y-scroll">
                     {members
                     .filter((traveller: any) => selectedMembers.some((member: any) => traveller.id === member.value))
-                    .map((traveller: any) => (
+                    .map((traveller: any) => (  
                       <div
                         className="flex items-center space-x-4 mb-2 w-full"
                         key={traveller.id}

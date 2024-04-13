@@ -16,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import Logo from "../../../public/logo.svg";
 
 const Header = () => {
   const {
@@ -55,7 +54,8 @@ const Header = () => {
 
           changeUserInformationToLoggedIn(
             result.data.accessToken,
-            result.data.refreshToken
+            result.data.refreshToken,
+            result.data.id
           );
         }
 

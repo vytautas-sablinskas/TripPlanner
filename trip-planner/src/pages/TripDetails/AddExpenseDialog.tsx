@@ -89,7 +89,8 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
 
       changeUserInformationToLoggedIn(
         result.data.accessToken,
-        result.data.refreshToken
+        result.data.refreshToken,
+        result.data.id
       );
     }
 

@@ -186,7 +186,8 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
   
               changeUserInformationToLoggedIn(
                   result.data.accessToken,
-                  result.data.refreshToken
+                  result.data.refreshToken,
+                  result.data.id
               );
           }
   
@@ -218,7 +219,8 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
   
               changeUserInformationToLoggedIn(
                   result.data.accessToken,
-                  result.data.refreshToken
+                  result.data.refreshToken,
+                  result.data.id
               );
           }
 
