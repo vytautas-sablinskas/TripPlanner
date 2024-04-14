@@ -21,4 +21,6 @@ public class PlaceMinimal
     public string? DisplayName { get; set; }
 
     public string? PrimaryType { get; set; }
+
+    public string? PriceLevel { get; set; }
 }

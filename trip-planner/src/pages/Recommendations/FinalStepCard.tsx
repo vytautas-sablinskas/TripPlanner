@@ -109,6 +109,7 @@ const FinalStepCard = ({ recommendations }: any) => {
         weekdayDescriptions={selectedCard?.place?.weekdayDescriptions}
         phoneNumber={selectedCard?.place?.internationalPhoneNumber}
         website={selectedCard?.place?.website}
+        priceLevel={selectedCard?.place?.priceLevel}
       />
     </div>
   );

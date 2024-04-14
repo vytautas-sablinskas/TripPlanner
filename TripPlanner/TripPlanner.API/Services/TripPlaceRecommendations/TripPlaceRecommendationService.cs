@@ -121,7 +121,8 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 DisplayName = place.DisplayName?.Text,
                 PrimaryType = place.PrimaryFieldType?.Type,
                 WeekdayDescriptions = place.OpeningHours?.WeekdayDescriptions,
-                Website = place.WebsiteUri
+                Website = place.WebsiteUri,
+                PriceLevel = GetPriceLevel(place.PriceLevel),
             },
             Score = (dto.RatingWeight * GetScoreFromOrderedList(ratingPlacesOrdered, place)) +
                     (dto.RatingCountWeight * GetScoreFromOrderedList(ratingCountPlacesOrdered, place)) +
@@ -205,8 +206,13 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         }
     }
 
-    private static GooglePriceLevel ConvertToPriceLevelEnum(string priceLevel)
+    private static GooglePriceLevel ConvertToPriceLevelEnum(string? priceLevel)
     {
+        if (string.IsNullOrEmpty(priceLevel))
+        {
+            return GooglePriceLevel.UNKNOWN;
+        }
+
         switch (priceLevel)
         {
             case "FREE":
@@ -221,6 +227,30 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 return GooglePriceLevel.VERY_EXPENSIVE;
             default:
                 return GooglePriceLevel.UNKNOWN;
+        }
+    }
+
+    private static string GetPriceLevel(string? priceLevel)
+    {
+        if (string.IsNullOrEmpty(priceLevel))
+        {
+            return null;
+        }
+
+        switch (priceLevel)
+        {
+            case "FREE":
+                return "Free";
+            case "PRICE_LEVEL_INEXPENSIVE":
+                return "Inexpensive";
+            case "PRICE_LEVEL_MODERATE":
+                return "Moderate";
+            case "PRICE_LEVEL_EXPENSIVE":
+                return "Expensive";
+            case "PRICE_LEVEL_VERY_EXPENSIVE":
+                return "Very Expensive";
+            default:
+                return null;
         }
     }
 }
