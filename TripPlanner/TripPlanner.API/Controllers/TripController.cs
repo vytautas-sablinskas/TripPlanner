@@ -35,6 +35,33 @@ public class TripController : ControllerBase
         return Ok(tripDto);
     }
 
+    [HttpGet("trips/{id}/shareInformation")]
+    [Authorize]
+    public async Task<IActionResult> GetTripShareInformation(Guid id)
+    {
+        var shareInformationDto = await _tripService.GetTripShareInformation(id, User.GetUserId());
+
+        return Ok(shareInformationDto);
+    }
+
+    [HttpPut("trips/{id}/shareInformation")]
+    [Authorize]
+    public async Task<IActionResult> UpdateTripShareInformation(Guid id, [FromForm] UpdateTripShareInformationDto dto)
+    {
+        await _tripService.UpdateShareTripInformation(User.GetUserId(), id, dto);
+
+        return Ok();
+    }
+
+    [HttpPost("trips/{id}/shareInformation/link")]
+    [Authorize]
+    public async Task<IActionResult> UpdateTripShareInformationLink(Guid id)
+    {
+        var guid = await _tripService.UpdateTripShareInformationLink(id, User.GetUserId());
+
+        return Ok(new { link = guid });
+    }
+
     [HttpGet("trips/{id}/time")]
     [Authorize]
     public IActionResult GetTripTime(Guid id)

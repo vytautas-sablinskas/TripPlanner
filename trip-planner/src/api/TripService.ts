@@ -74,6 +74,50 @@ export const getTrip = async (id : any) => {
     return response;
 }
 
+export const getTripShareInformation = async (id : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIPS.GET_SHARE_INFORMATION
+        .replace(":id", id),
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response;
+}
+
+export const updateTripShareInformation = async (id : any, form : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIPS.UPDATE_SHARE_INFORMATION
+        .replace(":id", id),
+        {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: form,
+        });
+
+    return response;
+}
+
+export const updateShareTripLink = async (id : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIPS.UPDATE_SHARE_LINK
+        .replace(":id", id),
+        {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response;
+}
+
 export const getTripTime = async (id : any) => {
     const token = localStorage.getItem('accessToken');
     const response = await fetch(ENDPOINTS.TRIPS.GET_TRIP_TIME

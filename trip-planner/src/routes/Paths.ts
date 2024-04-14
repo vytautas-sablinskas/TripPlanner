@@ -17,6 +17,7 @@ const Paths = {
     NOTIFICATIONS: '/notifications',
     PROFILE: '/profile',
     EXPORT_TRIP: '/trips/:tripId/export',
+    SHARE_TRIP: '/trips/:tripId/share',
     RECOMMENDATIONS: '/recommendations',
 }
 

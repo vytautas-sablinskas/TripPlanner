@@ -29,7 +29,7 @@
 }
 
 .link:hover {
-    border-color: #f75940
+    border-color: rgb(7, 109, 181);
 }
 
 .link .inactive:hover {

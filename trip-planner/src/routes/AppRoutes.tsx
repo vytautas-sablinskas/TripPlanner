@@ -20,6 +20,7 @@ import EditBudget from "@/pages/Budgets/EditBudget";
 import Profile from "@/pages/Profile/Profile";
 import ExportInformationTrip from "@/pages/TripDetails/ExportInformationTrip";
 import Recommendations from "@/pages/Recommendations/Recommendations";
+import ShareTrip from "@/pages/Trips/ShareTrip";
 
 const AppRoutes = [
   {
@@ -102,7 +103,11 @@ const AppRoutes = [
   {
     path: Paths.RECOMMENDATIONS,
     element: <Recommendations />
-  }
+  },
+  {
+    path: Paths.SHARE_TRIP,
+    element: <ShareTrip />
+  },
 ];
 
 export default AppRoutes;
