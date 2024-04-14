@@ -22,7 +22,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
     public async Task<IEnumerable<CategoryRecommendation>> GetRecommendations(TripPlaceRecommendationRequestDto dto)
     {
         _httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", _googleApiKey);
-        _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "places.rating,places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri,places.photos.name,places.displayName.text,places.formattedAddress,places.internationalPhoneNumber");
+        _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "places.rating,places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri,places.photos.name,places.displayName.text,places.formattedAddress,places.internationalPhoneNumber,places.primaryTypeDisplayName.text,places.regularOpeningHours.weekdayDescriptions,places.websiteUri");
 
         var allCategoryRecommendations = new List<CategoryRecommendation>();
         foreach (var category in dto.Categories)
@@ -39,7 +39,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 continue;
             }
 
-            var recommendations = GenerateRecommendations(response.Places, dto);
+            var recommendations = GenerateRecommendations(response.Places, dto, category);
             allCategoryRecommendations.Add(new CategoryRecommendation
             {
                 Category = category.ToString(),
@@ -47,7 +47,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             });
         }
 
-        await FetchAndAssignPhotos(allCategoryRecommendations);
+        // await FetchAndAssignPhotos(allCategoryRecommendations);
 
         return allCategoryRecommendations;
     }
@@ -62,7 +62,8 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             var jsonPayload = @$"
             {{
                 ""includedTypes"": [""{categoryFormatted}""],
-                ""maxResultCount"": 20,
+                ""maxResultCount"": 10,
+                ""rankPreference"": ""DISTANCE"",
                 ""locationRestriction"": {{
                     ""circle"": {{
                         ""center"": {{
@@ -98,10 +99,11 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         }
     }
 
-    private static IEnumerable<PlaceRecommendation> GenerateRecommendations(IEnumerable<Place> places, TripPlaceRecommendationRequestDto dto)
+    private static IEnumerable<PlaceRecommendation> GenerateRecommendations(IEnumerable<Place> places, TripPlaceRecommendationRequestDto dto, RecommendationCategories mainCategory)
     {
         var ratingPlacesOrdered = places.OrderByDescending(r => r.Rating).ToList();
         var ratingCountPlacesOrdered = places.OrderByDescending(r => r.UserRatingCount).ToList();
+        var mainCategoryFormatted = mainCategory.ToString().SeparateByUpperAndAddSpaces();
 
         var totalCount = places.Count();
         var recommendations = places.Select((place, index) => new PlaceRecommendation
@@ -115,19 +117,39 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 FormattedAddress = place.FormattedAddress,
                 InternationalPhoneNumber = place.InternationalPhoneNumber,
                 DisplayName = place.DisplayName?.Text,
+                PrimaryType = place.PrimaryFieldType?.Type,
+                WeekdayDescriptions = place.OpeningHours?.WeekdayDescriptions,
+                Website = place.WebsiteUri
             },
             Score = (dto.RatingWeight * GetScoreFromOrderedList(ratingPlacesOrdered, place)) +
                     (dto.RatingCountWeight * GetScoreFromOrderedList(ratingCountPlacesOrdered, place)) +
-                    (dto.DistanceWeight * CalculatePositionScoreBeforeWeight(index, totalCount)),
+                    (dto.DistanceWeight * CalculatePositionScoreBeforeWeight(index, totalCount)) +
+                    (CalculatePriceWeight(dto.PriceLevel, place.PriceLevel)),
             PhotoUri = place.Photos.Count > 0 ? place.Photos[0].Name : null,
         }).ToList();
 
         recommendations = recommendations
-            .OrderByDescending(r => r.Score)
+            .OrderByDescending(p => p.Place.PrimaryType == mainCategoryFormatted)
+            .ThenByDescending(r => r.Score)
             .Take(3)
             .ToList();
 
         return recommendations;
+    }
+
+    private static double CalculatePriceWeight(GooglePriceLevel preferedPriceLevel, string? actualPriceLevel)
+    {
+        if (string.IsNullOrEmpty(actualPriceLevel))
+        {
+            return 0.45;
+        }
+
+        var actualPriceLevelEnum = ConvertToPriceLevelEnum(actualPriceLevel);
+        var distance = Math.Abs((int)preferedPriceLevel - (int)actualPriceLevelEnum);
+
+        var score = 0.9 - (0.2 * distance) < 0 ? 0 : 0.9 - (0.2 * distance);
+
+        return score;
     }
 
     private static double GetScoreFromOrderedList(List<Place> orderedList, Place place)
@@ -178,6 +200,25 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         } catch
         {
 
+        }
+    }
+
+    private static GooglePriceLevel ConvertToPriceLevelEnum(string priceLevel)
+    {
+        switch (priceLevel)
+        {
+            case "FREE":
+                    return GooglePriceLevel.FREE;
+            case "PRICE_LEVEL_INEXPENSIVE":
+                return GooglePriceLevel.INEXPENSIVE;
+            case "PRICE_LEVEL_MODERATE":
+                return GooglePriceLevel.MODERATE;
+            case "PRICE_LEVEL_EXPENSIVE":
+                return GooglePriceLevel.EXPENSIVE;
+            case "PRICE_LEVEL_VERY_EXPENSIVE":
+                return GooglePriceLevel.VERY_EXPENSIVE;
+            default:
+                return GooglePriceLevel.UNKNOWN;
         }
     }
 }

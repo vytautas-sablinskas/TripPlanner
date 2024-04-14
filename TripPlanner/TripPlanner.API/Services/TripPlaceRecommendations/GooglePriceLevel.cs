@@ -2,10 +2,10 @@
 
 public enum GooglePriceLevel
 {
-    UNKNOWN,
     FREE,
     INEXPENSIVE,
     MODERATE,
     EXPENSIVE,
-    VERY_EXPENSIVE
+    VERY_EXPENSIVE,
+    UNKNOWN,
 }

@@ -3,6 +3,17 @@
 public enum RecommendationCategories
 {
     Restaurant,
-    Supermarket,
+    AmusementPark,
+    Aquarium,
     ArtGallery,
+    Bakery,
+    Cafe,
+    Casino,
+    Church,
+    Library,
+    Museum,
+    NightClub,
+    Park,
+    Supermarket,
+    TouristAttraction
 }

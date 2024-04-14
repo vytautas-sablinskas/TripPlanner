@@ -12,7 +12,6 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import { getRecommendations } from "@/api/RecommendationService";
-import { set } from "date-fns";
 
 const steps = [
   { label: "Select Location" },
@@ -29,6 +28,7 @@ export default function Recommendations() {
   const [selectedRating, setSelectedRating] = useState<any>("60");
   const [selectedRatingCount, setSelectedRatingCount] = useState<any>("60");
   const [selectedDistance, setSelectedDistance] = useState<any>("60");
+  const [selectedPrice, setSelectedPrice] = useState<any>("2");
   const [isDataLoading, setIsDataLoading] = useState<any>(false);
   const [recommendations, setRecommendations] = useState<any>([]);
   console.log(recommendations);
@@ -56,6 +56,8 @@ export default function Recommendations() {
             setSelectedRatingCount={setSelectedRatingCount}
             selectedDistance={selectedDistance}
             setSelectedDistance={setSelectedDistance}
+            selectedPrice={selectedPrice}
+            setSelectedPrice={setSelectedPrice}
         />;
       default:
         return null;
@@ -72,6 +74,7 @@ export default function Recommendations() {
     setSelectedRating("60");
     setSelectedRatingCount("60");
     setSelectedDistance("60");
+    setSelectedPrice("2");
     setIsDataLoading(false);
     setRecommendations([]);
   }
@@ -100,7 +103,8 @@ export default function Recommendations() {
               categories: categories.map((category: any) => Number(category)),
               latitude: geometry?.latitude,
               longitude: geometry?.longitude,
-              radius: radius[0]
+              radius: radius[0],
+              priceLevel: Number(selectedPrice)
             }}
             isDataLoading={isDataLoading}
             setIsDataLoading={setIsDataLoading}
@@ -151,20 +155,27 @@ const Footer = ({ geometry, address, setAddressError, categories, setCategoryErr
         );
       }
       
-      const response = await getRecommendations(dto);
-      if (!response.ok) {
+      try {
+        const response = await getRecommendations(dto);
+        if (!response.ok) {
+          toast.error("Failed to get recommendations", {
+            position: "top-center",
+          });
+          setIsDataLoading(false);
+          return false;
+        }
+  
+        const data = await response.json();
+        setRecommendations(data);
+        setIsDataLoading(false);
+        return true;
+      } catch {
         toast.error("Failed to get recommendations", {
           position: "top-center",
         });
         setIsDataLoading(false);
         return false;
       }
-
-      const data = await response.json();
-      setRecommendations(data);
-      setIsDataLoading(false);
-
-      return true;
   }
 
   const onNextStep = async () => {
