@@ -26,6 +26,6 @@ public class TripDocument
 
     public string CreatorId { get; set; }
 
-    [DeleteBehavior(DeleteBehavior.Restrict)]
+    [DeleteBehavior(DeleteBehavior.Cascade)]
     public virtual ICollection<TripDocumentMember> Members { get; set; }
 }

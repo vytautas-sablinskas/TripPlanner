@@ -84,8 +84,9 @@ public class TripService : ITripService
 
     public async Task DeleteTrip(Guid tripId)
     {
-        var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
-                                  .FirstOrDefault();
+        var trip = await _tripRepository.FindByCondition(t => t.Id == tripId)
+                                  .Include(t => t.TripDetails)
+                                  .FirstOrDefaultAsync();
 
         if (!trip.PhotoUri.StartsWith("/default"))
         {
