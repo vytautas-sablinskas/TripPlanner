@@ -47,7 +47,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             });
         }
 
-        // await FetchAndAssignPhotos(allCategoryRecommendations);
+        await FetchAndAssignPhotos(allCategoryRecommendations);
 
         return allCategoryRecommendations;
     }
@@ -106,7 +106,9 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         var mainCategoryFormatted = mainCategory.ToString().SeparateByUpperAndAddSpaces();
 
         var totalCount = places.Count();
-        var recommendations = places.Select((place, index) => new PlaceRecommendation
+        var recommendations = places
+            .Where(p => p.Rating > 0)
+            .Select((place, index) => new PlaceRecommendation
         {
             Place = new PlaceMinimal
             {
