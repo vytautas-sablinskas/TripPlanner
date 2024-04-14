@@ -62,7 +62,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             var jsonPayload = @$"
             {{
                 ""includedTypes"": [""{categoryFormatted}""],
-                ""maxResultCount"": 10,
+                ""maxResultCount"": 20,
                 ""rankPreference"": ""DISTANCE"",
                 ""locationRestriction"": {{
                     ""circle"": {{

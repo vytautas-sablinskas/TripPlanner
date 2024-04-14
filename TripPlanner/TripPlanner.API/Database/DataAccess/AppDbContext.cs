@@ -28,6 +28,10 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<TripDocumentMember> TripDocumentMembers { get; set; }
 
+    public DbSet<TripInformationShare> TripInformationShares { get; set; }
+
+    public DbSet<TripSharePhoto> TripSharePhotos { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
     {

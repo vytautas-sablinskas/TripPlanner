@@ -229,7 +229,7 @@ const Footer = ({ geometry, address, setAddressError, categories, setCategoryErr
             </Button>
             <CreateEditLoadingButton
               loading={isDataLoading}
-              text={isLastStep ? "Finish" : isOptionalStep ? "Skip" : "Next"}
+              text={isLastStep ? "Get Recommendations" : isOptionalStep ? "Skip" : "Next"}
               size="sm"
               onClick={onNextStep}
             />
