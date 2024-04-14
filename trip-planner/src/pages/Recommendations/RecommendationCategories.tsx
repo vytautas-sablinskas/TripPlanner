@@ -12,7 +12,9 @@ const RecommendationCategories = ({
     selectedRatingCount,
     setSelectedRatingCount,
     selectedDistance,
-    setSelectedDistance
+    setSelectedDistance,
+    selectedPrice,
+    setSelectedPrice,
 } : any) => {
     const MAX_CATEGORIES_SELECTED = 3;
 
@@ -41,42 +43,72 @@ const RecommendationCategories = ({
     const categories = [
         {
             id: 0,
-            name: "Food",
+            name: "Restaurants",
             icon: "🍔"
         },
         {
             id: 1,
-            name: "Accommodation",
+            name: "Amusement Parks",
             icon: "🏨"
         },
         {
             id: 2,
-            name: "Transportation",
+            name: "Aquariums",
             icon: "🚗"
         },
         {
             id: 3,
-            name: "Activities",
+            name: "Art Galleries",
             icon: "🎢"
         },
         {
             id: 4,
-            name: "Food",
+            name: "Bakeries",
             icon: "🍔"
         },
         {
             id: 5,
-            name: "Accommodation",
+            name: "Cafes",
             icon: "🏨"
         },
         {
             id: 6,
-            name: "Transportation",
+            name: "Casinos",
             icon: "🚗"
         },
         {
             id: 7,
-            name: "Activities",
+            name: "Churches",
+            icon: "🎢"
+        },
+        {
+            id: 8,
+            name: "Libraries",
+            icon: "🏨"
+        },
+        {
+            id: 9,
+            name: "Museums",
+            icon: "🚗"
+        },
+        {
+            id: 10,
+            name: "Night Clubs",
+            icon: "🎢"
+        },
+        {
+            id: 11,
+            name: "Parks",
+            icon: "🏨"
+        },
+        {
+            id: 12,
+            name: "Super Markets",
+            icon: "🚗"
+        },
+        {
+            id: 13,
+            name: "Tourist Attractions",
             icon: "🎢"
         }
     ]
@@ -99,9 +131,9 @@ const RecommendationCategories = ({
             <div className="flex flex-wrap my-3">
                 {categories.map((category : any) => (
                     <Card key={category.id} className={`flex-1 m-2 p-4 cursor-pointer ${cardBackgroundColor(category.id)}`} onClick={() => onCategorySelect(category.id)}>
-                        <CardContent className="!p-0 flex justify-center">
+                        <CardContent className="!p-0 flex justify-center h-full items-center">
                             <p className="mr-2">{category.icon}</p>
-                            <p>{category.name}</p>
+                            {category.name}
                         </CardContent>
                     </Card>
                 ))}
@@ -156,6 +188,31 @@ const RecommendationCategories = ({
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="90" id="90" />
                             <Label htmlFor="option-two">Important</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+                <div className="flex flex-col ml-2 mt-6">
+                    <Label className="mb-2 text-xl font-bold">Price Range Preference</Label>
+                    <RadioGroup orientation="horizontal" className="flex flex-wrap" value={selectedPrice} onValueChange={setSelectedPrice}>
+                        <div className="flex items-center space-x-2 mr-2">
+                            <RadioGroupItem value="0" id="0" />
+                            <Label htmlFor="option-one">Free</Label>
+                        </div>
+                        <div className="flex items-center space-x-2 mr-2">
+                            <RadioGroupItem value="1" id="1" />
+                            <Label htmlFor="option-one">Inexpensive</Label>
+                        </div>
+                        <div className="flex items-center space-x-2 mr-2">
+                            <RadioGroupItem value="2" id="2" />
+                            <Label htmlFor="option-one">Moderate</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="3" id="3" />
+                            <Label htmlFor="option-two">Expensive</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="4" id="4" />
+                            <Label htmlFor="option-two">Very Expensive</Label>
                         </div>
                     </RadioGroup>
                 </div>

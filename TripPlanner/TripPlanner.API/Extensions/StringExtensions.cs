@@ -12,4 +12,13 @@ public static class StringExtensions
 
         return formattedText;
     }
+
+    public static string SeparateByUpperAndAddSpaces(this string text)
+    {
+        string[] words = Regex.Split(text, @"(?<!^)(?=[A-Z])");
+
+        string formattedText = string.Join(" ", words);
+
+        return formattedText;
+    }
 }

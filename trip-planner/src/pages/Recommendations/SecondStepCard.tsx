@@ -9,6 +9,8 @@ const SecondStepCard = ({
   setSelectedRating,
   selectedRatingCount,
   setSelectedRatingCount,
+  selectedPrice,
+  setSelectedPrice,
   selectedDistance,
   setSelectedDistance
 } : any) => {
@@ -25,6 +27,8 @@ const SecondStepCard = ({
             setSelectedRating={setSelectedRating}
             setSelectedRatingCount={setSelectedRatingCount}
             setSelectedDistance={setSelectedDistance}
+            selectedPrice={selectedPrice}
+            setSelectedPrice={setSelectedPrice}
           />
         </div>
       );
