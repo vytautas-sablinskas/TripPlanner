@@ -3,7 +3,7 @@ import "./styles/header.css";
 import Paths from "../../routes/Paths";
 import { useUser } from "../../providers/user-provider/UserContext";
 import { logout, refreshAccessToken } from "../../api/AuthenticationService";
-import { BellDot, LogOut, User } from "lucide-react";
+import { BellDot, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { toast } from "sonner";
@@ -28,6 +28,20 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  const checkIsSmallScreen = () => {
+    setIsSmallScreen(window.innerWidth <= 768);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", checkIsSmallScreen);
+
+    checkIsSmallScreen();
+    return () => {
+      window.removeEventListener("resize", checkIsSmallScreen);
+    };
+  }, []);
 
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem("refreshToken");
@@ -90,12 +104,40 @@ const Header = () => {
           </>
         ) : (
           <div className="flex items-center">
-            <Link to={Paths.TRIPS} className="link font-bold !mr-1">
-              Trips
-            </Link>
-            <Link to={Paths.RECOMMENDATIONS} className="link font-bold !mr-1">
-              Recommendations
-            </Link>
+            {isSmallScreen ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild className="mb-1 mr-1 px-3 link">
+                  <div>
+                    <Menu className="w-5 h-5 cursor-pointer notification" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Menu</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate(Paths.TRIPS)}>
+                    Trips
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate(Paths.RECOMMENDATIONS)}
+                  >
+                    Recommendations
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Link to={Paths.TRIPS} className="link font-bold !mr-1">
+                  Trips
+                </Link>
+                <Link
+                  to={Paths.RECOMMENDATIONS}
+                  className="link font-bold !mr-1"
+                >
+                  Recommendations
+                </Link>
+              </>
+            )}
+
             <Link to={Paths.NOTIFICATIONS} className="link mr-3 notification">
               <BellDot className="w-5 h-5" />
               <span className={hasNotifications ? "badge" : ""} />
