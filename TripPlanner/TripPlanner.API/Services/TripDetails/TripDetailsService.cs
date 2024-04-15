@@ -16,14 +16,16 @@ public class TripDetailsService : ITripDetailsService
     private readonly IRepository<Trip> _tripRepository;
     private readonly IRepository<TripBudget> _tripBudgetRepository;
     private readonly IRepository<Traveller> _travellerRepository;
+    private readonly IRepository<TripDocument> _tripDocumentRepository;
     private readonly IMapper _mapper;
 
-    public TripDetailsService(IRepository<TripDetail> tripDetailsRepository, IRepository<Trip> tripRepository, IRepository<TripBudget> tripBudgetRepository, IRepository<Traveller> travellerRepository, IMapper mapper)
+    public TripDetailsService(IRepository<TripDetail> tripDetailsRepository, IRepository<Trip> tripRepository, IRepository<TripBudget> tripBudgetRepository, IRepository<Traveller> travellerRepository, IRepository<TripDocument> tripDocumentRepository, IMapper mapper)
     {
         _tripDetailsRepository = tripDetailsRepository;
         _tripRepository = tripRepository;
         _tripBudgetRepository = tripBudgetRepository;
         _travellerRepository = travellerRepository;
+        _tripDocumentRepository = tripDocumentRepository;
         _mapper = mapper;
     }
 
@@ -46,8 +48,16 @@ public class TripDetailsService : ITripDetailsService
 
     public async Task DeleteTripDetail(Guid id)
     {
-        var tripDetail = _tripDetailsRepository.FindByCondition(t => t.Id == id)
-            .FirstOrDefault();
+        var tripDetail = await _tripDetailsRepository.FindByCondition(t => t.Id == id)
+            .FirstOrDefaultAsync();
+
+        var documents = await _tripDocumentRepository.FindByCondition(t => t.TripDetailId == tripDetail.Id)
+            .ToListAsync();
+
+        foreach (var document in documents)
+        {
+            await _tripDocumentRepository.Delete(document);
+        }
 
         await _tripDetailsRepository.Delete(tripDetail);
     }

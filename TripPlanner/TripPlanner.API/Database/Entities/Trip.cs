@@ -21,8 +21,11 @@ public class Trip
     public DateTime EndDate { get; set; }
 
     [DeleteBehavior(DeleteBehavior.Cascade)]
-    public virtual IEnumerable<TripDetail> TripDetails { get; set; }
+    public virtual IEnumerable<TripDetail> TripDetails { get; set; } = new List<TripDetail>();
 
     [DeleteBehavior(DeleteBehavior.Cascade)]
-    public virtual IEnumerable<Traveller> Travellers { get; set; }
+    public virtual IEnumerable<Traveller> Travellers { get; set; } = new List<Traveller>();
+
+    [DeleteBehavior(DeleteBehavior.Cascade)]
+    public virtual IEnumerable<TripInformationShare> TripInformationShares { get; set; } = new List<TripInformationShare>();
 }

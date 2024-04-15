@@ -95,8 +95,7 @@ const FinalStepCard = ({ recommendations }: any) => {
                 ))
               ) : (
                 <p className="ml-2 text-md ">
-                  No places were found. Try increasing the range or writing a
-                  more specific address
+                  No places were found. Try increasing the range or choosing another address
                 </p>
               )}
             </div>

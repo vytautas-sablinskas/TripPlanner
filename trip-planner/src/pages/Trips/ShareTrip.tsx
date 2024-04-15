@@ -176,8 +176,8 @@ const ShareTrip = () => {
     const files = event.target.files;
     if (!files) return;
 
-    if (files.length + selectedPhotos.length > 10) {
-      toast.error("You can only upload up to 10 photos", {
+    if (files.length + selectedPhotos.length > 5) {
+      toast.error("You can only upload up to 5 photos", {
         position: "top-center",
       });
       return;
@@ -191,7 +191,7 @@ const ShareTrip = () => {
   };
 
   return (
-    <div className="flex justify-center w-full">
+    <div className="flex flex-col justify-center w-full">
       <Card className="p-4 sm:max-w-full w-full">
         <CardContent>
           <Label>Title</Label>
@@ -218,34 +218,32 @@ const ShareTrip = () => {
               />
               <CirclePlus className="ml-2 h-4 w-4" />
             </Button>
-            <Label className="ml-2">Up to 10 photos</Label>
-            <div className="flex flex-wrap gap-4 min-h-[240px] p-2 border">
+            <Label className="ml-2">Up to 5 photos</Label>
+            <div className="flex flex-wrap gap-10 min-h-[240px] p-2 border">
               {selectedPhotos &&
                 Array.from(selectedPhotos).map((photo: any, index: any) => (
                   <Card
                     key={index}
-                    className="!p-0 sm:w-[325px] w-full relative"
+                    className="!p-0 sm:w-[300px] h-[200px] w-full relative"
                   >
                     <CardContent className="!p-0">
                       <div
-                        className="h-[200px] w-full"
+                        className="h-[198px] w-full"
                       >
                         {typeof photo === "string" ? (
                           <img
                             src={photo}
                             alt={`selected-${index}`}
-                            className="w-full h-full"
+                            className="w-full h-full rounded"
                           />
                         ) : (
                           <img
                             src={URL.createObjectURL(photo)}
                             alt={`selected-${index}`}
-                            className="h-full w-full"
+                            className="h-full w-full rounded"
                           />
                         )}
-                      </div>
-
-                      <Button
+                                              <Button
                         className="absolute bottom-2 flex left-2 right-2"
                         onClick={() => removePhoto(index)}
                         variant="outline"
@@ -253,6 +251,8 @@ const ShareTrip = () => {
                         <CircleX className="h-4 w-4 mr-2" />
                         Remove Photo
                       </Button>
+                      </div>
+
                     </CardContent>
                   </Card>
                 ))}

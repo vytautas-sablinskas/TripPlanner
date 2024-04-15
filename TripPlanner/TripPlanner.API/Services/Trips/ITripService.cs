@@ -21,4 +21,6 @@ public interface ITripService
     Task<bool> UpdateShareTripInformation(string userId, Guid tripId, UpdateTripShareInformationDto dto);
 
     Task<string?> UpdateTripShareInformationLink(Guid tripId, string userId);
+
+    Task<TripShareInformationViewDto> GetShareTripViewInformation(Guid linkId);
 }

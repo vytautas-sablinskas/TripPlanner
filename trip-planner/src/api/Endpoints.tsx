@@ -17,6 +17,7 @@ const ENDPOINTS = {
         DELETE_TRIP: `${BASE_URL}/trips/:id`,
         UPDATE_SHARE_INFORMATION: `${BASE_URL}/trips/:id/shareInformation`,
         UPDATE_SHARE_LINK: `${BASE_URL}/trips/:id/shareInformation/link`,
+        GET_SHARE_TRIP_INFORMATION: `${BASE_URL}/trips/shared/:linkId`,
     },
     TRIP_DETAILS: {
         GET_ALL_TRIP_DETAILS: `${BASE_URL}/trips/:id/tripDetails/`,

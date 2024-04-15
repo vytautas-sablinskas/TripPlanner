@@ -49,8 +49,12 @@
     text-align: center;
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 450px) {
     .login-container {
         width: 100%;
+    }
+
+    .login-container-wrapper {
+        margin: 0;
     }
 }

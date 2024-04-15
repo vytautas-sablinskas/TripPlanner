@@ -9,7 +9,7 @@ import {
 import "./styles/google-map-extensions.css";
 
 import { Button } from "../ui/button";
-import { MapPin, Route, Search, Waypoints } from "lucide-react";
+import { Route, Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -23,21 +23,6 @@ import {
 const center = {
   lat: -3.745,
   lng: -38.523,
-};
-
-const mapOptions = {
-  styles: [
-    {
-      featureType: "poi",
-      elementType: "labels",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      featureType: "transit",
-      elementType: "labels",
-      stylers: [{ visibility: "off" }],
-    },
-  ],
 };
 
 function MyComponent({ mapLocations } : any) {
@@ -125,11 +110,15 @@ function MyComponent({ mapLocations } : any) {
         return 'Driving';
       case 'WALKING':
         return 'Walking';
-      case 'BICYCLING':
-        return 'Bicycling';
       default:
         return mode;
     }
+  }
+
+  const onGetDirections = () => {
+    if (!selectedDay || !mapLocations[selectedDay] || mapLocations[selectedDay].length <= 1) return;
+
+    setShouldRender(true);
   }
 
   return (
@@ -144,7 +133,7 @@ function MyComponent({ mapLocations } : any) {
               <SelectGroup>
                 <SelectLabel>Travel Mode</SelectLabel>
                 {Object.keys(google.maps.TravelMode)
-                  .filter(mode => mode !== "TWO_WHEELER" && mode !== "TRANSIT")
+                  .filter(mode => mode !== "TWO_WHEELER" && mode !== "TRANSIT" && mode !== "BICYCLING")
                   .map((mode: any) => (
                     <SelectItem value={mode} key={mode}>
                       {formatMode(mode)}
@@ -153,7 +142,7 @@ function MyComponent({ mapLocations } : any) {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button className="ml-2 mb-2" onClick={() => setShouldRender(true)} disabled={isGetRoutesDisabled}>
+          <Button className="ml-2 mb-2" onClick={() => onGetDirections()} disabled={isGetRoutesDisabled}>
             <Route className="h-4 w-4 mr-2" />
             Get Directions
           </Button>
@@ -252,7 +241,7 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
   }, [routesLibrary, map, mapLocations, selectedDay, shouldRender]);
 
   useEffect(() => {
-    if (directionsRenderers.length === 0 || !mapLocations[selectedDay] || !shouldRender) return;
+    if (directionsRenderers.length === 0 || !mapLocations[selectedDay] || !mapLocations[selectedDay].length || !shouldRender) return;
 
     const locations = mapLocations[selectedDay];
 

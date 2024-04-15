@@ -39,5 +39,6 @@ public class TripDetail
 
     public string CreatorId { get; set; }
 
+    [DeleteBehavior(DeleteBehavior.Cascade)]
     public virtual IEnumerable<TripDocument> Documents { get; set; }
 }

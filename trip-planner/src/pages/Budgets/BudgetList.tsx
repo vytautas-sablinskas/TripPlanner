@@ -10,7 +10,7 @@ import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { getTripBudgets } from "@/api/TriBudgetsService";
+import { getTripBudgets } from "@/api/TripBudgetsService";
 
 const BudgetList = () => {
   const navigate = useNavigate();

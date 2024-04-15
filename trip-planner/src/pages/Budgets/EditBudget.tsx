@@ -27,7 +27,7 @@ import {
     FormLabel,
     FormMessage,
   } from "@/components/ui/form";
-  import { editTripBudget, getTripBudgetEditInfo } from "@/api/TriBudgetsService";
+  import { editTripBudget, getTripBudgetEditInfo } from "@/api/TripBudgetsService";
   import { checkTokenValidity } from "@/utils/jwtUtils";
   import { refreshAccessToken } from "@/api/AuthenticationService";
   import { toast } from "sonner";

@@ -21,6 +21,7 @@ import Profile from "@/pages/Profile/Profile";
 import ExportInformationTrip from "@/pages/TripDetails/ExportInformationTrip";
 import Recommendations from "@/pages/Recommendations/Recommendations";
 import ShareTrip from "@/pages/Trips/ShareTrip";
+import ShareTripView from "@/pages/Trips/ShareTripView";
 
 const AppRoutes = [
   {
@@ -108,6 +109,10 @@ const AppRoutes = [
     path: Paths.SHARE_TRIP,
     element: <ShareTrip />
   },
+  {
+    path: Paths.SHARE_TRIP_VIEW,
+    element: <ShareTripView />
+  }
 ];
 
 export default AppRoutes;
