@@ -304,7 +304,6 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
-    { id: 'fullName', value: '' },
     { id: 'email', value: '' },
   ]);
 
@@ -354,7 +353,6 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
       const value = event.target.value;
       setCombinedFilterValue(value);
       const updatedFilters = [
-          { id: 'fullName', value },
           { id: 'email', value },
       ];
       setColumnFilters(updatedFilters);
@@ -364,7 +362,7 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
     <div className="w-full">
       <div className="flex flex-col items-center py-4 sm:flex-row sm:items-end">
         <Input
-            placeholder="Filter emails or full names..."
+            placeholder="Filter by email"
             value={combinedFilterValue}
             onChange={handleCombinedFilterChange}
             className="w-full sm:mr-2"
