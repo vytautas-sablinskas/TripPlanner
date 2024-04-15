@@ -104,7 +104,7 @@ const AddUnselectedDetailToTripDialog = ({
                       onValueChange={setSelectedTrip}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="No upcoming plans found" />
+                        <SelectValue placeholder="No upcoming trips found" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
