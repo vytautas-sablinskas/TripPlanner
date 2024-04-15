@@ -31,7 +31,6 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import { createExpense } from "@/api/ExpensesService";
-import { DateTimePicker } from "@/components/Extra/DateTimePicker";
 import { DatePicker } from "@/components/Extra/DatePicker";
 import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 
@@ -107,13 +106,15 @@ const AddExpenseDialog = ({
     }
 
     setIsLoading(true);
-    const response = await createExpense(getTripId(), budgetId, {
-      currency: formValues.currency,
-      type: Number(formValues.eventType),
-      name: formValues.name,
-      amount: Number(formValues.amount),
-      date: getUtcTimeWithoutChangingTime(formValues.date)
-    });
+    const dto = {
+        currency: formValues.currency,
+        type: Number(formValues.eventType),
+        name: formValues.name,
+        amount: Number(formValues.amount),
+        date: getUtcTimeWithoutChangingTime(formValues.date)
+    }
+
+    const response = await createExpense(getTripId(), budgetId, dto);
     if (!response.ok) {
       toast.error("An error occurred while adding expense", {
         position: "top-center",
@@ -122,14 +123,28 @@ const AddExpenseDialog = ({
     }
 
     const data = await response.json();
-    onAdd(data, formValues);
+    onAdd(data, dto);
     setIsLoading(false);
     setOpen(false);
+    form.reset({
+      currency: mainCurrency,
+      amount: "0",
+      eventType: "0",
+      name: "",
+      date: undefined,
+    });
   };
 
   const handleClose = (e: any) => {
     e.preventDefault();
     setOpen(false);
+    form.reset({
+      currency: mainCurrency,
+      amount: "0",
+      eventType: "0",
+      name: "",
+      date: undefined,
+    });
   };
 
   return (

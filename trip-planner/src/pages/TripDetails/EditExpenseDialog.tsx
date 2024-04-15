@@ -85,7 +85,7 @@ const EditExpenseDialog = ({
     form.setValue("amount", amount);
     form.setValue("eventType", eventType);
     form.setValue("name", name);
-    form.setValue("date", new Date(currentDate));
+    form.setValue("date", currentDate ? new Date(currentDate) : undefined);
   }, [open]);
 
   const onSubmit = async (formValues: any) => {

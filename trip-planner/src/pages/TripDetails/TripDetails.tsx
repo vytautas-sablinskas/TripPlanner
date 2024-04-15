@@ -309,6 +309,7 @@ const TripDetails = () => {
             amount: formValues.amount,
             type: formValues.type,
             date: formValues.date,
+            amountInMainCurrency: Number(response.amountInMainCurrency),
           };
         }
         return e;
@@ -323,7 +324,6 @@ const TripDetails = () => {
   };
 
   const onExpenseAdd = (response: any, formValues: any) => {
-    console.log(formValues);
     setBudget({
       ...budget,
       spentAmount: response.amount,
@@ -333,10 +333,12 @@ const TripDetails = () => {
           id: response.id,
           name: formValues.name,
           currency: formValues.currency,
-          amount: Number(formValues.amount),
-          type: Number(formValues.eventType),
+          amount: formValues.amount,
+          amountInMainCurrency: Number(response.amountInMainCurrency),
+          type: formValues.type,
           personPhoto: response.personPhoto,
           personName: response.personName,
+          date: formValues.date,
         },
       ],
     });
@@ -550,7 +552,7 @@ const TripDetails = () => {
           <TripBudgetBreakdownDialog 
             open={isBreakdownOpen}
             setOpen={setIsBreakdownOpen}
-            trips={budget.expenses}
+            expenses={budget.expenses}
             tripStartDate={tripDetails.tripInformation.startDate}
             tripEndDate={tripDetails.tripInformation.endDate}
             mainCurrency={budget.currency}

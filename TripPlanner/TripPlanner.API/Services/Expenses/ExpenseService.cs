@@ -54,7 +54,7 @@ public class ExpenseService : IExpenseService
 
         var createdExpense = _expenseRepository.Create(expense);
 
-        return new CreatedExpenseResponseDto(budget.SpentAmount, createdExpense.Id, user.PhotoUri, $"{user.Name} {user.Surname}");
+        return new CreatedExpenseResponseDto(budget.SpentAmount, spentAmountInMainCurrency, createdExpense.Id, user.PhotoUri, $"{user.Name} {user.Surname}");
     }
 
     public async Task<DeleteExpenseResponseDto> DeleteExpense(Guid expenseId)
@@ -112,6 +112,6 @@ public class ExpenseService : IExpenseService
         currentExpense.Date = dto.Date;
         await _expenseRepository.Update(currentExpense);
 
-        return new EditExpenseResponseDto(newAmount);
+        return new EditExpenseResponseDto(newAmount, currentExpense.AmountInMainCurrency);
     }
 }
