@@ -21,6 +21,7 @@ const Paths = {
     SHARE_TRIP_VIEW: '/trips/shared/:linkId',
     RECOMMENDATIONS: '/recommendations',
     UNSELECTED_PLANS: '/unselected-plans',
+    USER_DOCUMENTS: '/user-documents',
 }
 
 export default Paths

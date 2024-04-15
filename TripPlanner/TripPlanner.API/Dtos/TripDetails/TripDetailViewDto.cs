@@ -9,6 +9,7 @@ public record TripDetailViewDto (
   string? PhoneNumber,
   string? Website,
   string? Notes,
+  int ActiveDocuments,
   DateTime? StartTime,
   DateTime? EndTime,
   IEnumerable<TripDocumentDto> Documents,

@@ -22,6 +22,14 @@ public class TripDocumentService : ITripDocumentService
         _tripDocumentMemberRepository = tripDocumentMemberRepository;
     }
 
+    public async Task<IEnumerable<TripDocumentDto>> GetUserDocuments(string userId)
+    {
+        var documents = await _tripDocumentRepository.FindByCondition(t => t.CreatorId == userId)
+            .ToListAsync();
+
+        return documents.Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile, d.CreatorId));
+    }
+
     public async Task<(bool, TripDocumentDto?)> AddNewDocument(string userId, Guid tripDetailId, AddNewTripDocumentDto dto)
     {
         var (isSuccess, uri) = await _azureBlobStorageService.UploadFileAsync(dto.Document);
@@ -56,7 +64,7 @@ public class TripDocumentService : ITripDocumentService
             _tripDocumentMemberRepository.Create(member);
         }
 
-        return (true, new TripDocumentDto(document.Name, document.LinkToFile, document.Id, document.TypeOfFile));
+        return (true, new TripDocumentDto(document.Name, document.LinkToFile, document.Id, document.TypeOfFile, document.CreatorId));
     }
 
     public async Task<TripDocumentAndMemberDto> GetDocumentMembers(Guid documentId)

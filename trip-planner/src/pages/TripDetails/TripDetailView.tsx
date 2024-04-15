@@ -47,6 +47,7 @@ const TripDetailView = () => {
   const [documents, setDocuments] = useState<any>([]);
   const [tripDetail, setTripDetail] = useState<any>({});
   const [travellers, setTravellers] = useState<any>([]);
+  const [activeDocumentCount, setActiveDocumentCount] = useState<any>(0);
 
   const getTripId = () => {
     const path = location.pathname.split("/");
@@ -106,6 +107,7 @@ const TripDetailView = () => {
         endTime: data.endTime,
       });
       setTravellers(data.travellers);
+      setActiveDocumentCount(data.activeDocuments);
       setIsLoading(false);
     };
 
@@ -200,6 +202,7 @@ const TripDetailView = () => {
     setIsAddDocumentSubmitting(false);
     setIsAddDocumentDialogOpen(false);
     toast.success("Document added successfully", { position: "top-center" });
+    setActiveDocumentCount((prev : any) => prev + 1);
   };
 
   const handleDeleteDocument = async (id: any) => {
@@ -241,6 +244,7 @@ const TripDetailView = () => {
     setDocuments(documents.filter((document: any) => document.id !== id));
     toast.success("Document deleted successfully", { position: "top-center" });
     setIsDeleteDocumentDeleting(false);
+    setActiveDocumentCount((prev : any) => prev - 1);
   };
 
   const handleEditDocument = async (formValues: any) => {
@@ -426,6 +430,7 @@ const TripDetailView = () => {
           open={isAddDocumentDialogOpen}
           setOpen={setIsAddDocumentDialogOpen}
           travellers={travellers}
+          activeDocumentCount={activeDocumentCount}
         />
       </Card>
     </div>

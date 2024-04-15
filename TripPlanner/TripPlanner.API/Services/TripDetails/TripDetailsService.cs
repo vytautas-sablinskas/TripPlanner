@@ -123,8 +123,10 @@ public class TripDetailsService : ITripDetailsService
             .ToListAsync();
         var documents = tripDetail.Documents
             .Where(d => !d.IsPrivateDocument || d.CreatorId == userId || d.Members.Any(m => m.MemberId == userId))
-            .Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile));
-        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, tripDetail.Trip.StartDate, tripDetail.Trip.EndDate, documents, travellerMinimalDtos);
+            .Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile, d.CreatorId));
+        var activeDocumentsCount = await _tripDocumentRepository.FindByCondition(t => t.CreatorId == userId).CountAsync();
+
+        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, activeDocumentsCount, tripDetail.Trip.StartDate, tripDetail.Trip.EndDate, documents, travellerMinimalDtos);
 
         return (true, tripDetailViewDto);
     }

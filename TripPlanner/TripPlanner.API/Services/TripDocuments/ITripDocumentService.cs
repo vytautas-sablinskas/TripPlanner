@@ -8,6 +8,8 @@ public interface ITripDocumentService
 
     Task<TripDocumentAndMemberDto> GetDocumentMembers(Guid documentId);
 
+    Task<IEnumerable<TripDocumentDto>> GetUserDocuments(string userId);
+
     Task<bool> EditDocument(Guid documentId, EditDocumentDto dto);
 
     Task<bool> DeleteDocument(Guid documentId);
