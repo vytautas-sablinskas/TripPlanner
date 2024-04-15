@@ -44,82 +44,82 @@ const RecommendationCategories = ({
         {
             id: 0,
             name: "Restaurants",
-            icon: "🍔"
+            icon: "/recommendations/restaurant-48.png"
         },
         {
             id: 1,
             name: "Amusement Parks",
-            icon: "🏨"
+            icon: "/recommendations/amusement-park-48.png"
         },
         {
             id: 2,
             name: "Aquariums",
-            icon: "🚗"
+            icon: "/recommendations/aquarium-48.png"
         },
         {
             id: 3,
             name: "Art Galleries",
-            icon: "🎢"
+            icon: "/recommendations/physical-gallery-48.png"
         },
         {
             id: 4,
             name: "Bakeries",
-            icon: "🍔"
+            icon: "/recommendations/bakery-48.png"
         },
         {
             id: 5,
             name: "Cafes",
-            icon: "🏨"
+            icon: "/recommendations/cafe-48.png"
         },
         {
             id: 6,
             name: "Casinos",
-            icon: "🚗"
+            icon: "/recommendations/casino-48.png"
         },
         {
             id: 7,
             name: "Churches",
-            icon: "🎢"
+            icon: "/recommendations/church-48.png"
         },
         {
             id: 8,
             name: "Libraries",
-            icon: "🏨"
+            icon: "/recommendations/library-48.png"
         },
         {
             id: 9,
             name: "Museums",
-            icon: "🚗"
+            icon: "/recommendations/museum-48.png"
         },
         {
             id: 10,
             name: "Night Clubs",
-            icon: "🎢"
+            icon: "/recommendations/disco-ball-48.png"
         },
         {
             id: 11,
             name: "Parks",
-            icon: "🏨"
+            icon: "/recommendations/park-48.png"
         },
         {
             id: 12,
             name: "Super Markets",
-            icon: "🚗"
+            icon: "/recommendations/shopping-cart-48.png"
         },
         {
             id: 13,
             name: "Tourist Attractions",
-            icon: "🎢"
+            icon: "/recommendations/tourist-48.png"
         }
     ]
 
     const cardBackgroundColor = (id : any) => {
         if (selectedCategory.includes(id)) {
-            return "bg-red-100";
+            return "bg-blue-300";
         }
 
         if (selectedCategory.length === MAX_CATEGORIES_SELECTED) {
-            return "bg-gray-100";
+            return "bg-gray-300";
         }
 
         return "";
@@ -132,7 +132,7 @@ const RecommendationCategories = ({
                 {categories.map((category : any) => (
                     <Card key={category.id} className={`flex-1 m-2 p-4 cursor-pointer ${cardBackgroundColor(category.id)}`} onClick={() => onCategorySelect(category.id)}>
                         <CardContent className="!p-0 flex justify-center h-full items-center">
-                            <p className="mr-2">{category.icon}</p>
+                            <img src={category.icon} alt="icon" className="mr-2 w-6 h-6" />
                             {category.name}
                         </CardContent>
                     </Card>
