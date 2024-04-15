@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { editTripDetails, getTripDetailById } from "@/api/TripDetailService";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
-import { getLocalTimeISOFromDate, getLocalTimeISOFromString } from "@/utils/date";
+import { getLocalTimeISOFromDate, getLocalTimeISOFromString, getUtcTimeWithoutChangingTime } from "@/utils/date";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
@@ -44,7 +44,7 @@ const formSchema = z.object({
       .optional()
       .refine(
         (value) => {
-          return value !== undefined;
+          return value !== undefined && value !== null;
         },
         {
           message: "Start Date is required.",
@@ -110,8 +110,8 @@ const TripDetailEdit = () => {
       }
 
       const data = await response.json();
-      const startDate = new Date(data.startTime + "Z");
-      const endDate = new Date(data.endTime + "Z");
+      const startDate = new Date(data.startTime);
+      const endDate = data.endTime ? new Date(data.endTime) : undefined;
       form.reset({
         name: data.name,
         eventType: data.eventType.toString(),
@@ -125,7 +125,7 @@ const TripDetailEdit = () => {
         phoneNumber: data.phoneNumber || "",
       });
 
-      setTripTime({ startDate: data.tripStartTime + "Z", endDate: data.tripEndTime + "Z" });
+      setTripTime({ startDate: data.tripStartTime, endDate: data.tripEndTime });
       setIsLoading(false);
     };
 
@@ -150,9 +150,9 @@ const TripDetailEdit = () => {
   const isValidDates = (data: any) => {
     let isError = false;
 
-    const startTimeISO = getLocalTimeISOFromDate(data.dates.startDate);
-    const startTripTimeISO = getLocalTimeISOFromString(tripTime.startDate);
-    const endTripTimeISO = getLocalTimeISOFromString(tripTime.endDate);
+    const startTimeISO = new Date(data.dates.startDate).toISOString();
+    const startTripTimeISO = new Date(tripTime.startDate).toISOString();
+    const endTripTimeISO = new Date(tripTime.endDate).toISOString();
     if (startTimeISO < startTripTimeISO || startTimeISO > endTripTimeISO) {
       form.setError("dates.startDate", {
         message: "Start date can't exceed set trip times.",
@@ -170,7 +170,6 @@ const TripDetailEdit = () => {
         isError = true;
       }
 
-      console.log(endTimeISO, endTripTimeISO);
       if (endTimeISO > endTripTimeISO || endTimeISO < startTripTimeISO) {
         form.setError("dates.endDate", {
           type: "manual",
@@ -210,14 +209,13 @@ const TripDetailEdit = () => {
       );
     }
 
-    console.log(getLocalTimeISOFromDate(data.dates.startDate));
     const response = await editTripDetails({
       name: data.name,
       eventType: Number(data.eventType),
       address: data.address || "",
       notes: data.notes || "",
-      startTime: data.dates.startDate,
-      endTime: data.dates.endDate,
+      startTime: getUtcTimeWithoutChangingTime(data.dates.startDate),
+      endTime: getUtcTimeWithoutChangingTime(data.dates.endDate),
       id: getTripDetailsId(),
       phoneNumber: data.phoneNumber,
       website: data.website,
@@ -287,10 +285,11 @@ const TripDetailEdit = () => {
                       <DateTimePicker
                         date={field.value}
                         setDate={field.onChange}
+                        startDate={tripTime.startDate}
+                        endDate={tripTime.endDate}
                       />
                     </FormControl>
                     <FormMessage />
-                    <FormDescription>Trip starts at {getLocalTimeISOFromString(tripTime.startDate)}</FormDescription>
                   </FormItem>
                 )}
               />
@@ -304,10 +303,11 @@ const TripDetailEdit = () => {
                       <DateTimePicker
                         date={field.value}
                         setDate={field.onChange}
+                        startDate={tripTime.startDate}
+                        endDate={tripTime.endDate}
                       />
                     </FormControl>
                     <FormMessage />
-                    <FormDescription>Trip ends at {getLocalTimeISOFromString(tripTime.endDate)}</FormDescription>
                   </FormItem>
                 )}
               />

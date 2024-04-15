@@ -18,7 +18,7 @@ import Paths from "@/routes/Paths";
 import "./styles/create-edit-trip.css";
 import { toast } from "sonner";
 import { addTrip } from "@/api/TripService";
-import { getUtcTime } from "@/utils/date";
+import { getUtcTime, getUtcTimeWithoutChangingTime } from "@/utils/date";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
@@ -129,8 +129,8 @@ const CreateTrip = () => {
     fromDate.setHours(0, 0, 0, 0);
     toDate.setHours(23, 59, 59, 999);
     const dates = {
-      from: getUtcTime(fromDate),
-      to: getUtcTime(toDate),
+      from: getUtcTimeWithoutChangingTime(fromDate),
+      to: getUtcTimeWithoutChangingTime(toDate),
     };
 
     formData.append("title", data.tripTitle);

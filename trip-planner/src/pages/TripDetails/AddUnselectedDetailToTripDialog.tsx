@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CirclePlus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -58,6 +58,10 @@ const AddUnselectedDetailToTripDialog = ({
       startDate: selectedTrip?.startDate,
     },
   });
+
+  useEffect(() => {
+    setSelectedTrip(trips.length > 0 ? trips[0] : "");
+  }, [trips])
 
   const onAdd = () => {
     if (!selectedTrip) return;
@@ -130,12 +134,10 @@ const AddUnselectedDetailToTripDialog = ({
                     <DateTimePicker
                       date={field.value}
                       setDate={field.onChange}
+                      startDate={selectedTrip.startDate}
+                      endDate={selectedTrip.endDate}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Trip starts at {selectedTrip.startDate} and ends at{" "}
-                    {selectedTrip.endDate}
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
