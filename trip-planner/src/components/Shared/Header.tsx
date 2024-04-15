@@ -106,9 +106,9 @@ const Header = () => {
           <div className="flex items-center">
             {isSmallScreen ? (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild className="mb-1 mr-1 px-3 link">
+                <DropdownMenuTrigger asChild className="cursor-pointer mb-1 mr-1 px-3 link">
                   <div>
-                    <Menu className="w-5 h-5 cursor-pointer notification" />
+                    <Menu className="w-5 h-5 notification" />
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -116,6 +116,9 @@ const Header = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate(Paths.TRIPS)} className="cursor-pointer">
                     Trips
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate(Paths.UNSELECTED_PLANS)} className="cursor-pointer">
+                    Plans
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => navigate(Paths.RECOMMENDATIONS)}
@@ -129,6 +132,9 @@ const Header = () => {
               <>
                 <Link to={Paths.TRIPS} className="link font-bold !mr-1">
                   Trips
+                </Link>
+                <Link to={Paths.UNSELECTED_PLANS} className="link font-bold !mr-1">
+                  Plans
                 </Link>
                 <Link
                   to={Paths.RECOMMENDATIONS}

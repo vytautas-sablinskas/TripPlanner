@@ -121,11 +121,11 @@ const TripCard = ({ trip, onDelete }: any) => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.TRIP_TRAVELLERS_VIEW.replace(":tripId", trip.id))}>
                     <Users className="mr-2 h-4 w-4" />
-                    Manage Trip Participants
+                    Trip Participants
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.BUDGETS.replace(":tripId", trip.id))}>
                     <Wallet className="mr-2 h-4 w-4"/>
-                    Manage Trip Budgets
+                    Trip Budgets
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.EXPORT_TRIP.replace(":tripId", trip.id))}>
                     <Printer className="mr-2 h-4 w-4"/>

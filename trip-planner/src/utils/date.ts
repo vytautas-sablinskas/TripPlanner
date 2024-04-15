@@ -37,7 +37,15 @@ export const getLocalDate = (date: string) => {
     return modifiedDateTime.toJSDate();
 }
 
+export const getUtcTimeWithoutChangingTime = (date: any) => {
+    const dateTime = DateTime.fromJSDate(date);
 
+    const timeWithoutOffset = dateTime.setZone('utc', { keepLocalTime: true });
+
+    const isoStringWithoutOffset = timeWithoutOffset.toISO();
+
+    return isoStringWithoutOffset;
+}
 
 export const formatDateToString = (dateString : any, options: DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) => {
     const date = new Date(dateString);

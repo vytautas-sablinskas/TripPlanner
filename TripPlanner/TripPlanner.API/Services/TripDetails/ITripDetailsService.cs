@@ -6,6 +6,8 @@ public interface ITripDetailsService
 {
     void CreateTripDetail(CreateTripDetailDto tripDto, string userId);
 
+    Task<IEnumerable<GetEditTripDetailsDto>> GetUnselectedTripDetails(string userId);
+
     Task EditTripDetail(EditTripDetailDto tripDto);
 
     Task DeleteTripDetail(Guid id);
@@ -15,4 +17,6 @@ public interface ITripDetailsService
     Task<GetEditTripDetailsDto> GetTripDetailById(Guid tripId, Guid detailId);
 
     Task<(bool, TripDetailViewDto)> GetTripDetailView(string userId, Guid tripId, Guid detailId);
+
+    Task AddToTripTripDetail(AddToTripTripDetailDto dto);
 }

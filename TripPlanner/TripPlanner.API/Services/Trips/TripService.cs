@@ -128,9 +128,8 @@ public class TripService : ITripService
 
     public async Task<TripsDto> GetUserTrips(string userId, TripFilter filter, int page)
     {
-        var tripsQuery = _tripRepository.FindAll()
-            .Include(t => t.Travellers)
-            .Where(t => t.Travellers.Any(traveller => traveller.UserId == userId && traveller.Status == TravellerStatus.Joined));
+        var tripsQuery = _tripRepository.FindByCondition(t => t.Travellers.Any(traveller => traveller.UserId == userId && traveller.Status == TravellerStatus.Joined))
+            .Include(t => t.Travellers);
 
         switch (filter)
         {
@@ -143,6 +142,16 @@ public class TripService : ITripService
         }
 
         return new TripsDto(new List<TripDto>(), TotalTripCount: 0);
+    }
+
+    public async Task<IEnumerable<TripDto>> GetAllUserTrips(string userId)
+    {
+        var trips = await _tripRepository.FindByCondition(t => t.Travellers.Any(traveller => traveller.UserId == userId && traveller.Status == TravellerStatus.Joined && t.EndDate > DateTime.UtcNow))
+            .ToListAsync();
+
+        var mappedTrips = trips.Select(_mapper.Map<TripDto>);
+
+        return mappedTrips;
     }
 
     public async Task<bool> UpdateShareTripInformation(string userId, Guid tripId, UpdateTripShareInformationDto dto)

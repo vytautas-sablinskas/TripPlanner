@@ -25,6 +25,9 @@ public class Place
     [JsonProperty("regularOpeningHours")]
     public OpeningHoursField? OpeningHours { get; set; }
 
+    [JsonProperty("location")]
+    public required LocationField Location { get; set; }
+
     public string? FormattedAddress { get; set; }
 
     public string? WebsiteUri { get; set; }

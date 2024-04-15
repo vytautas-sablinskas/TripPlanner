@@ -22,7 +22,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
     public async Task<IEnumerable<CategoryRecommendation>> GetRecommendations(TripPlaceRecommendationRequestDto dto)
     {
         _httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", _googleApiKey);
-        _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "places.rating,places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri,places.photos.name,places.displayName.text,places.formattedAddress,places.internationalPhoneNumber,places.primaryTypeDisplayName.text,places.regularOpeningHours.weekdayDescriptions,places.websiteUri");
+        _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "places.rating,places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri,places.photos.name,places.displayName.text,places.formattedAddress,places.internationalPhoneNumber,places.primaryTypeDisplayName.text,places.regularOpeningHours.weekdayDescriptions,places.websiteUri,places.location");
 
         var allCategoryRecommendations = new List<CategoryRecommendation>();
         foreach (var category in dto.Categories)
@@ -123,6 +123,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 WeekdayDescriptions = place.OpeningHours?.WeekdayDescriptions,
                 Website = place.WebsiteUri,
                 PriceLevel = GetPriceLevel(place.PriceLevel),
+                Location = place.Location
             },
             Score = (dto.RatingWeight * GetScoreFromOrderedList(ratingPlacesOrdered, place)) +
                     (dto.RatingCountWeight * GetScoreFromOrderedList(ratingCountPlacesOrdered, place)) +

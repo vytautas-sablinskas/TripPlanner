@@ -4,17 +4,79 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import FinalStepMoreInformationDialog from "./FinalStepMoreInformationDialog";
+import { checkTokenValidity } from "@/utils/jwtUtils";
+import { refreshAccessToken } from "@/api/AuthenticationService";
+import { toast } from "sonner";
+import { useUser } from "@/providers/user-provider/UserContext";
+import { useNavigate } from "react-router-dom";
+import Paths from "@/routes/Paths";
+import { addTripDetails } from "@/api/TripDetailService";
 
 const FinalStepCard = ({ recommendations }: any) => {
   const [viewInformationOpen, setViewInformationOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any>(null);
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+    useUser();
+  const [disabledButtons, setDisabledButtons] = useState<any>([]);
+  const navigate = useNavigate();
 
   const onViewMoreInformation = (card: any) => {
     setSelectedCard(card);
     setViewInformationOpen(true);
   };
 
-  console.log(selectedCard);
+  const onAddPlan = async (card: any, index: any) => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
+          position: "top-center",
+        });
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken,
+        result.data.id
+      );
+    }
+
+    const dto = {
+      name: card.place.displayName,
+      eventType: 5,
+      address: card.place.formattedAddress,
+      website: card.place.website,
+      phoneNumber: card.place.internationalPhoneNumber,
+      latitude: card.place.location.latitude,
+      longitude: card.place.location.longitude,
+    };
+
+    try {
+      setDisabledButtons([...disabledButtons, index]);
+      const response = await addTripDetails(dto);
+      if (!response.ok) {
+        setDisabledButtons(disabledButtons.filter((item: any) => item !== index));
+        toast.error("Failed to add plan. Try again!", {
+          position: "top-center",
+        });
+        return;
+      }
+
+      toast.success("Plan added successfully!", {
+        position: "top-center",
+      });
+    } catch {
+      setDisabledButtons(disabledButtons.filter((item: any) => item !== index));
+    }
+  };
+  console.log(recommendations);
+
   return (
     <div className="items-center justify-center my-2 border bg-secondary text-primary rounded-md">
       <div className="p-8">
@@ -27,7 +89,7 @@ const FinalStepCard = ({ recommendations }: any) => {
             <div className="flex-1 flex flex-wrap">
               {recommendation.recommendations &&
               recommendation.recommendations.length > 0 ? (
-                recommendation.recommendations.map((rec: any) => (
+                recommendation.recommendations.map((rec: any, index: any) => (
                   <div
                     key={rec.place.googleMapsUri}
                     className="flex-1 flex flex-col m-2 border bg-gray-100 rounded-md max-w-[500px]"
@@ -85,7 +147,12 @@ const FinalStepCard = ({ recommendations }: any) => {
                           <Clock className="mr-2 h-4 w-4" />
                           More Information
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onAddPlan(rec, rec.place.displayName + index)}
+                          disabled={disabledButtons.includes(rec.place.displayName + index)}
+                        >
                           <CirclePlus className="mr-2 h-4 w-4" />
                           Add Plan
                         </Button>
@@ -95,7 +162,8 @@ const FinalStepCard = ({ recommendations }: any) => {
                 ))
               ) : (
                 <p className="ml-2 text-md ">
-                  No places were found. Try increasing the range or choosing another address
+                  No places were found. Try increasing the range or choosing
+                  another address
                 </p>
               )}
             </div>

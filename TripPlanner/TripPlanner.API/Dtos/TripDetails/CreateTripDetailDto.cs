@@ -22,9 +22,9 @@ public record CreateTripDetailDto(
 
     double? Longitude,
 
-    DateTime StartTime,
+    DateTime? StartTime,
 
     DateTime? EndTime,
 
-    Guid TripId
+    Guid? TripId
 );

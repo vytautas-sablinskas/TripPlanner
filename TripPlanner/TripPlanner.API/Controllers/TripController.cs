@@ -109,4 +109,13 @@ public class TripController : ControllerBase
 
         return Ok(dto);
     }
+
+    [HttpGet("trips/user")]
+    [Authorize]
+    public async Task<IActionResult> GetAllUserTrips()
+    {
+        var trips = await _tripService.GetAllUserTrips(User.GetUserId());
+
+        return Ok(trips);
+    }
 }

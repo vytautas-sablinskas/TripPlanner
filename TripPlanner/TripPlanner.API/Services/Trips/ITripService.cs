@@ -23,4 +23,6 @@ public interface ITripService
     Task<string?> UpdateTripShareInformationLink(Guid tripId, string userId);
 
     Task<TripShareInformationViewDto> GetShareTripViewInformation(Guid linkId);
+
+    Task<IEnumerable<TripDto>> GetAllUserTrips(string userId);
 }
