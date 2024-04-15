@@ -15,6 +15,8 @@ public class Expense
 
     public string Currency { get; set; }
 
+    public DateTime? Date { get; set; }
+
     public double AmountInMainCurrency { get; set; }
 
     [DeleteBehavior(DeleteBehavior.Restrict)]

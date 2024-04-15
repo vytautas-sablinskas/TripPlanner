@@ -10,5 +10,6 @@ public record ExpenseDto(
     string Name,
     BudgetTypes Type,
     string PersonPhoto,
-    string PersonName
+    string PersonName,
+    DateTime? Date
 );

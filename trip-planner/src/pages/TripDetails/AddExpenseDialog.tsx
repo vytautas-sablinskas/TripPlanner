@@ -31,15 +31,26 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import { createExpense } from "@/api/ExpensesService";
+import { DateTimePicker } from "@/components/Extra/DateTimePicker";
+import { DatePicker } from "@/components/Extra/DatePicker";
+import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 
 const formSchema = z.object({
   currency: z.string(),
   amount: z.string().optional(),
   eventType: z.string(),
   name: z.string().optional(),
+  date: z.date().optional(),
 });
 
-const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any) => {
+const AddExpenseDialog = ({
+  open,
+  setOpen,
+  mainCurrency,
+  onAdd,
+  budgetId,
+  tripTime,
+}: any) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,10 +58,10 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
       amount: "0",
       eventType: "0",
       name: "",
+      date: undefined,
     },
   });
 
-  
   useEffect(() => {
     form.setValue("currency", mainCurrency);
   }, [mainCurrency]);
@@ -62,7 +73,8 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
 
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+    useUser();
   const navigate = useNavigate();
 
   const onSubmit = async (formValues: any) => {
@@ -95,7 +107,13 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
     }
 
     setIsLoading(true);
-    const response = await createExpense(getTripId(), budgetId, { currency: formValues.currency, type: Number(formValues.eventType), name: formValues.name, amount: Number(formValues.amount) })
+    const response = await createExpense(getTripId(), budgetId, {
+      currency: formValues.currency,
+      type: Number(formValues.eventType),
+      name: formValues.name,
+      amount: Number(formValues.amount),
+      date: getUtcTimeWithoutChangingTime(formValues.date)
+    });
     if (!response.ok) {
       toast.error("An error occurred while adding expense", {
         position: "top-center",
@@ -109,10 +127,10 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
     setOpen(false);
   };
 
-  const handleClose = (e : any) => {
+  const handleClose = (e: any) => {
     e.preventDefault();
     setOpen(false);
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={() => !isLoading && setOpen(!open)}>
@@ -141,19 +159,6 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
                       label="Plan Type"
                       items={ActivityTypes}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className=" mt-4">
-                  <FormLabel>Name</FormLabel>
-                  <FormControl className="w-full">
-                    <Input {...field} placeholder="Enter name of expense" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,9 +210,44 @@ const AddExpenseDialog = ({ open, setOpen, mainCurrency, onAdd, budgetId }: any)
                 </FormItem>
               )}
             />
+            <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col mt-4">
+                    <FormLabel>Date</FormLabel>
+                    <FormControl className="w-full mb-4">
+                      <DatePicker
+                        date={field.value}
+                        setDate={field.onChange}
+                        startDate={tripTime.startDate}
+                        endDate={tripTime.endDate}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className=" mt-4">
+                  <FormLabel>Name</FormLabel>
+                  <FormControl className="w-full">
+                    <Input {...field} placeholder="Enter name of expense" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter className="flex flex-col mt-4">
               <DialogClose>
-                <Button className="w-full mb-4" disabled={isLoading} onClick={handleClose}>
+                <Button
+                  className="w-full mb-4"
+                  disabled={isLoading}
+                  onClick={handleClose}
+                >
                   Cancel
                 </Button>
               </DialogClose>

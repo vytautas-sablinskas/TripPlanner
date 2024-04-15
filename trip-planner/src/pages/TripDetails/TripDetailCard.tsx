@@ -21,7 +21,6 @@ import {
   Utensils,
 } from "lucide-react";
 import { DateTimeFormatOptions } from "luxon";
-import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 
 const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
   const startTime = detail.startTime ? new Date(detail.startTime) : null;
@@ -69,9 +68,12 @@ const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
       toast.error("Unexpected error. Try again later", {
         position: "top-center",
       });
+      setIsLoading(false);
+      return;
     }
 
-    onDelete();
+    await onDelete(detail.id);
+    setIsLoading(false);
   };
 
   const getActivityImage = (type: any) => {

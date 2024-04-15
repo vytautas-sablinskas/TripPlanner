@@ -49,6 +49,7 @@ public class ExpenseService : IExpenseService
             AmountInMainCurrency = spentAmountInMainCurrency,
             UserId = userId,
             TripBudgetId = budgetId,
+            Date = dto.Date,
         };
 
         var createdExpense = _expenseRepository.Create(expense);
@@ -108,6 +109,7 @@ public class ExpenseService : IExpenseService
         currentExpense.Amount = dto.Amount;
         currentExpense.Name = dto.Name;
         currentExpense.Type = dto.Type;
+        currentExpense.Date = dto.Date;
         await _expenseRepository.Update(currentExpense);
 
         return new EditExpenseResponseDto(newAmount);
