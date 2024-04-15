@@ -12,9 +12,11 @@ import { Calendar } from "../ui/calendar";
 interface DateTimePickerProps {
   date: Date | undefined;
   setDate: (date: Date) => void;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
 }
 
-export function DateTimePicker({ date, setDate }: DateTimePickerProps) {
+export function DateTimePicker({ date, setDate, startDate, endDate }: DateTimePickerProps) {
   const [selectedDateTime, setSelectedDateTime] =
     React.useState<DateTime | null>(date ? DateTime.fromJSDate(date) : null);
 
@@ -71,6 +73,11 @@ export function DateTimePicker({ date, setDate }: DateTimePickerProps) {
           mode="single"
           selected={selectedDateTime ? selectedDateTime.toJSDate() : undefined}
           onSelect={handleSelect}
+          disabled={(date) =>
+            (endDate && date > new Date(endDate)) || (startDate && date < new Date(startDate))
+              ? true
+              : false
+          }
           initialFocus
         />
         {footer}

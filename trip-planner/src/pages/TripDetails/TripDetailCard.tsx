@@ -20,9 +20,11 @@ import {
   ShoppingCart,
   Utensils,
 } from "lucide-react";
+import { DateTimeFormatOptions } from "luxon";
+import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 
 const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
-  const startTime = detail.startTime ? new Date(detail.startTime + "Z") : null;
+  const startTime = detail.startTime ? new Date(detail.startTime) : null;
   const navigate = useNavigate();
   const location = useLocation();
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
@@ -34,16 +36,9 @@ const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
   };
 
   function formatTime(time: any) {
-    const options = { hour: "numeric", minute: "2-digit", hour12: true };
-    const formattedTime = time.toLocaleTimeString("en-US", options);
-    return formattedTime;
-  }
-
-  function formatTimezoneOffset() {
-    const timezoneOffset = new Date().getTimezoneOffset();
-    const offsetSign = timezoneOffset < 0 ? "+" : "-";
-    const offsetHours = Math.abs(Math.floor(timezoneOffset / 60));
-    return `GMT ${offsetSign}${offsetHours}`;
+    const options : DateTimeFormatOptions = { hour: "numeric", minute: "2-digit", hour12: true };
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    return formatter.format(time);
   }
 
   const handleDelete = async () => {
@@ -106,7 +101,6 @@ const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
       >
         <div>
           <p className="">{startTime && formatTime(startTime)}</p>
-          <p className="">{formatTimezoneOffset()}</p>
         </div>
         <span className="event-image-container justify-center">
           <Separator orientation="vertical" className="mx-5" />

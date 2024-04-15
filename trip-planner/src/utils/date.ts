@@ -4,11 +4,8 @@ export const getFormattedDateRange = (startStr: string, endStr: string): string 
     const startDate = DateTime.fromISO(startStr, { zone: 'utc' });
     const endDate = DateTime.fromISO(endStr, { zone: 'utc' });
 
-    const startDateLocal = startDate.setZone('local');
-    const endDateLocal = endDate.setZone('local');
-
-    const startFormatted = startDateLocal.toFormat("LLL dd");
-    const endFormatted = endDateLocal.toFormat("LLL dd, yyyy");
+    const startFormatted = startDate.toFormat("LLL dd");
+    const endFormatted = endDate.toFormat("LLL dd, yyyy");
 
     const dateString = `${startFormatted} - ${endFormatted}`;
 
@@ -49,7 +46,9 @@ export const getUtcTimeWithoutChangingTime = (date: any) => {
 
 export const formatDateToString = (dateString : any, options: DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', options);
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    console.log(formatter.format(date));
+    return formatter.format(date);
 }
 
 export const getFormattedDateTime = (dateStr :any) => {

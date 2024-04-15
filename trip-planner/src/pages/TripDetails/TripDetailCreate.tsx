@@ -27,7 +27,7 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { getTripTime } from "@/api/TripService";
 import { addTripDetails } from "@/api/TripDetailService";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
-import { getLocalTimeISOFromDate, getLocalTimeISOFromString } from "@/utils/date";
+import { getLocalTimeISOFromDate, getLocalTimeISOFromString, getUtcTimeWithoutChangingTime } from "@/utils/date";
 import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -106,10 +106,9 @@ const TripDetailCreate = () => {
       }
 
       const data = await response.json();
-      console.log(data);
       setTripTime({
-        startDate: getLocalTimeISOFromString(data.startDate + "Z"),
-        endDate: getLocalTimeISOFromString(data.endDate + "Z"),
+        startDate: new Date(data.startDate).toISOString(),
+        endDate: new Date(data.endDate).toISOString(),
       });
       setIsLoading(false);
     };
@@ -194,21 +193,23 @@ const TripDetailCreate = () => {
         result.data.id
       );
     }
-
+    
     const tripId = getTripId();
-    const response = await addTripDetails({
+    const dto = {
       name: data.name,
       eventType: Number(data.eventType),
       address: data.address,
       notes: data.notes,
-      startTime: data.dates.startDate,
-      endTime: data.dates.endDate,
+      startTime: getUtcTimeWithoutChangingTime(data.dates.startDate),
+      endTime: getUtcTimeWithoutChangingTime(data.dates.endDate),
       phoneNumber: data.phoneNumber,
       website: data.website,
       longitude: geometry?.longitude,
       latitude: geometry?.latitude,
       tripId,
-    });
+    }
+
+    const response = await addTripDetails(dto);
     if (!response || !response.ok) {
       toast.error("Unexpected error. Try again later", {
         position: "top-center",
@@ -272,9 +273,10 @@ const TripDetailCreate = () => {
                       <DateTimePicker
                         date={field.value}
                         setDate={field.onChange}
+                        startDate={tripTime.startDate}
+                        endDate={tripTime.endDate}
                       />
                     </FormControl>
-                    <FormDescription>Trip starts at {tripTime.startDate}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -289,10 +291,11 @@ const TripDetailCreate = () => {
                       <DateTimePicker
                         date={field.value}
                         setDate={field.onChange}
+                        startDate={tripTime.startDate}
+                        endDate={tripTime.endDate}
                       />
                     </FormControl>
                     <FormMessage />
-                    <FormDescription>Trip ends at {tripTime.endDate}</FormDescription>
                   </FormItem>
                 )}
               />

@@ -10,7 +10,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
 import { getTripDetails } from "@/api/TripDetailService";
-import { getFormattedDateRange, getLocalDate } from "@/utils/date";
+import { getFormattedDateRange, getLocalDate, getUtcTimeWithoutChangingTime } from "@/utils/date";
 import { Backpack, BarChart4, BedDouble, CircleHelp, CirclePlus, CircleX, Pencil, PersonStanding, ShoppingCart, Utensils } from "lucide-react";
 import { ValueSelector } from "@/components/Extra/ValueSelector";
 import { Progress } from "@/components/ui/progress";
@@ -88,9 +88,10 @@ const TripDetails = () => {
 
     const tripDetailsByDay = data.tripDetails.reduce(
       (acc: any, detail: any) => {
-        const startDate = getLocalDate(detail.startTime + "Z")
-          .toISOString()
-          .split("T")[0];
+        const date = getUtcTimeWithoutChangingTime(new Date(detail.startTime));
+        if (!date) return acc;
+
+        const startDate = date.split("T")[0];
         if (!acc[startDate]) {
           acc[startDate] = [];
         }
@@ -100,10 +101,21 @@ const TripDetails = () => {
       {}
     );
 
+    const tripDetailsByDayArray = Object.entries(tripDetailsByDay);
+
+    tripDetailsByDayArray.sort(([dateA], [dateB]) => {
+      return new Date(dateA).getTime() - new Date(dateB).getTime();
+    });
+
+    const sortedTripDetailsByDay = tripDetailsByDayArray.reduce((acc : any, [date, details] : any) => {
+      acc[date] = details;
+      return acc;
+    }, {});
+
     const tripMapInformation: Record<string, { lat: number; lng: number }[]> = {};
 
-    Object.keys(tripDetailsByDay).forEach((day: string) => {
-      const detailsForDay = tripDetailsByDay[day];
+    Object.keys(sortedTripDetailsByDay).forEach((day: string) => {
+      const detailsForDay = sortedTripDetailsByDay[day];
       const latLngArray = detailsForDay
         .filter((detail: any) => detail.latitude !== null && detail.longitude !== null)
         .map((detail: any) => ({
@@ -115,8 +127,6 @@ const TripDetails = () => {
 
       tripMapInformation[day] = latLngArray;
     });
-
-    console.log(tripMapInformation);
 
     setMapInformation(tripMapInformation);
 
