@@ -47,9 +47,38 @@ export const getTripDetailForView = async (detailId : any, tripId : any) => {
     return response;
 }
 
+export const getUnselectedTrips = async () => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIP_DETAILS.GET_UNSELECTED_DETAILS,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response;
+}
+
 export const addTripDetails = async (data : any) => {
     const token = localStorage.getItem('accessToken');
     const response = await fetch(ENDPOINTS.TRIP_DETAILS.CREATE_TRIP_DETAILS,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({...data}),
+        });
+
+    return response
+};
+
+export const addTripToTripDetail = async (data : any) => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIP_DETAILS.ADD_TRIP_TO_DETAIL,
         {
             method: 'POST',
             headers: {

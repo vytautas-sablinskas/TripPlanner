@@ -147,3 +147,17 @@ export const getShareTripInformation = async (linkId : any) => {
 
     return response;
 }
+
+export const getAllUserTrips = async () => {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(ENDPOINTS.TRIPS.GET_USER_TRIPS,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+    return response;
+}

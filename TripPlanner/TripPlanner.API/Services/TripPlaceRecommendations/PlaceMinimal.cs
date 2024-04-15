@@ -23,4 +23,6 @@ public class PlaceMinimal
     public string? PrimaryType { get; set; }
 
     public string? PriceLevel { get; set; }
+
+    public LocationField? Location { get; set; }
 }

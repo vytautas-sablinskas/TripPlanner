@@ -21,7 +21,7 @@ public class TripDetail
 
     public string? PhoneNumber { get; set; }
 
-    public DateTime StartTime { get; set; }
+    public DateTime? StartTime { get; set; }
 
     public double? Latitude { get; set; }
 

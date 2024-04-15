@@ -1,4 +1,3 @@
-import { refreshAccessToken } from "@/api/AuthenticationService";
 import { getShareTripInformation } from "@/api/TripService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import Paths from "@/routes/Paths";
@@ -7,10 +6,8 @@ import {
   getFormattedDateRange,
   getLocalDate,
 } from "@/utils/date";
-import { checkTokenValidity } from "@/utils/jwtUtils";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import TripDetailCard from "../TripDetails/TripDetailCard";
 import { Card, CardContent } from "@/components/ui/card";
 import ReactQuill from "react-quill";
@@ -22,8 +19,6 @@ import "./styles/share-trip-view.css";
 const ShareTripView = () => {
   const { linkId } = useParams();
   const navigate = useNavigate();
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
-    useUser();
   const [days, setDays] = useState<any>([]);
   const [sortedDays, setSortedDays] = useState<any>([]);
   const [tripInformation, setTripInformation] = useState<any>({});
@@ -31,27 +26,6 @@ const ShareTripView = () => {
   const [sharedInformation, setSharedInformation] = useState<any>({});
   const [isLoading, setIsLoading] = useState<any>(true);
   const fetchInformation = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-
-    if (!checkTokenValidity(accessToken || "")) {
-      const result = await refreshAccessToken();
-      if (!result.success) {
-        toast.error("Session has expired. Login again!", {
-          position: "top-center",
-        });
-
-        changeUserInformationToLoggedOut();
-        navigate(Paths.LOGIN);
-        return;
-      }
-
-      changeUserInformationToLoggedIn(
-        result.data.accessToken,
-        result.data.refreshToken,
-        result.data.id
-      );
-    }
-
     try {
       setIsLoading(true);
       const response = await getShareTripInformation(linkId);
@@ -108,9 +82,6 @@ const ShareTripView = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-
-  console.log((sharedInformation.title))
-  console.log(sharedInformation.descriptionInHtml);
 
   return (
     <div className="w-full">

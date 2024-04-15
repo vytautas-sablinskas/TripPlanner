@@ -20,6 +20,7 @@ const Paths = {
     SHARE_TRIP: '/trips/:tripId/share',
     SHARE_TRIP_VIEW: '/trips/shared/:linkId',
     RECOMMENDATIONS: '/recommendations',
+    UNSELECTED_PLANS: '/unselected-plans',
 }
 
 export default Paths

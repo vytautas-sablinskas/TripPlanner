@@ -35,6 +35,15 @@ public class TripDetailController : ControllerBase
         return Ok(detailById);
     }
 
+    [HttpGet("tripDetails/notSelected")]
+    [Authorize]
+    public async Task<IActionResult> GetNotSelectedTripDetails()
+    {
+        var details = await _tripDetailsService.GetUnselectedTripDetails(User.GetUserId());
+
+        return Ok(details);
+    }
+
     [HttpGet("trips/{tripId}/tripDetails/{detailId}/view")]
     [Authorize]
     public async Task<IActionResult> GetTripDetailForView(Guid tripId, Guid detailId)
@@ -70,6 +79,15 @@ public class TripDetailController : ControllerBase
     public async Task<IActionResult> DeleteTripDetail(Guid id)
     {
         await _tripDetailsService.DeleteTripDetail(id);
+
+        return NoContent();
+    }
+
+    [HttpPost("tripDetails/addToTrip")]
+    [Authorize]
+    public async Task<IActionResult> AddTripDetailToTrip(AddToTripTripDetailDto dto)
+    {
+        await _tripDetailsService.AddToTripTripDetail(dto);
 
         return NoContent();
     }

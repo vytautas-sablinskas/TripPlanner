@@ -37,6 +37,16 @@ public class TripDetailsService : ITripDetailsService
         _tripDetailsRepository.Create(trip);
     }
 
+    public async Task<IEnumerable<GetEditTripDetailsDto>> GetUnselectedTripDetails(string userId)
+    {
+        var tripDetails = await _tripDetailsRepository.FindByCondition(t => t.CreatorId == userId && t.TripId == null)
+            .ToListAsync();
+
+        var detailsDto = tripDetails.Select(_mapper.Map<GetEditTripDetailsDto>);
+
+        return detailsDto;
+    }
+
     public async Task EditTripDetail(EditTripDetailDto tripDto)
     {
         var trip = await _tripDetailsRepository.FindByCondition(c => c.Id == tripDto.Id)
@@ -116,5 +126,20 @@ public class TripDetailsService : ITripDetailsService
         var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, documents, travellerMinimalDtos);
 
         return (true, tripDetailViewDto);
+    }
+
+    public async Task AddToTripTripDetail(AddToTripTripDetailDto dto)
+    {
+        var tripDetail = await _tripDetailsRepository.FindByCondition(t => t.Id == dto.Id)
+            .FirstOrDefaultAsync();
+        if (tripDetail == null)
+        {
+            return;
+        }
+
+        tripDetail.StartTime = dto.StartDate;
+        tripDetail.TripId = dto.TripId;
+
+        await _tripDetailsRepository.Update(tripDetail);
     }
 }
