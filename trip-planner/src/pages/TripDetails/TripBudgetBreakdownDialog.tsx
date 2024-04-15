@@ -25,6 +25,7 @@ const TripBudgetBreakdownDialog = ({
     "Other",
   ];
   const key = `Expenses By Category, ${mainCurrency}`;
+  const daysKey = `Expenses By Day, ${mainCurrency}`
 
   const getBudgetType = (type: any) => {
     switch (type) {
@@ -86,7 +87,7 @@ const TripBudgetBreakdownDialog = ({
 
     const result = Object.keys(amountSpentByDay).map((date) => ({
       date,
-      Expenses: amountSpentByDay[date],
+      [daysKey]: amountSpentByDay[date] || 0,
     }));
 
     return result;
@@ -131,7 +132,7 @@ const TripBudgetBreakdownDialog = ({
             data={allDateSpendings}
             key={allDateSpendings.length}
             index="date"
-            categories={["Expenses"]}
+            categories={[daysKey]}
             colors={["blue-700"]}
             yAxisWidth={30}
           />
