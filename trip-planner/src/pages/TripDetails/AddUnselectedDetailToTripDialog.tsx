@@ -49,20 +49,22 @@ const AddUnselectedDetailToTripDialog = ({
   isLoading,
 }: any) => {
   const [selectedTrip, setSelectedTrip] = useState<any>(
-    trips.length > 0 ? trips[0].id : null
+    trips.length > 0 ? trips[0].id : ""
   );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      startDate: selectedTrip.startDate,
+      startDate: selectedTrip?.startDate,
     },
   });
 
   const onAdd = () => {
-    if (selectedTrip === null) return;
+    if (!selectedTrip) return;
 
     const date = form.getValues("startDate");
+    if (!date) return;
+
     const formattedStartDate = getUtcTimeWithoutChangingTime(date);
     if (formattedStartDate === null) return;
     
