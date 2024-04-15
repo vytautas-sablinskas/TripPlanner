@@ -12,7 +12,9 @@ const SecondStepCard = ({
   selectedPrice,
   setSelectedPrice,
   selectedDistance,
-  setSelectedDistance
+  setSelectedDistance,
+  enabled,
+  setEnabled
 } : any) => {
     return (
         <div className="my-2 border bg-secondary text-primary rounded-md">
@@ -29,6 +31,8 @@ const SecondStepCard = ({
             setSelectedDistance={setSelectedDistance}
             selectedPrice={selectedPrice}
             setSelectedPrice={setSelectedPrice}
+            enabled={enabled}
+            setEnabled={setEnabled}
           />
         </div>
       );
