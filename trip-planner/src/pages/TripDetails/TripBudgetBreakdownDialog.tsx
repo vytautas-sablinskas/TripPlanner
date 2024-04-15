@@ -5,87 +5,104 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChart, LineChart } from "@tremor/react";
 
-const TripBudgetBreakdownDialog = ({ open, setOpen, trips, tripStartDate, tripEndDate, mainCurrency }: any) => {
-    const budgetTypes = ["Activity", "Travel", "Food", "Lodging", "Shopping", "Other"];
-    const key = `Expenses By Category, ${mainCurrency}`;
+const TripBudgetBreakdownDialog = ({
+  open,
+  setOpen,
+  expenses,
+  tripStartDate,
+  tripEndDate,
+  mainCurrency,
+}: any) => {
+  const budgetTypes = [
+    "Activity",
+    "Travel",
+    "Food",
+    "Lodging",
+    "Shopping",
+    "Other",
+  ];
+  const key = `Expenses By Category, ${mainCurrency}`;
+  const daysKey = `Expenses By Day, ${mainCurrency}`
 
-    const getBudgetType = (type : any) => {
-        switch (type) {
-          case 0:
-            return "Activity";
-          case 1:
-            return "Travel";
-          case 2:
-            return "Food";
-          case 3:
-            return "Lodging";
-          case 4:
-            return "Shopping";
-          case 5:
-            return "Other";
-          default:
-            return "";
-        }
-      };
-
-    const budgetData = budgetTypes.map((budgetType) => {
-        
-        const totalAmount = trips
-          .filter((expense : any) => getBudgetType(expense.type) === budgetType)
-          .reduce((acc : any, expense : any) => acc + expense.amountInMainCurrency, 0);
-        return { name: budgetType, [key]: totalAmount };
-      });
-      
-      console.log(budgetData);
-
-    function getDates(startDate : any, endDate : any) {
-        const dates = [];
-        while (startDate <= endDate) {
-          dates.push(startDate.toISOString().split("T")[0]);
-          startDate.setDate(startDate.getDate() + 1);
-        }
-        return dates;
+  const getBudgetType = (type: any) => {
+    switch (type) {
+      case 0:
+        return "Activity";
+      case 1:
+        return "Travel";
+      case 2:
+        return "Food";
+      case 3:
+        return "Lodging";
+      case 4:
+        return "Shopping";
+      case 5:
+        return "Other";
+      default:
+        return "";
     }
+  };
 
-    const startDate = new Date(tripStartDate);
-    const endDate = new Date(tripEndDate);
-    const allDates = getDates(startDate, endDate);
+  const budgetData = budgetTypes.map((budgetType) => {
+    const totalAmount = expenses
+      .filter((expense: any) => getBudgetType(expense.type) === budgetType)
+      .reduce(
+        (acc: any, expense: any) => acc + expense.amountInMainCurrency,
+        0
+      );
+    return { name: budgetType, [key]: totalAmount };
+  });
+
+  function getDates(startDate: any, endDate: any) {
+    const dates = [];
+    while (startDate <= endDate) {
+      dates.push(startDate.toISOString().split("T")[0]);
+      startDate.setDate(startDate.getDate() + 1);
+    }
+    return dates;
+  }
+
+  const startDate = new Date(tripStartDate);
+  const endDate = new Date(tripEndDate);
+  const allDates = getDates(startDate, endDate);
+
+  function calculateAmountSpentByDay(dates: any, trips: any) {
+    const amountSpentByDay: any = {};
+
+    dates.forEach((date: any) => {
+      amountSpentByDay[date] = 0;
+    });
+
+    trips.forEach((trip: any) => {
+      const tripDate = trip.date ? trip.date.split("T")[0] : null;
+      const amount = trip.amountInMainCurrency || 0;
+
+      if (tripDate && amount && amount !== 0 && dates.includes(tripDate)) {
+        amountSpentByDay[tripDate] += amount;
+      }
+    });
+
+    const result = Object.keys(amountSpentByDay).map((date) => ({
+      date,
+      [daysKey]: amountSpentByDay[date] || 0,
+    }));
+
+    return result;
+  }
+
+  const [allDateSpendings, setAllDateSpendings] = useState<any>(calculateAmountSpentByDay(allDates, expenses))
+  useEffect(() => {
+    setAllDateSpendings(calculateAmountSpentByDay(allDates, expenses));
+  }, [expenses]);
 
   const [tabSelected, setTabSelected] = useState<any>("days");
 
-  const chartdata2 = [
-    {
-      date: "Jan 23",
-      Expenses: 167,
-    },
-    {
-      date: "Feb 23",
-      Expenses: 125,
-    },
-    {
-      date: "Mar 23",
-      Expenses: 156,
-    },
-    {
-      date: "Apr 23",
-      Expenses: 165,
-    },
-    {
-      date: "May 23",
-      Expenses: 153,
-    },
-    {
-      date: "Jun 23",
-      Expenses: 124,
-    },
-  ];
-
   const dataFormatter = (number: number) => {
     const numberFixed = Number(number.toFixed(2));
-  
+
     return Intl.NumberFormat("us").format(numberFixed);
   };
 
@@ -112,9 +129,10 @@ const TripBudgetBreakdownDialog = ({ open, setOpen, trips, tripStartDate, tripEn
         {tabSelected === "days" && (
           <LineChart
             className="h-72"
-            data={chartdata2}
+            data={allDateSpendings}
+            key={allDateSpendings.length}
             index="date"
-            categories={["Expenses"]}
+            categories={[daysKey]}
             colors={["blue-700"]}
             yAxisWidth={30}
           />

@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { z } from "zod";
@@ -32,12 +31,16 @@ import Paths from "@/routes/Paths";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { editExpense } from "@/api/ExpensesService";
+import { DateTimePicker } from "@/components/Extra/DateTimePicker";
+import { DatePicker } from "@/components/Extra/DatePicker";
+import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 
 const formSchema = z.object({
   currency: z.string(),
   amount: z.string().optional(),
   eventType: z.string(),
   name: z.string().optional(),
+  date: z.date().optional(),
 });
 
 const EditExpenseDialog = ({
@@ -50,6 +53,8 @@ const EditExpenseDialog = ({
   handeEditSubmit,
   budgetId,
   expenseId,
+  tripTime,
+  currentDate
 }: any) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,8 +63,11 @@ const EditExpenseDialog = ({
       amount: amount || "0",
       eventType: eventType,
       name: name || "",
+      date: currentDate ? new Date(currentDate) : undefined,
     },
   });
+
+  console.log(currentDate);
 
   const getTripId = () => {
     const paths = location.pathname.split("/");
@@ -69,13 +77,15 @@ const EditExpenseDialog = ({
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+    useUser();
 
   useEffect(() => {
     form.setValue("currency", currencyValue);
     form.setValue("amount", amount);
     form.setValue("eventType", eventType);
     form.setValue("name", name);
+    form.setValue("date", currentDate ? new Date(currentDate) : undefined);
   }, [open]);
 
   const onSubmit = async (formValues: any) => {
@@ -108,7 +118,14 @@ const EditExpenseDialog = ({
     }
 
     setIsLoading(true);
-    const response = await editExpense(getTripId(), budgetId, expenseId, { currency: formValues.currency, type: Number(formValues.eventType), name: formValues.name, amount: Number(formValues.amount) })
+    const newDto = {
+      currency: formValues.currency,
+      type: Number(formValues.eventType),
+      name: formValues.name,
+      amount: Number(formValues.amount),
+      date: getUtcTimeWithoutChangingTime(formValues.date)
+    }
+    const response = await editExpense(getTripId(), budgetId, expenseId, newDto);
     if (!response.ok) {
       toast.error("Failed to edit expense", {
         position: "top-center",
@@ -116,18 +133,18 @@ const EditExpenseDialog = ({
       setIsLoading(false);
       return;
     }
-    
+
     const data = await response.json();
 
-    handeEditSubmit(formValues, data);
+    handeEditSubmit(newDto, data);
     setIsLoading(false);
   };
 
-  const handleCancel = (e : any) => {
+  const handleCancel = (e: any) => {
     e.preventDefault();
     setOpen(false);
-  }
- 
+  };
+
   return (
     <Dialog open={open} onOpenChange={() => !isLoading && setOpen(!open)}>
       <DialogContent
@@ -162,19 +179,6 @@ const EditExpenseDialog = ({
             />
             <FormField
               control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className=" mt-4">
-                  <FormLabel>Name</FormLabel>
-                  <FormControl className="w-full">
-                    <Input {...field} placeholder="Enter name of expense" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="currency"
               render={({ field }) => (
                 <FormItem className="mt-4">
@@ -191,7 +195,6 @@ const EditExpenseDialog = ({
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="amount"
@@ -220,9 +223,44 @@ const EditExpenseDialog = ({
                 </FormItem>
               )}
             />
+            <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel>Date</FormLabel>
+                    <FormControl className="w-full mb-4">
+                      <DatePicker
+                        date={field.value}
+                        setDate={field.onChange}
+                        startDate={tripTime.startDate}
+                        endDate={tripTime.endDate}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className=" mt-4">
+                  <FormLabel>Name</FormLabel>
+                  <FormControl className="w-full">
+                    <Input {...field} placeholder="Enter name of expense" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter className="flex flex-col mt-4">
               <DialogClose>
-                <Button className="w-full mb-4" disabled={isLoading} onClick={handleCancel}>
+                <Button
+                  className="w-full mb-4"
+                  disabled={isLoading}
+                  onClick={handleCancel}
+                >
                   Cancel
                 </Button>
               </DialogClose>

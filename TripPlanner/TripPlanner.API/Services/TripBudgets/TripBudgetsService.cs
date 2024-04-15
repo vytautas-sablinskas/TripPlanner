@@ -63,7 +63,8 @@ public class TripBudgetsService : ITripBudgetsService
                 e.Name,
                 e.Type,
                 user.PhotoUri,
-                $"{user.Name} {user.Surname}"
+                $"{user.Name} {user.Surname}",
+                e.Date
             );   
         });
 

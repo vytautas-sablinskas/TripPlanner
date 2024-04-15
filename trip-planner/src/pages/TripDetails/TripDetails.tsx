@@ -48,6 +48,8 @@ const TripDetails = () => {
   const [isBreakdownOpen, setIsBreakdownOpen] = useState<any>(false);
   const [breakdownTrips, setBreakdownTrips] = useState<any>([]);
 
+  console.log(tripDetails);
+
   const getTripId = () => {
     const paths = location.pathname.split("/");
     return paths[paths.length - 1];
@@ -186,8 +188,14 @@ const TripDetails = () => {
     tryFetchingTripDetails();
   }, []);
 
-  const handleDelete = async () => {
-    await tryFetchingTripDetails();
+  const handleDelete = async (id : any) => {
+    setTripDetails({
+      ...tripDetails,
+      data: Object.keys(tripDetails.data).reduce((acc : any, date : any) => {
+        acc[date] = tripDetails.data[date].filter((detail : any) => detail.id !== id);
+        return acc;
+      }, {})
+    });
   };
 
   const onBudgetChange = (value: any) => {
@@ -298,8 +306,10 @@ const TripDetails = () => {
             ...e,
             name: formValues.name,
             currency: formValues.currency,
-            amount: Number(formValues.amount),
-            type: Number(formValues.eventType),
+            amount: formValues.amount,
+            type: formValues.type,
+            date: formValues.date,
+            amountInMainCurrency: Number(response.amountInMainCurrency),
           };
         }
         return e;
@@ -314,7 +324,6 @@ const TripDetails = () => {
   };
 
   const onExpenseAdd = (response: any, formValues: any) => {
-    console.log(formValues);
     setBudget({
       ...budget,
       spentAmount: response.amount,
@@ -324,10 +333,12 @@ const TripDetails = () => {
           id: response.id,
           name: formValues.name,
           currency: formValues.currency,
-          amount: Number(formValues.amount),
-          type: Number(formValues.eventType),
+          amount: formValues.amount,
+          amountInMainCurrency: Number(response.amountInMainCurrency),
+          type: formValues.type,
           personPhoto: response.personPhoto,
           personName: response.personName,
+          date: formValues.date,
         },
       ],
     });
@@ -499,6 +510,10 @@ const TripDetails = () => {
             setOpen={setOpenAddExpenseDialog}
             onAdd={onExpenseAdd}
             budgetId={selectedBudget}
+            tripTime={{
+              startDate: tripDetails.tripInformation.startDate,
+              endDate: tripDetails.tripInformation.endDate
+            }}
           />
           <DeleteDialog
             title="Delete Expense"
@@ -525,11 +540,19 @@ const TripDetails = () => {
             handeEditSubmit={handeEditSubmit}
             name={budget.expenses.find((e: any) => e.id === openId)?.name}
             budgetId={selectedBudget}
+            tripTime={{
+              startDate: tripDetails.tripInformation.startDate,
+              endDate: tripDetails.tripInformation.endDate
+            }}
+            currentDate={budget.expenses
+              .find((e : any) => e.id === openId)
+              ?.date
+            }
           />
           <TripBudgetBreakdownDialog 
             open={isBreakdownOpen}
             setOpen={setIsBreakdownOpen}
-            trips={budget.expenses}
+            expenses={budget.expenses}
             tripStartDate={tripDetails.tripInformation.startDate}
             tripEndDate={tripDetails.tripInformation.endDate}
             mainCurrency={budget.currency}
