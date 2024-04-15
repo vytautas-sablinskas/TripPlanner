@@ -47,7 +47,6 @@ export const getUtcTimeWithoutChangingTime = (date: any) => {
 export const formatDateToString = (dateString : any, options: DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) => {
     const date = new Date(dateString);
     const formatter = new Intl.DateTimeFormat('en-US', options);
-    console.log(formatter.format(date));
     return formatter.format(date);
 }
 
