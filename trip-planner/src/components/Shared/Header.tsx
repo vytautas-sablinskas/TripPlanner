@@ -114,11 +114,12 @@ const Header = () => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Menu</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate(Paths.TRIPS)}>
+                  <DropdownMenuItem onClick={() => navigate(Paths.TRIPS)} className="cursor-pointer">
                     Trips
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => navigate(Paths.RECOMMENDATIONS)}
+                    className="cursor-pointer"
                   >
                     Recommendations
                   </DropdownMenuItem>
@@ -155,11 +156,17 @@ const Header = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>User Information</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate(Paths.PROFILE)}>
+                <DropdownMenuItem 
+                  onClick={() => navigate(Paths.PROFILE)}
+                  className="cursor-pointer"
+                >
                   <User className="w-4 h-4 mr-4" />
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem 
+                  onClick={handleLogout}
+                  className="cursor-pointer"
+                >
                   <LogOut className="w-4 h-4 mr-4" />
                   Logout
                 </DropdownMenuItem>

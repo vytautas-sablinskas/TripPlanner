@@ -176,8 +176,8 @@ const ShareTrip = () => {
     const files = event.target.files;
     if (!files) return;
 
-    if (files.length + selectedPhotos.length > 10) {
-      toast.error("You can only upload up to 10 photos", {
+    if (files.length + selectedPhotos.length > 5) {
+      toast.error("You can only upload up to 5 photos", {
         position: "top-center",
       });
       return;
@@ -218,7 +218,7 @@ const ShareTrip = () => {
               />
               <CirclePlus className="ml-2 h-4 w-4" />
             </Button>
-            <Label className="ml-2">Up to 10 photos</Label>
+            <Label className="ml-2">Up to 5 photos</Label>
             <div className="flex flex-wrap gap-10 min-h-[240px] p-2 border">
               {selectedPhotos &&
                 Array.from(selectedPhotos).map((photo: any, index: any) => (

@@ -18,6 +18,7 @@ const Paths = {
     PROFILE: '/profile',
     EXPORT_TRIP: '/trips/:tripId/export',
     SHARE_TRIP: '/trips/:tripId/share',
+    SHARE_TRIP_VIEW: '/trips/shared/:linkId',
     RECOMMENDATIONS: '/recommendations',
 }
 

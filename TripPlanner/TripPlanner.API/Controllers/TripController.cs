@@ -97,4 +97,16 @@ public class TripController : ControllerBase
 
         return Ok(tripId);
     }
+
+    [HttpGet("trips/shared/{linkId}")]
+    public async Task<IActionResult> GetTripShareViewInformation(Guid linkId)
+    {
+        var dto = await _tripService.GetShareTripViewInformation(linkId);
+        if (dto == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(dto);
+    }
 }

@@ -115,6 +115,12 @@ function MyComponent({ mapLocations } : any) {
     }
   }
 
+  const onGetDirections = () => {
+    if (!selectedDay || !mapLocations[selectedDay] || mapLocations[selectedDay].length <= 1) return;
+
+    setShouldRender(true);
+  }
+
   return (
     <div>
       <div>
@@ -136,7 +142,7 @@ function MyComponent({ mapLocations } : any) {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button className="ml-2 mb-2" onClick={() => setShouldRender(true)} disabled={isGetRoutesDisabled}>
+          <Button className="ml-2 mb-2" onClick={() => onGetDirections()} disabled={isGetRoutesDisabled}>
             <Route className="h-4 w-4 mr-2" />
             Get Directions
           </Button>

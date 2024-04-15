@@ -11,7 +11,7 @@ import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { deleteTripBudget } from "@/api/TriBudgetsService";
+import { deleteTripBudget } from "@/api/TripBudgetsService";
 
 const BudgetCard = ({ budget, setData }: any) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);

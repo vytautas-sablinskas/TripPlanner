@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TripPlanner.API.Constants;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
+using TripPlanner.API.Dtos.TripDetails;
 using TripPlanner.API.Dtos.Trips;
 using TripPlanner.API.Services.AzureBlobStorage;
 using TripPlanner.API.Services.TripTravellers;
@@ -17,8 +18,9 @@ public class TripService : ITripService
     private readonly IAzureBlobStorageService _azureBlobStorageService;
     private readonly IRepository<TripInformationShare> _tripInformationShareRepository;
     private readonly IRepository<TripSharePhoto> _tripSharePhotoRepository;
+    private readonly IRepository<TripDetail> _tripDetailRepository;
 
-    public TripService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IMapper mapper, IAzureBlobStorageService azureBlobStorageService, IRepository<TripInformationShare> tripInformationShareRepository, IRepository<TripSharePhoto> tripSharePhotoRepository)
+    public TripService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IMapper mapper, IAzureBlobStorageService azureBlobStorageService, IRepository<TripInformationShare> tripInformationShareRepository, IRepository<TripSharePhoto> tripSharePhotoRepository, IRepository<TripDetail> tripDetailRepository)
     {
         _tripRepository = tripRepository;
         _appUserRepository = appUserRepository;
@@ -26,6 +28,7 @@ public class TripService : ITripService
         _azureBlobStorageService = azureBlobStorageService;
         _tripInformationShareRepository = tripInformationShareRepository;
         _tripSharePhotoRepository = tripSharePhotoRepository;
+        _tripDetailRepository = tripDetailRepository;
     }
 
     public async Task<Guid> CreateNewTrip(CreateTripDto tripDto, string userId)
@@ -118,7 +121,7 @@ public class TripService : ITripService
             .Include(t => t.Photos)
             .FirstOrDefaultAsync();
 
-        var shareInformationDto = new TripShareInformationDto(shareInformation.Title, shareInformation.DescriptionHtml, shareInformation.Photos.Select(p => p.PhotoUri), shareInformation.LinkGuid != null ? $"http://localhost:5173/trips/shared?linkId={shareInformation.LinkGuid}" : null);
+        var shareInformationDto = new TripShareInformationDto(shareInformation.Title, shareInformation.DescriptionHtml, shareInformation.Photos.Select(p => p.PhotoUri), shareInformation.LinkGuid != null ? $"http://localhost:5173/trips/shared/{shareInformation.LinkGuid}" : null);
 
         return shareInformationDto;
     }
@@ -220,8 +223,37 @@ public class TripService : ITripService
 
         await _tripInformationShareRepository.Update(shareInformation);
 
-        return shareInformation.LinkGuid == null ? null : $"http://localhost:5173/trips/shared?linkId={newGuid}";
+        return shareInformation.LinkGuid == null ? null : $"http://localhost:5173/trips/shared/{newGuid}";
     }
+
+    public async Task<TripShareInformationViewDto> GetShareTripViewInformation(Guid linkId)
+    {
+        var shareInformation = await _tripInformationShareRepository.FindByCondition(t => t.LinkGuid == linkId)
+            .Include(p => p.Photos)
+            .Include(p => p.User)
+            .FirstOrDefaultAsync();
+        if (shareInformation == null)
+        {
+            return null;
+        }
+
+        var trip = await _tripRepository.FindByCondition(t => t.Id == shareInformation.TripId)
+            .FirstOrDefaultAsync();
+        if (trip == null)
+        {
+            return null;
+        }
+
+        var tripDetails = await _tripDetailRepository.FindByCondition(t => t.TripId == shareInformation.TripId)
+            .ToListAsync();
+
+        var detailsDto = tripDetails.Select(_mapper.Map<TripDetailMinimalDto>);
+        var tripDto = _mapper.Map<TripDto>(trip);
+        var shareInformationDto = new TripShareInformationDto(shareInformation.Title, shareInformation.DescriptionHtml, shareInformation.Photos.Select(p => p.PhotoUri), null);
+
+        return new TripShareInformationViewDto(detailsDto, tripDto, shareInformationDto, $"{shareInformation.User.Name} {shareInformation.User.Surname}");
+    }
+
     private async Task<TripsDto> GetUpcomingTrips(IQueryable<Trip> tripsQuery, int page)
     {
         var tripsCount = await tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)

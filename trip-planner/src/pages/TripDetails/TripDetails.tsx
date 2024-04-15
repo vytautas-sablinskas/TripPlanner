@@ -23,7 +23,7 @@ import {
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import AddExpenseDialog from "./AddExpenseDialog";
-import { getTripBudget } from "@/api/TriBudgetsService";
+import { getTripBudget } from "@/api/TripBudgetsService";
 import { deleteExpense } from "@/api/ExpensesService";
 import GoogleMapExtension from "@/components/Extra/GoogleMapExtension";
 import TripBudgetBreakdownDialog from "./TripBudgetBreakdownDialog";
