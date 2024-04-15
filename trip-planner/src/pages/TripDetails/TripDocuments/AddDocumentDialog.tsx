@@ -56,6 +56,7 @@ const AddDocumentDialog = ({
   open,
   setOpen,
   travellers,
+  activeDocumentCount
 }: any) => {
   const [uploadedImage, setUploadedImage] = useState<any>(
     "/document-placeholder.png"
@@ -102,6 +103,11 @@ const AddDocumentDialog = ({
       form.setError("file", {
         message: "File is required."
       });
+      return;
+    }
+
+    if (activeDocumentCount === 10) {
+      toast.error("You can only have 10 active documents at a time!", { position: "top-center" });
       return;
     }
 

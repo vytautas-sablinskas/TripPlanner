@@ -89,3 +89,18 @@ export const getTripDocumentMembers = async (
 
   return response;
 };
+
+export const getUserDocuments = async () => {
+  const token = localStorage.getItem("accessToken");
+  const response = await fetch(
+    ENDPOINTS.TRIP_DOCUMENTS.GET_USER_DOCUMENTS,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response;
+};

@@ -39,6 +39,15 @@ public class TripDocumentController : ControllerBase
         return Ok(members);
     }
 
+    [HttpGet("documents/user")]
+    [Authorize]
+    public async Task<IActionResult> GetUserDocuments()
+    {
+        var documents = await _tripDocumentService.GetUserDocuments(User.GetUserId());
+
+        return Ok(documents);
+    }
+
     [HttpPut("trips/{tripId}/tripDetails/{tripDetailId}/documents/{documentId}")]
     [Authorize]
     public async Task<IActionResult> EditDocument(Guid documentId, [FromBody] EditDocumentDto dto)

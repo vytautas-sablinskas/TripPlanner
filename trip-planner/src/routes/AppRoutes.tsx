@@ -23,6 +23,7 @@ import Recommendations from "@/pages/Recommendations/Recommendations";
 import ShareTrip from "@/pages/Trips/ShareTrip";
 import ShareTripView from "@/pages/Trips/ShareTripView";
 import UnselectedTripDetails from "@/pages/TripDetails/UnselectedTripDetails";
+import UserDocuments from "@/pages/Profile/UserDocuments";
 
 const AppRoutes = [
   {
@@ -117,6 +118,10 @@ const AppRoutes = [
   {
     path: Paths.UNSELECTED_PLANS,
     element: <UnselectedTripDetails />
+  },
+  {
+    path: Paths.USER_DOCUMENTS,
+    element: <UserDocuments />
   }
 ];
 

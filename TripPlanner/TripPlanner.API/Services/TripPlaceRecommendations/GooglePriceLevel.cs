@@ -8,4 +8,5 @@ public enum GooglePriceLevel
     EXPENSIVE,
     VERY_EXPENSIVE,
     UNKNOWN,
+    NO_RATING
 }

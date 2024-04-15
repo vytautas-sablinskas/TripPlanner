@@ -36,58 +36,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { CirclePlus, CircleX, Pencil } from "lucide-react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { CircleX } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import Paths from "@/routes/Paths"
 import DeleteDialog from "@/components/Extra/DeleteDialog"
-import TripEditTravellerDialog from "./TripEditTravellerDialog"
 import { checkTokenValidity } from "@/utils/jwtUtils"
 import { refreshAccessToken } from "@/api/AuthenticationService"
 import { toast } from "sonner"
 import { useUser } from "@/providers/user-provider/UserContext"
-import { deleteTripTraveller, editTripTraveller } from "@/api/TripTravellersService"
+import "../Notifications/styles/notification-list.css";
+import { deleteTripDocument } from "@/api/TripDocumentService"
  
-export type Payment = {
+export type Notification = {
   id: string
-  permissions: number
-  status: number
-  fullName: string
-  email: string
-}
-
-const getPermissionName = (permission : number) => {
-    switch(permission) {
-        case 0:
-            return "View Only";
-        case 1:
-            return "View and Edit Plans";
-        case 2:
-            return "Trip Administrator";
-        default:
-            return "Unknown Permission";
-    }
-}
-
-const getTripId = (location : any) => {
-  const path = location.pathname.split("/");
-  return path[path.length - 2];
-};
-
-const getStatusName = (status : number) => {
-    switch(status) {
-        case 0:
-            return "Joined";
-        case 1:
-            return "Invited";
-        default:
-            return "Unknown Permission";
-    }
+  name: string
+  linkToFile: string
 }
  
-export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : any) {
-  const columns: ColumnDef<Payment>[] = [
+export function UserDocumentsList({ data, onStatusChange } : any) {
+  const columns: ColumnDef<Notification>[] = [
     {
-      accessorKey: "fullName",
+      accessorKey: "name",
       header: ({ column }) => {
           return (
             <Button
@@ -95,66 +64,21 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
               className="p-0"
             >
-              Traveller Full Name
+              Information
               <CaretSortIcon className="ml-2 h-4 w-4" />
             </Button>
           )
         },
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("fullName")}</div>
+        <a href={row.getValue("linkToFile")} target="_blank" className="cursor-pointer" style={{ color: 'rgb(16, 122, 197)' }}>{row.getValue("name")}</a>
       ),
     },
     {
-      accessorKey: "email",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="p-0"
-          >
-            Email
-            <CaretSortIcon className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-    },
-    {
-      accessorKey: "status",
-      header: ({ column }) => {
-          return (
-          <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-              className="p-0"
-            >
-            Status
-            <CaretSortIcon className="ml-2 h-4 w-4" />
-          </Button>
-          )
-        },
-      cell: ({ row }) => {
-        return <div className="text-left font-medium">{getStatusName(row.getValue("status"))}</div>
-      },
-    },
-    {
-      accessorKey: "permissions",
-      header: ({ column }) => {
-          return (
-          <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-              className="p-0"
-            >
-            Permissions
-            <CaretSortIcon className="ml-2 h-4 w-4" />
-          </Button>
-          )
-        },
-      cell: ({ row }) => {
-        return <div className="text-left font-medium">{getPermissionName(row.getValue("permissions"))}</div>
-      },
+        accessorKey: "linkToFile",
+        header: () => "",
+        cell: ({ row }) => {
+            null
+        }
     },
     {
       id: "actions",
@@ -163,14 +87,11 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
         const [isMenuOpen, setIsMenuOpen] = React.useState(false);
         const [isLoading, setIsLoading] = React.useState(false);
         const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
-        const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
         const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
         const navigate = useNavigate();
-        const location = useLocation();
   
-        const handleDelete = async () => {
-          setIsLoading(true);
-          const accessToken = localStorage.getItem("accessToken");
+        const handleAccessToken = async () => {
+            const accessToken = localStorage.getItem("accessToken");
   
           if (!checkTokenValidity(accessToken || "")) {
               const result = await refreshAccessToken();
@@ -190,49 +111,26 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
                   result.data.id
               );
           }
-  
-          const response = await deleteTripTraveller(getTripId(location), row.getValue("email"))
-          if (!response.ok) {
-            toast.error("Failed deleting. Try refreshing page!");
-          }
-  
-          onDelete(row.index);
-          toast.success(`${row.getValue("fullName")} was deleted from trip`);
-          setIsLoading(false);
         }
-  
-        const handleEdit = async (permission : any) => {
-          setIsLoading(true);
-          const accessToken = localStorage.getItem("accessToken");
-  
-          if (!checkTokenValidity(accessToken || "")) {
-              const result = await refreshAccessToken();
-              if (!result.success) {
-                  toast.error("Session has expired. Login again!", {
-                  position: "top-center",
-                  });
-  
-                  changeUserInformationToLoggedOut();
-                  navigate(Paths.LOGIN);
-                  return;
-              }
-  
-              changeUserInformationToLoggedIn(
-                  result.data.accessToken,
-                  result.data.refreshToken,
-                  result.data.id
-              );
-          }
 
-          const response = await editTripTraveller(getTripId(location), data[row.index].id, permission)
+        const handleReject = async () => {
+          setIsLoading(true);
+          await handleAccessToken();
+
+          const response = await deleteTripDocument(1, 1, data[row.index].id)
           if (!response.ok) {
-            toast.error("Failed updating. Try refreshing page!");
+            toast.error("Unexpected error. Try refreshing page!");
+            setIsLoading(false)
             return;
           }
-  
-          onEdit(row.index, permission);
-          toast.success(`${row.getValue("fullName")} permissions were updated!`);
+          console.log(response);
+
+          toast.success(`Document was successfully deleted`, {
+            position: 'top-center'
+          });
+
           setIsLoading(false);
+          onStatusChange(row.index);
         }
   
         const onDeleteDialogClose = () => {
@@ -240,63 +138,40 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
           setIsDeleteDialogOpen(false);
         };
   
-        const onEditDialogClose = () => {
-          setIsMenuOpen(false);
-          setIsEditDialogOpen(false);
-        }
-  
         return (
-          row.getValue("permissions") !== 2 && userPermissions === 2 ? (
             <DropdownMenu
-              open={isMenuOpen}
-              onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
-              modal={false}
-            >
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <DotsHorizontalIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onSelect={(e) => e.preventDefault()}
-                  onClick={() => setIsEditDialogOpen(true)}
-                  className="cursor-pointer"
-                >
-                  <Pencil className="w-4 h-4 mr-2" />
-                  Edit Permissions
-                </DropdownMenuItem>
-                <TripEditTravellerDialog 
-                  title={`Edit ${row.getValue("fullName")} permissions`}
-                  onEdit={handleEdit}
-                  isLoading={isLoading}
-                  currentPermission={row.getValue("permissions")}
-                  open={isEditDialogOpen}
-                  setOpen={onEditDialogClose}
-                />
-                <DropdownMenuItem
-                  onSelect={(e) => e.preventDefault()}
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                  className="cursor-pointer"
-                >
-                  <CircleX className="w-4 h-4 mr-2"/>
-                  Remove Traveller
-                </DropdownMenuItem>
-                <DeleteDialog
-                  title="Delete Traveller"
-                  description={`Are you sure you want to delete ${row.getValue("fullName")} from trip?`}
-                  dialogButtonText="Delete"
-                  onDelete={handleDelete}
-                  isLoading={isLoading}
-                  open={isDeleteDialogOpen}
-                  setOpen={onDeleteDialogClose}
-                />
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : null
+            open={isMenuOpen}
+            onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
+            modal={false}
+          >
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <DotsHorizontalIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={(e) => e.preventDefault()}
+                onClick={() => setIsDeleteDialogOpen(true)}
+                className="cursor-pointer"
+              >
+                <CircleX className="w-4 h-4 mr-2"/>
+                Delete Document
+              </DropdownMenuItem>
+              <DeleteDialog
+                title="Delete Document"
+                description={`Are you sure you want to reject this document? This will permanently delete this document.`}
+                dialogButtonText="Delete"
+                onDelete={handleReject}
+                isLoading={isLoading}
+                open={isDeleteDialogOpen}
+                setOpen={onDeleteDialogClose}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
         );
       }
     },
@@ -304,12 +179,9 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
-    { id: 'email', value: '' },
+    { id: 'name', value: '' },
   ]);
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -353,28 +225,24 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
       const value = event.target.value;
       setCombinedFilterValue(value);
       const updatedFilters = [
-          { id: 'email', value },
+          { id: 'name', value },
       ];
       setColumnFilters(updatedFilters);
   };
 
   return (
     <div className="w-full">
-      <div className="flex flex-col items-center py-4 sm:flex-row sm:items-end">
+      <div className="flex items-center py-4">
         <Input
-            placeholder="Filter by email"
+            placeholder="Filter by Name"
             value={combinedFilterValue}
             onChange={handleCombinedFilterChange}
-            className="w-full sm:mr-2"
+            className="max-w-sm mr-2"
         />
-        <div className="sm:ml-auto mt-2 flex flex-col justify-end sm:items-end sm:flex-row w-full">
-            <Button variant="outline" className="sm:mr-4 sm:w-auto w-full justify-start" onClick={() => navigate(Paths.TRIP_TRAVELLERS_CREATE.replace(":tripId", getTripId(location)))}>
-                <CirclePlus className="w-4 h-4 mr-2"/>
-                Invite People
-            </Button>
+        <div className="ml-auto flex items-end">
             <DropdownMenu>
-            <DropdownMenuTrigger asChild className="mt-2 w-full sm:w-auto">
-                <Button variant="outline" className="justify-start">
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline">
                 Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
@@ -443,7 +311,7 @@ export function TripTravellerList({ data, onDelete, onEdit, userPermissions } : 
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No documents.
                 </TableCell>
               </TableRow>
             )}

@@ -3,7 +3,7 @@ import "./styles/header.css";
 import Paths from "../../routes/Paths";
 import { useUser } from "../../providers/user-provider/UserContext";
 import { logout, refreshAccessToken } from "../../api/AuthenticationService";
-import { BellDot, LogOut, Menu, User } from "lucide-react";
+import { BellDot, File, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { toast } from "sonner";
@@ -168,6 +168,10 @@ const Header = () => {
                 >
                   <User className="w-4 h-4 mr-4" />
                   Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate(Paths.USER_DOCUMENTS)} className="cursor-pointer">
+                  <File className="w-4 h-4 mr-4" />
+                  Documents
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={handleLogout}

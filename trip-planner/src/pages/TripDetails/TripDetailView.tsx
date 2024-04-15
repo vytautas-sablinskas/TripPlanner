@@ -29,6 +29,8 @@ import {
   deleteTripDocument,
   editTripDocument,
 } from "@/api/TripDocumentService";
+import { DateTimeFormatOptions } from "luxon";
+import { formatDateToString } from "@/utils/date";
 
 const TripDetailView = () => {
   const navigate = useNavigate();
@@ -45,6 +47,7 @@ const TripDetailView = () => {
   const [documents, setDocuments] = useState<any>([]);
   const [tripDetail, setTripDetail] = useState<any>({});
   const [travellers, setTravellers] = useState<any>([]);
+  const [activeDocumentCount, setActiveDocumentCount] = useState<any>(0);
 
   const getTripId = () => {
     const path = location.pathname.split("/");
@@ -100,13 +103,22 @@ const TripDetailView = () => {
         phoneNumber: data.phoneNumber,
         website: data.website,
         notes: data.notes,
+        startTime: data.startTime,
+        endTime: data.endTime,
       });
       setTravellers(data.travellers);
+      setActiveDocumentCount(data.activeDocuments);
       setIsLoading(false);
     };
 
     tryFetchingDetails();
   }, []);
+
+  function formatTime(time: any) {
+    const options : DateTimeFormatOptions = { hour: "numeric", minute: "2-digit", hour12: true };
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    return formatter.format(time);
+  }
 
   const handleDelete = async () => {
     setIsLoading(true);
@@ -169,8 +181,8 @@ const TripDetailView = () => {
     const form = new FormData();
     form.append("document", formValues.file);
     form.append("name", formValues.name);
-    form.append("memberIds", JSON.stringify(formValues.memberIds))
-    form.append("isPrivate", formValues.isPrivate)
+    form.append("memberIds", JSON.stringify(formValues.memberIds));
+    form.append("isPrivate", formValues.isPrivate);
 
     const response = await addTripDocument(
       getTripId(),
@@ -190,6 +202,7 @@ const TripDetailView = () => {
     setIsAddDocumentSubmitting(false);
     setIsAddDocumentDialogOpen(false);
     toast.success("Document added successfully", { position: "top-center" });
+    setActiveDocumentCount((prev : any) => prev + 1);
   };
 
   const handleDeleteDocument = async (id: any) => {
@@ -231,6 +244,7 @@ const TripDetailView = () => {
     setDocuments(documents.filter((document: any) => document.id !== id));
     toast.success("Document deleted successfully", { position: "top-center" });
     setIsDeleteDocumentDeleting(false);
+    setActiveDocumentCount((prev : any) => prev - 1);
   };
 
   const handleEditDocument = async (formValues: any) => {
@@ -261,7 +275,11 @@ const TripDetailView = () => {
       getTripId(),
       getTripDetailId(),
       formValues.id,
-      { name: formValues.name, memberIds: members, isPrivate: formValues.isPrivate }
+      {
+        name: formValues.name,
+        memberIds: members,
+        isPrivate: formValues.isPrivate,
+      }
     );
     if (!response.ok) {
       toast.error("Unexpected error. Try again later", {
@@ -281,6 +299,10 @@ const TripDetailView = () => {
     toast.success("Document edited successfully", { position: "top-center" });
     setIsEditDocumentSubmitting(false);
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="trip-view-main-container">
@@ -329,14 +351,23 @@ const TripDetailView = () => {
         <CardContent>
           <h2 className="information-container-title">Plan Information</h2>
           <div className="trip-detail-view-time-container">
-            <div className="flex flex-col">
-              <p className="font-medium text-lg">Starts Sat, Mar 9, 2024</p>
-              <p className="font-bold text-xl">11:59 AM GMT+2</p>
-            </div>
-            <div className="ml-32">
-              <p className="font-medium text-lg">Ends Mon, Mar 11, 2024</p>
-              <p className="font-bold text-xl">7:59 PM GMT+2</p>
-            </div>
+            {tripDetail.startTime && (
+              <div className="flex flex-col">
+                <p className="font-medium text-lg">
+                  Starts {formatDateToString(tripDetail.startTime) || undefined}
+                </p>
+                <p className="font-bold text-xl">{formatTime(new Date(tripDetail.startTime))}</p>
+              </div>
+            )}
+
+            {tripDetail.endTime && (
+              <div className="ml-32">
+                <p className="font-medium text-lg">
+                  Ends {formatDateToString(tripDetail.endTime || undefined)}
+                </p>
+                <p className="font-bold text-xl">{formatTime(new Date(tripDetail.endTime))}</p>
+              </div>
+            )}
           </div>
           <div className="activity-addresses">
             {tripDetail.address && (
@@ -357,19 +388,14 @@ const TripDetailView = () => {
               </a>
             )}
             {tripDetail.website && (
-              <a
-                href={tripDetail.website}
-                target="_blank"
-              >
+              <a href={tripDetail.website} target="_blank">
                 <Globe className="w-4 h-4 mr-2" />
                 {tripDetail.website}
               </a>
             )}
           </div>
           <div className="notes">
-            <p className="mb-5">
-              {tripDetail.notes}
-            </p>
+            <p className="mb-5">{tripDetail.notes}</p>
           </div>
         </CardContent>
       </Card>
@@ -404,6 +430,7 @@ const TripDetailView = () => {
           open={isAddDocumentDialogOpen}
           setOpen={setIsAddDocumentDialogOpen}
           travellers={travellers}
+          activeDocumentCount={activeDocumentCount}
         />
       </Card>
     </div>

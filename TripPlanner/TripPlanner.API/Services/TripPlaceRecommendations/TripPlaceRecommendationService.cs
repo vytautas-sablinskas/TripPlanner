@@ -128,7 +128,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             Score = (dto.RatingWeight * GetScoreFromOrderedList(ratingPlacesOrdered, place)) +
                     (dto.RatingCountWeight * GetScoreFromOrderedList(ratingCountPlacesOrdered, place)) +
                     (dto.DistanceWeight * CalculatePositionScoreBeforeWeight(index, totalCount)) +
-                    (CalculatePriceWeight(dto.PriceLevel, place.PriceLevel)),
+                    CalculatePriceWeight(dto.PriceLevel, place.PriceLevel),
             PhotoUri = place.Photos.Count > 0 ? place.Photos[0].Name : null,
         }).ToList();
 
@@ -143,6 +143,11 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
 
     private static double CalculatePriceWeight(GooglePriceLevel preferedPriceLevel, string? actualPriceLevel)
     {
+        if (preferedPriceLevel == GooglePriceLevel.NO_RATING)
+        {
+            return 0;
+        }
+
         if (string.IsNullOrEmpty(actualPriceLevel))
         {
             return 0.45;

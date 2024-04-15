@@ -31,7 +31,14 @@ export default function Recommendations() {
   const [selectedPrice, setSelectedPrice] = useState<any>("2");
   const [isDataLoading, setIsDataLoading] = useState<any>(false);
   const [recommendations, setRecommendations] = useState<any>([]);
-  console.log(recommendations);
+  const [enabled, setEnabled] = useState<any>([
+    { id: "rating", isEnabled: true },
+    { id: "ratingCount", isEnabled: true },
+    { id: "distance", isEnabled: true },
+    { id: "price", isEnabled: true }
+  ]);
+
+
   const getStepCard = (index: number) => {
     switch (index) {
       case 0:
@@ -58,6 +65,8 @@ export default function Recommendations() {
             setSelectedDistance={setSelectedDistance}
             selectedPrice={selectedPrice}
             setSelectedPrice={setSelectedPrice}
+            enabled={enabled}
+            setEnabled={setEnabled}
         />;
       default:
         return null;
@@ -77,6 +86,12 @@ export default function Recommendations() {
     setSelectedPrice("2");
     setIsDataLoading(false);
     setRecommendations([]);
+    setEnabled([
+      { id: "rating", isEnabled: true },
+      { id: "ratingCount", isEnabled: true },
+      { id: "distance", isEnabled: true },
+      { id: "price", isEnabled: true }
+    ])
   }
 
   return (
@@ -97,20 +112,21 @@ export default function Recommendations() {
             setCategoryError={setCategoryError}
             setAddressError={setAddressError}
             dto={{
-              ratingWeight: Number(selectedRating) / 100,
-              ratingCountWeight: Number(selectedRatingCount) / 100,
-              distanceWeight: Number(selectedDistance) / 100,
+              ratingWeight: enabled.find((e : any) => e.id === "rating")?.isEnabled ? Number(selectedRating) / 100 : 0,
+              ratingCountWeight: enabled.find((e : any) => e.id === "ratingCount")?.isEnabled ? Number(selectedRatingCount) / 100 : 0,
+              distanceWeight: enabled.find((e : any) => e.id === "distance")?.isEnabled ? Number(selectedDistance) / 100 : 0,
               categories: categories.map((category: any) => Number(category)),
               latitude: geometry?.latitude,
               longitude: geometry?.longitude,
               radius: radius[0],
-              priceLevel: Number(selectedPrice)
+              priceLevel: enabled.find((e : any) => e.id === "distance")?.isEnabled ? Number(selectedPrice) : 6
             }}
             isDataLoading={isDataLoading}
             setIsDataLoading={setIsDataLoading}
             recommendations={recommendations}
             setRecommendations={setRecommendations}
             onFormReset={onFormReset}
+            enabled={enabled}
           />
         </Stepper>
       </div>
@@ -118,7 +134,7 @@ export default function Recommendations() {
   );
 }
 
-const Footer = ({ geometry, address, setAddressError, categories, setCategoryError, dto, isDataLoading, setIsDataLoading, recommendations, setRecommendations, onFormReset } : any) => {
+const Footer = ({ geometry, address, setAddressError, categories, setCategoryError, dto, isDataLoading, setIsDataLoading, recommendations, setRecommendations, onFormReset, enabled } : any) => {
   const {
     nextStep,
     prevStep,
@@ -192,7 +208,6 @@ const Footer = ({ geometry, address, setAddressError, categories, setCategoryErr
     setAddressError(null);
     if (currentStep.label === "Select Filters") {
       var success = await tryGettingRecommendations();
-      // var success = true;
       if (!success) {
         return;
       }
