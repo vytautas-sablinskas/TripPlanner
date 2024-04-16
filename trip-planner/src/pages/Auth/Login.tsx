@@ -147,7 +147,7 @@ const Login = () => {
                 loading={loading}
                 text={"Login"}
               />
-              <span className="wrong-section-text">Don't have an account yet?<strong className="sing-up-text">Sign Up</strong></span>
+              <span className="wrong-section-text">Don't have an account yet?<strong className="sing-up-text" onClick={() => navigate(Paths.REGISTER)}>Sign Up</strong></span>
           </CardContent>
         </Card>
       </form>

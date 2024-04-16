@@ -202,7 +202,7 @@ const Register = () => {
             />
             <AuthButton loading={loading} text={"Register"} />
             <span className="wrong-section-text">
-              Already have an account?<strong className="sing-up-text">Log in</strong>
+              Already have an account?<strong className="sing-up-text" onClick={() => navigate(Paths.LOGIN)}>Log in</strong>
             </span>
           </CardContent>
         </Card>

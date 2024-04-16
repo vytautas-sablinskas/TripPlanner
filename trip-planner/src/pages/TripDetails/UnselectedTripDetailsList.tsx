@@ -317,6 +317,7 @@ export function UnselectedTripDetailsList({ data, availableTrips, onPlanChange }
 
   return (
     <div className="w-full">
+      <h1 className="my-4 font-bold text-4xl">Your Plans</h1>
       <div className="flex items-center py-4">
         <Input
             placeholder="Filter by Name"

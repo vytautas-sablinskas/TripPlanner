@@ -75,12 +75,10 @@ const FinalStepCard = ({ recommendations }: any) => {
       setDisabledButtons(disabledButtons.filter((item: any) => item !== index));
     }
   };
-  console.log(recommendations);
 
   return (
     <div className="items-center justify-center my-2 border bg-secondary text-primary rounded-md">
       <div className="p-8">
-        <h1 className="text-2xl font-bold ml-2">Recommendations</h1>
         {recommendations.map((recommendation: any) => (
           <div key={recommendation.category}>
             <h2 className="text-xl font-bold mt-4 ml-2">
