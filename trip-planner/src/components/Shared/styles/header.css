@@ -7,6 +7,15 @@
     margin-bottom: 8px;
 }
 
+.header-container-home {
+    display: flex;
+    align-items: center;
+    height: 100px;
+    width: 1110px;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
 .left-side-header:first-child{
     margin-left: 10px;
 }
@@ -76,5 +85,9 @@
 
     .right-side-header:last-child  {
         margin-right: 0;
+    }
+
+    .header-container-home {
+        width: 100%;
     }
 }
