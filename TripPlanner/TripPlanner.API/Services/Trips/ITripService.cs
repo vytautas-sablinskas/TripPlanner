@@ -8,7 +8,7 @@ public interface ITripService
 
     Task EditTrip(EditTripDto tripDto, Guid tripId);
 
-    Task DeleteTrip(Guid tripId);
+    Task DeleteTrip(Guid tripId, string userId);
 
     TripDto GetTrip(Guid tripId);
 

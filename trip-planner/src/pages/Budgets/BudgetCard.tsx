@@ -55,7 +55,7 @@ const BudgetCard = ({ budget, setData }: any) => {
       changeUserInformationToLoggedIn(
         result.data.accessToken,
         result.data.refreshToken,
-        result.data.id,
+        result.data.id
       );
     }
 
@@ -112,29 +112,33 @@ const BudgetCard = ({ budget, setData }: any) => {
               </>
             )}
           </p>
-          <Button
-            className="mr-6 pl-0 justify-start"
-            variant="ghost"
-            onClick={() =>
-              navigate(
-                Paths.EDIT_BUDGET.replace(":tripId", getTripId()).replace(
-                  ":budgetId",
-                  budget.id
+          {budget.isCreator && (
+            <Button
+              className="mr-6 pl-0 justify-start"
+              variant="ghost"
+              onClick={() =>
+                navigate(
+                  Paths.EDIT_BUDGET.replace(":tripId", getTripId()).replace(
+                    ":budgetId",
+                    budget.id
+                  )
                 )
-              )
-            }
-          >
-            <Pencil className="mr-2" />
-            Edit
-          </Button>
-          <Button
-            variant="ghost"
-            className="pl-0 justify-start"
-            onClick={() => setIsDeleteDialogOpen(true)}
-          >
-            <CircleX className="mr-2" />
-            Delete
-          </Button>
+              }
+            >
+              <Pencil className="mr-2" />
+              Edit
+            </Button>
+          )}
+          {budget.isCreator && (
+            <Button
+              variant="ghost"
+              className="pl-0 justify-start"
+              onClick={() => setIsDeleteDialogOpen(true)}
+            >
+              <CircleX className="mr-2" />
+              Delete
+            </Button>
+          )}
         </div>
         <DeleteDialog
           open={isDeleteDialogOpen}

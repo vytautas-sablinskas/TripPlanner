@@ -84,7 +84,7 @@ public class TripController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteTrip(Guid id)
     {
-        await _tripService.DeleteTrip(id);
+        await _tripService.DeleteTrip(id, User.GetUserId());
 
         return NoContent();
     }

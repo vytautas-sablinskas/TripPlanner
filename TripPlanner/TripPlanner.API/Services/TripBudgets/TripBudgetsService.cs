@@ -254,12 +254,13 @@ public class TripBudgetsService : ITripBudgetsService
             return budget;
         }).ToList();
 
-        var budgetDtos = _mapper.Map<IEnumerable<TripBudgetDto>>(budgets);
-        budgetDtos = budgetDtos.Select((budget) =>
+        var budgetDtos = budgets.Select((budget) =>
         {
+            var budgetDto = _mapper.Map<TripBudgetDto>(budget);
             budget.SpentAmount = budget.SpentAmount;
+            budgetDto.IsCreator = budget.CreatorId == userId;
 
-            return budget;
+            return budgetDto;
         }).ToList();
 
         return budgetDtos;

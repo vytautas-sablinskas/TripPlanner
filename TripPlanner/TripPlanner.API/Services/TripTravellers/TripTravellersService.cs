@@ -15,14 +15,16 @@ public class TripTravellersService : ITripTravellersService
     private readonly IRepository<AppUser> _appUserRepository;
     private readonly IRepository<Notification> _notificationRepository;
     private readonly IRepository<Traveller> _travellerRepository;
+    private readonly IRepository<TripInformationShare> _tripInformationShareRepository;
     private readonly IEmailService _emailService;
 
-    public TripTravellersService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IRepository<Traveller> travellerRepository, IRepository<Notification> notificationRepository, IEmailService emailService)
+    public TripTravellersService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IRepository<Traveller> travellerRepository, IRepository<Notification> notificationRepository, IRepository<TripInformationShare> tripInformationShareRepository, IEmailService emailService)
     {
         _tripRepository = tripRepository;
         _appUserRepository = appUserRepository;
         _travellerRepository = travellerRepository;
         _notificationRepository = notificationRepository;
+        _tripInformationShareRepository = tripInformationShareRepository;
         _emailService = emailService;
     }
 
@@ -65,7 +67,7 @@ public class TripTravellersService : ITripTravellersService
         var updatedTravelers = trip.Travellers.ToList();
         foreach (var email in invitationDto.Invites)
         {
-            var user = usersToInvite.Find(t => t.Email == email);
+            var user = usersToInvite.Find(t => t.Email.ToLower() == email.ToLower());
             if (trip.Travellers.Any(t => user != null && t.UserId == user.Id))
             {
                 continue;
@@ -73,7 +75,6 @@ public class TripTravellersService : ITripTravellersService
 
             var inviter = _appUserRepository.FindByCondition(t => t.Id == userId)
                     .FirstOrDefault();
-
 
             updatedTravelers.Add(new Traveller
             {
@@ -99,10 +100,7 @@ public class TripTravellersService : ITripTravellersService
                 };
 
                 _notificationRepository.Create(notification);
-            }
 
-            if (presentNotification == null)
-            {
                 var message = new MailMessage
                 {
                     From = new MailAddress("triplog.services@gmail.com"),
@@ -152,7 +150,7 @@ public class TripTravellersService : ITripTravellersService
 
         if (dto.Status == InvitationUpdateStatus.Accepted)
         {
-            await AcceptInvitation(notification, traveller);
+            await AcceptInvitation(notification, traveller, userId);
         }
     }
 
@@ -169,7 +167,7 @@ public class TripTravellersService : ITripTravellersService
         }
     }
 
-    private async Task AcceptInvitation(Notification? notification, Traveller? traveller)
+    private async Task AcceptInvitation(Notification? notification, Traveller? traveller, string userId)
     {
         if (traveller == null)
         {
@@ -178,6 +176,15 @@ public class TripTravellersService : ITripTravellersService
 
         traveller.Status = TravellerStatus.Joined;
         await _travellerRepository.Update(traveller);
+        var tripShareInformation = new TripInformationShare
+        {
+            TripId = notification.TripId,
+            UserId = userId,
+            DescriptionHtml = "",
+            Title = "",
+            Photos = new List<TripSharePhoto>(),
+        };
+        _tripInformationShareRepository.Create(tripShareInformation);
 
         if (notification != null)
         {

@@ -98,10 +98,12 @@ const TripCard = ({ trip, onDelete }: any) => {
               {getFormattedDateRange(trip.startDate, trip.endDate)}
             </p>
             <div className="trip-card-buttons">
-              <Button className="trip-card-button" variant="ghost" onClick={() => navigate(Paths.EDIT_TRIP.replace(":id", trip.id))}>
-                <Pencil className="mr-2 h-4 w-4" />
-                <span>Edit Trip Information</span>
-              </Button>
+              {trip.isCreator && 
+                <Button className="trip-card-button" variant="ghost" onClick={() => navigate(Paths.EDIT_TRIP.replace(":id", trip.id))}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  <span>Edit Trip Information</span>
+                </Button>
+              }
               <DropdownMenu
                 open={isMenuOpen}
                 onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
@@ -141,12 +143,12 @@ const TripCard = ({ trip, onDelete }: any) => {
                     className="cursor-pointer"
                   >
                     <CircleX className="mr-2 h-4 w-4" />
-                    Delete Trip
+                    {trip.isCreator ? "Delete Trip" : "Leave Trip"}
                   </DropdownMenuItem>
                   <DeleteDialog
-                    title="Delete Trip"
-                    description="Are you sure you want to delete this trip? This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans."
-                    dialogButtonText="Delete"
+                    title={trip.isCreator ? "Delete Trip" : "Leave Trip"}
+                    description={`Are you sure you want to ${trip.isCreator ? "delete" : "leave"} this trip?${trip.isCreator ? " This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans." : ""}`}
+                    dialogButtonText={trip.isCreator ? "Delete" : "Leave"}
                     onDelete={handleDelete}
                     isLoading={loading}
                     open={isDialogOpen}

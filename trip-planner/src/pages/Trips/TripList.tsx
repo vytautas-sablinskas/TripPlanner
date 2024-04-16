@@ -85,6 +85,8 @@ const TripList = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [page]);
 
+  console.log(trips);
+
   return (
     <div className="trip-list-container">
       <h1 className="my-4 font-bold text-4xl">Your Trips</h1>
