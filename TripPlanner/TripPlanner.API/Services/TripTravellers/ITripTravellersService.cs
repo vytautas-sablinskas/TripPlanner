@@ -1,4 +1,5 @@
-﻿using TripPlanner.API.Dtos.TripTravellers;
+﻿using TripPlanner.API.Dtos.Notifications;
+using TripPlanner.API.Dtos.TripTravellers;
 
 namespace TripPlanner.API.Services.TripTravellers;
 

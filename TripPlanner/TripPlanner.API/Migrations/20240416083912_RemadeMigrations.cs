@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TripPlanner.API.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateToLatest : Migration
+    public partial class RemadeMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,6 +32,7 @@ namespace TripPlanner.API.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhotoUri = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -50,6 +51,21 @@ namespace TripPlanner.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CurrencyExchangeRates",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FromCurrency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ToCurrency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rate = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CurrencyExchangeRates", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,7 +198,7 @@ namespace TripPlanner.API.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     TripId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -193,8 +209,7 @@ namespace TripPlanner.API.Migrations
                         name: "FK_NotificationDetails_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -226,7 +241,7 @@ namespace TripPlanner.API.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Permissions = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     TripId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -247,6 +262,38 @@ namespace TripPlanner.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TripBudgets",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    UnlimitedBudget = table.Column<bool>(type: "bit", nullable: true),
+                    Budget = table.Column<double>(type: "float", nullable: false),
+                    MainCurrency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SpentAmount = table.Column<double>(type: "float", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TripId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripBudgets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripBudgets_AspNetUsers_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TripBudgets_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TripDetails",
                 columns: table => new
                 {
@@ -255,7 +302,11 @@ namespace TripPlanner.API.Migrations
                     EventType = table.Column<int>(type: "int", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Website = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TripId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false)
@@ -273,6 +324,164 @@ namespace TripPlanner.API.Migrations
                         name: "FK_TripDetails_Trips_TripId",
                         column: x => x.TripId,
                         principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripInformationShares",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DescriptionHtml = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TripId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LinkGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripInformationShares", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripInformationShares_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TripInformationShares_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Expenses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AmountInMainCurrency = table.Column<double>(type: "float", nullable: false),
+                    TripBudgetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Expenses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Expenses_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Expenses_TripBudgets_TripBudgetId",
+                        column: x => x.TripBudgetId,
+                        principalTable: "TripBudgets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripBudgetMembers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TripBudgetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripBudgetMembers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripBudgetMembers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TripBudgetMembers_TripBudgets_TripBudgetId",
+                        column: x => x.TripBudgetId,
+                        principalTable: "TripBudgets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripDocuments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LinkToFile = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TypeOfFile = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TripDetailId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsPrivateDocument = table.Column<bool>(type: "bit", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripDocuments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripDocuments_AspNetUsers_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TripDocuments_TripDetails_TripDetailId",
+                        column: x => x.TripDetailId,
+                        principalTable: "TripDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripSharePhotos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PhotoUri = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TripInformationShareId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripSharePhotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripSharePhotos_TripInformationShares_TripInformationShareId",
+                        column: x => x.TripInformationShareId,
+                        principalTable: "TripInformationShares",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripDocumentMembers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TripDocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripDocumentMembers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripDocumentMembers_AspNetUsers_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TripDocumentMembers_TripDocuments_TripDocumentId",
+                        column: x => x.TripDocumentId,
+                        principalTable: "TripDocuments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -317,6 +526,16 @@ namespace TripPlanner.API.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Expenses_TripBudgetId",
+                table: "Expenses",
+                column: "TripBudgetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Expenses_UserId",
+                table: "Expenses",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_NotificationDetails_UserId",
                 table: "NotificationDetails",
                 column: "UserId");
@@ -337,6 +556,26 @@ namespace TripPlanner.API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TripBudgetMembers_TripBudgetId",
+                table: "TripBudgetMembers",
+                column: "TripBudgetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripBudgetMembers_UserId",
+                table: "TripBudgetMembers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripBudgets_CreatorId",
+                table: "TripBudgets",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripBudgets_TripId",
+                table: "TripBudgets",
+                column: "TripId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TripDetails_CreatorId",
                 table: "TripDetails",
                 column: "CreatorId");
@@ -345,6 +584,41 @@ namespace TripPlanner.API.Migrations
                 name: "IX_TripDetails_TripId",
                 table: "TripDetails",
                 column: "TripId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripDocumentMembers_MemberId",
+                table: "TripDocumentMembers",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripDocumentMembers_TripDocumentId",
+                table: "TripDocumentMembers",
+                column: "TripDocumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripDocuments_CreatorId",
+                table: "TripDocuments",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripDocuments_TripDetailId",
+                table: "TripDocuments",
+                column: "TripDetailId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripInformationShares_TripId",
+                table: "TripInformationShares",
+                column: "TripId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripInformationShares_UserId",
+                table: "TripInformationShares",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripSharePhotos_TripInformationShareId",
+                table: "TripSharePhotos",
+                column: "TripInformationShareId");
         }
 
         /// <inheritdoc />
@@ -366,6 +640,12 @@ namespace TripPlanner.API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CurrencyExchangeRates");
+
+            migrationBuilder.DropTable(
+                name: "Expenses");
+
+            migrationBuilder.DropTable(
                 name: "NotificationDetails");
 
             migrationBuilder.DropTable(
@@ -375,10 +655,28 @@ namespace TripPlanner.API.Migrations
                 name: "Travellers");
 
             migrationBuilder.DropTable(
-                name: "TripDetails");
+                name: "TripBudgetMembers");
+
+            migrationBuilder.DropTable(
+                name: "TripDocumentMembers");
+
+            migrationBuilder.DropTable(
+                name: "TripSharePhotos");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "TripBudgets");
+
+            migrationBuilder.DropTable(
+                name: "TripDocuments");
+
+            migrationBuilder.DropTable(
+                name: "TripInformationShares");
+
+            migrationBuilder.DropTable(
+                name: "TripDetails");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

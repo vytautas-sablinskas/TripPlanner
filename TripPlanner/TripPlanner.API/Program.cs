@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
@@ -15,6 +17,7 @@ using TripPlanner.API.Database.Seeders;
 using TripPlanner.API.Services.Authentication;
 using TripPlanner.API.Services.AzureBlobStorage;
 using TripPlanner.API.Services.CurrencyExchangeService;
+using TripPlanner.API.Services.Email;
 using TripPlanner.API.Services.Expenses;
 using TripPlanner.API.Services.Notifications;
 using TripPlanner.API.Services.Profile;
@@ -72,6 +75,22 @@ public static class Program
 
         services.AddHttpClient();
 
+        services.AddTransient((serviceProvider) =>
+        {
+            var smtpClient = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                Credentials = new NetworkCredential(
+                    userName: configuration["Email:UserName"],
+                    password: configuration["Email:Password"]
+                )
+            };
+
+            return smtpClient;
+        });
+
         services.AddScoped<IRepository<AppUser>, Repository<AppUser>>();
         services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>();
         services.AddScoped<IRepository<Traveller>, Repository<Traveller>>();
@@ -103,6 +122,8 @@ public static class Program
         services.AddScoped<ICurrencyExchangeService, CurrencyExchangeService>();
         services.AddScoped<IExpenseService, ExpenseService>();
         services.AddScoped<ITripPlaceRecommendationService, TripPlaceRecommendationService>();
+        services.AddScoped<ISmtpClientWrapper, SmtpClientWrapper>();
+        services.AddScoped<IEmailService, EmailService>();
 
         services.AddAutoMapper(typeof(Program));
 

@@ -31,6 +31,7 @@ public class AuthenticationSeeder : IAuthenticationSeeder
             Surname = "Administrator",
             Email = "admin@admin.com",
             RefreshTokens = new List<RefreshToken>(),
+            PhotoUri = "/default.jpg"
         };
 
         var adminUserExists = await _userManager.FindByNameAsync(newAdminUser.UserName);

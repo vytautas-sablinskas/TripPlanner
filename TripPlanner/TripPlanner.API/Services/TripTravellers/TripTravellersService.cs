@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Enums;
+using TripPlanner.API.Dtos.Notifications;
 using TripPlanner.API.Dtos.TripTravellers;
+using TripPlanner.API.Services.Email;
 
 namespace TripPlanner.API.Services.TripTravellers;
 
@@ -12,13 +15,15 @@ public class TripTravellersService : ITripTravellersService
     private readonly IRepository<AppUser> _appUserRepository;
     private readonly IRepository<Notification> _notificationRepository;
     private readonly IRepository<Traveller> _travellerRepository;
+    private readonly IEmailService _emailService;
 
-    public TripTravellersService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IRepository<Traveller> travellerRepository, IRepository<Notification> notificationRepository)
+    public TripTravellersService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IRepository<Traveller> travellerRepository, IRepository<Notification> notificationRepository, IEmailService emailService)
     {
         _tripRepository = tripRepository;
         _appUserRepository = appUserRepository;
         _travellerRepository = travellerRepository;
         _notificationRepository = notificationRepository;
+        _emailService = emailService;
     }
 
     public TravellersDto GetTravellers(Guid tripId, string userId)
@@ -28,14 +33,15 @@ public class TripTravellersService : ITripTravellersService
                 .ThenInclude(traveller => traveller.User)
             .FirstOrDefault();
 
-        var travellerDtos = trip.Travellers.Select(t => new TravellerDto
-        {
-            Id = t.Id,
-            Email = t.User.Email,
-            FullName = $"{t.User.Name} {t.User.Surname}",
-            Status = t.Status,
-            Permissions = t.Permissions
-        });
+        var travellerDtos = trip.Travellers
+            .Where(t => t.User != null)
+            .Select(t => new TravellerDto
+            {
+                Email = t.User.Email,
+                FullName = t.User != null ? $"{t.User.Name} {t.User.Surname}" : "",
+                Status = t.Status,
+                Permissions = t.Permissions
+            });
 
         var userPermissions = trip.Travellers
             .Where(t => t.UserId == userId)
@@ -57,32 +63,55 @@ public class TripTravellersService : ITripTravellersService
                 .ToList();
 
         var updatedTravelers = trip.Travellers.ToList();
-        foreach (var user in usersToInvite)
+        foreach (var email in invitationDto.Invites)
         {
-            if (!trip.Travellers.Any(t => t.UserId == user.Id))
+            var user = usersToInvite.Find(t => t.Email == email);
+            if (trip.Travellers.Any(t => user != null && t.UserId == user.Id))
             {
-                var inviter = _appUserRepository.FindByCondition(t => t.Id == userId)
+                continue;
+            }
+
+            var inviter = _appUserRepository.FindByCondition(t => t.Id == userId)
                     .FirstOrDefault();
 
-                updatedTravelers.Add(new Traveller
-                {
-                    User = user,
-                    Permissions = invitationDto.Permissions,
-                    Status = TravellerStatus.Invited,
-                    UserId = user.Id,
-                });
 
+            updatedTravelers.Add(new Traveller
+            {
+                Permissions = invitationDto.Permissions,
+                Status = TravellerStatus.Invited,
+                UserId = user?.Id,
+                Email = email,
+            });
+
+            var presentNotification = await _notificationRepository.FindByCondition(n => n.Email != null && n.Email.ToLower() == email.ToLower() && n.TripId == tripId)
+                .FirstOrDefaultAsync();
+
+            if (presentNotification == null)
+            {
                 var notification = new Notification()
                 {
                     Message = invitationDto.Message,
                     Title = $"Invitation to trip from {inviter.Name} {inviter.Surname}",
                     TripId = tripId,
-                    User = user,
-                    UserId = user.Id,
+                    UserId = user?.Id,
+                    Email = email,
                     Status = NotificationStatus.Unread,
                 };
 
                 _notificationRepository.Create(notification);
+            }
+
+            if (presentNotification == null)
+            {
+                var message = new MailMessage
+                {
+                    From = new MailAddress("triplog.services@gmail.com"),
+                    Subject = "[TripLog]: Invitation to trip",
+                    Body = $"<h3>Invitation To Trip From {inviter.Name} {inviter.Surname}</h3><p>Message from user: {invitationDto.Message}</p><p>Click <a href='http://www.localhost:5173/notifications'>here</a> to check invitation</p>",
+                    IsBodyHtml = true
+                };
+
+                await _emailService.SendEmailAsync(message, email);
             }
         }
 

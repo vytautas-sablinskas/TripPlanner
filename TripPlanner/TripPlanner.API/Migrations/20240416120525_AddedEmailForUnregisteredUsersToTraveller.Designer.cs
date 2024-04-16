@@ -12,8 +12,8 @@ using TripPlanner.API.Database.DataAccess;
 namespace TripPlanner.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240415182020_AddedDateToExpense")]
-    partial class AddedDateToExpense
+    [Migration("20240416120525_AddedEmailForUnregisteredUsersToTraveller")]
+    partial class AddedEmailForUnregisteredUsersToTraveller
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -308,6 +308,9 @@ namespace TripPlanner.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
@@ -321,7 +324,6 @@ namespace TripPlanner.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -366,6 +368,9 @@ namespace TripPlanner.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Permissions")
                         .HasColumnType("int");
 
@@ -376,7 +381,6 @@ namespace TripPlanner.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -728,9 +732,7 @@ namespace TripPlanner.API.Migrations
                 {
                     b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -757,8 +759,7 @@ namespace TripPlanner.API.Migrations
                     b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Trip");
 

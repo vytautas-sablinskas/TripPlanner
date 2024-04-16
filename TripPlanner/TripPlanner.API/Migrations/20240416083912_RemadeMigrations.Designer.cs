@@ -12,8 +12,8 @@ using TripPlanner.API.Database.DataAccess;
 namespace TripPlanner.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240410132051_AddCurrencyExchangeRates")]
-    partial class AddCurrencyExchangeRates
+    [Migration("20240416083912_RemadeMigrations")]
+    partial class RemadeMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -276,11 +276,14 @@ namespace TripPlanner.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("TripBudgetId")
+                    b.Property<Guid>("TripBudgetId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Type")
@@ -318,7 +321,6 @@ namespace TripPlanner.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -373,7 +375,6 @@ namespace TripPlanner.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -507,6 +508,12 @@ namespace TripPlanner.API.Migrations
                     b.Property<int>("EventType")
                         .HasColumnType("int");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -514,11 +521,17 @@ namespace TripPlanner.API.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("StartTime")
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("TripId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -538,6 +551,9 @@ namespace TripPlanner.API.Migrations
                     b.Property<string>("CreatorId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsPrivateDocument")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LinkToFile")
                         .IsRequired()
@@ -561,6 +577,79 @@ namespace TripPlanner.API.Migrations
                     b.HasIndex("TripDetailId");
 
                     b.ToTable("TripDocuments");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripDocumentMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("TripDocumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("TripDocumentId");
+
+                    b.ToTable("TripDocumentMembers");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripInformationShare", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DescriptionHtml")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("LinkGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TripId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TripInformationShares");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripSharePhoto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PhotoUri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TripInformationShareId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripInformationShareId");
+
+                    b.ToTable("TripSharePhotos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -616,16 +705,19 @@ namespace TripPlanner.API.Migrations
 
             modelBuilder.Entity("TripPlanner.API.Database.Entities.Expense", b =>
                 {
-                    b.HasOne("TripPlanner.API.Database.Entities.TripBudget", null)
+                    b.HasOne("TripPlanner.API.Database.Entities.TripBudget", "TripBudget")
                         .WithMany("Expenses")
                         .HasForeignKey("TripBudgetId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("TripBudget");
 
                     b.Navigation("User");
                 });
@@ -634,9 +726,7 @@ namespace TripPlanner.API.Migrations
                 {
                     b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -663,8 +753,7 @@ namespace TripPlanner.API.Migrations
                     b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Trip");
 
@@ -738,12 +827,61 @@ namespace TripPlanner.API.Migrations
                     b.HasOne("TripPlanner.API.Database.Entities.TripDetail", "TripDetail")
                         .WithMany("Documents")
                         .HasForeignKey("TripDetailId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Creator");
 
                     b.Navigation("TripDetail");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripDocumentMember", b =>
+                {
+                    b.HasOne("TripPlanner.API.Database.Entities.AppUser", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TripPlanner.API.Database.Entities.TripDocument", "Document")
+                        .WithMany("Members")
+                        .HasForeignKey("TripDocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripInformationShare", b =>
+                {
+                    b.HasOne("TripPlanner.API.Database.Entities.Trip", "Trip")
+                        .WithMany("TripInformationShares")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TripPlanner.API.Database.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripSharePhoto", b =>
+                {
+                    b.HasOne("TripPlanner.API.Database.Entities.TripInformationShare", "TripInformationShare")
+                        .WithMany("Photos")
+                        .HasForeignKey("TripInformationShareId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TripInformationShare");
                 });
 
             modelBuilder.Entity("TripPlanner.API.Database.Entities.AppUser", b =>
@@ -756,6 +894,8 @@ namespace TripPlanner.API.Migrations
                     b.Navigation("Travellers");
 
                     b.Navigation("TripDetails");
+
+                    b.Navigation("TripInformationShares");
                 });
 
             modelBuilder.Entity("TripPlanner.API.Database.Entities.TripBudget", b =>
@@ -768,6 +908,16 @@ namespace TripPlanner.API.Migrations
             modelBuilder.Entity("TripPlanner.API.Database.Entities.TripDetail", b =>
                 {
                     b.Navigation("Documents");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripDocument", b =>
+                {
+                    b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("TripPlanner.API.Database.Entities.TripInformationShare", b =>
+                {
+                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }
