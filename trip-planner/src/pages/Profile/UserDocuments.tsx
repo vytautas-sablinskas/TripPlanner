@@ -72,6 +72,7 @@ const UserDocuments = () => {
 
     return (
         <div className="notifications-main-container">
+            <h1 className="my-4 font-bold text-4xl">Your Documents</h1>
             <UserDocumentsList data={documents} onStatusChange={onStatusChange}/>
         </div>
     )

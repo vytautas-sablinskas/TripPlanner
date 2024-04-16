@@ -202,6 +202,7 @@ const ShareTrip = () => {
 
   return (
     <div className="flex flex-col justify-center w-full">
+      <h1 className="my-4 font-bold text-4xl">Share Trip With Others</h1>
       <Card className="p-4 sm:max-w-full w-full">
         <CardContent>
           <Label>Title</Label>

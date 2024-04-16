@@ -97,10 +97,12 @@ export default function Recommendations() {
   return (
     <div className="w-full flex justify-center">
       <div className="flex flex-col gap-4">
+        <h1 className="my-4 font-bold text-4xl">Recommendations</h1>
         <Stepper initialStep={0} steps={steps}>
           {steps.map((stepProps, index) => {
             return (
               <Step key={stepProps.label} {...stepProps}>
+
                 {getStepCard(index)}
               </Step>
             );

@@ -86,6 +86,7 @@ const TripTravellersView = () => {
 
     return (
         <div className="trip-travellers-view-main-container">
+            <h1 className="my-4 font-bold text-4xl">Trip Participants</h1>
             <TripTravellerList data={travellers} onDelete={handleDelete} onEdit={handleEdit} userPermissions={userPermissions}/>
         </div>
     );

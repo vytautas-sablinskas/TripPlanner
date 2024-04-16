@@ -87,6 +87,7 @@ const TripList = () => {
 
   return (
     <div className="trip-list-container">
+      <h1 className="my-4 font-bold text-4xl">Your Trips</h1>
       <span className="add-trip-container">
         <Button
           className="add-trip-button"

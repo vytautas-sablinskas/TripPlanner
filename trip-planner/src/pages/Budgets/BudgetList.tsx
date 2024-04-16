@@ -66,7 +66,8 @@ const BudgetList = () => {
 
   return (
     <div className="main-budget-list-container">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <h1 className="my-4 font-bold text-4xl">Budgets</h1>
         <Button
           className="rounded-xl"
           variant="ghost"
