@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Roles;
 using TripPlanner.API.Dtos.Authentication;
@@ -10,11 +12,15 @@ public class AuthenticationService : IAuthenticationService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly IRepository<Notification> _notificationRepository;
+    private readonly IRepository<Traveller> _travellerRepository;
 
-    public AuthenticationService(UserManager<AppUser> userManager, IJwtTokenService jwtTokenService)
+    public AuthenticationService(UserManager<AppUser> userManager, IJwtTokenService jwtTokenService, IRepository<Notification> notificationRepository, IRepository<Traveller> travellerRepository)
     {
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
+        _notificationRepository = notificationRepository;
+        _travellerRepository = travellerRepository;
     }
 
     public async Task<Result<SuccessfulLoginWithUserInfoDto>> Login(LoginDto loginDto)
@@ -53,6 +59,23 @@ public class AuthenticationService : IAuthenticationService
             return new Result<UserDto>(Success: false, Message: "Unexpected error. Try again later!", Data: null);
 
         await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+
+        var notifications = await _notificationRepository.FindByCondition(n => n.Email != null && n.Email.ToLower() == userDto.Email.ToLower())
+            .ToListAsync();
+
+        foreach (var notification in notifications)
+        {
+            notification.UserId = newUser.Id;
+            await _notificationRepository.Update(notification);
+        }
+
+        var travellers = await _travellerRepository.FindByCondition(t => t.Email.ToLower() == userDto.Email.ToLower())
+            .ToListAsync();
+        foreach (var traveller in travellers)
+        {
+            traveller.UserId = newUser.Id;
+            await _travellerRepository.Update(traveller);
+        }
 
         return new Result<UserDto>(Success: true, Message: "", Data: new UserDto(newUser.Id, newUser.UserName, newUser.Email));
     }

@@ -5,25 +5,24 @@
 namespace TripPlanner.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedPhotoToUserProfile : Migration
+    public partial class AddedEmailToNotification : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "PhotoUri",
-                table: "AspNetUsers",
+                name: "Email",
+                table: "NotificationDetails",
                 type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PhotoUri",
-                table: "AspNetUsers");
+                name: "Email",
+                table: "NotificationDetails");
         }
     }
 }

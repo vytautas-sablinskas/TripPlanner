@@ -10,9 +10,11 @@ public class Notification
 
     public string? Message { get; set; }
 
-    public virtual AppUser User { get; set; }
+    public string? Email { get; set; }
 
-    public string UserId { get; set; }
+    public virtual AppUser? User { get; set; }
+
+    public string? UserId { get; set; }
 
     public NotificationStatus Status { get; set; }
 

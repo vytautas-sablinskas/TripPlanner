@@ -12,9 +12,11 @@ public class Traveller
     public TravellerStatus Status { get; set; }
 
     [DeleteBehavior(DeleteBehavior.Restrict)]
-    public virtual AppUser User { get; set; }
+    public virtual AppUser? User { get; set; }
 
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
+
+    public string? Email { get; set; }
 
     [DeleteBehavior(DeleteBehavior.Restrict)]
     public virtual Trip Trip { get; set; }

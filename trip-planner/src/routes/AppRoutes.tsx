@@ -24,6 +24,7 @@ import ShareTrip from "@/pages/Trips/ShareTrip";
 import ShareTripView from "@/pages/Trips/ShareTripView";
 import UnselectedTripDetails from "@/pages/TripDetails/UnselectedTripDetails";
 import UserDocuments from "@/pages/Profile/UserDocuments";
+import TripInvitation from "@/pages/Trips/TripInvitation";
 
 const AppRoutes = [
   {
@@ -122,6 +123,10 @@ const AppRoutes = [
   {
     path: Paths.USER_DOCUMENTS,
     element: <UserDocuments />
+  },
+  {
+    path: Paths.TRIP_INVITATION,
+    element: <TripInvitation />
   }
 ];
 

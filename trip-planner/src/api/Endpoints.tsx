@@ -34,7 +34,8 @@ const ENDPOINTS = {
         GET_ALL_TRIP_TRAVELLERS: `${BASE_URL}/trips/:tripId/travellers`,
         ADD_TRIP_TRAVELLERS: `${BASE_URL}/trips/:tripId/travellers/create`,
         DELETE_TRIP_TRAVELLER: `${BASE_URL}/trips/:tripId/travellers/:email`,
-        EDIT_TRIP_TRAVELLER: `${BASE_URL}/trips/:tripId/travellers/:travellerId/update`
+        EDIT_TRIP_TRAVELLER: `${BASE_URL}/trips/:tripId/travellers/:travellerId/update`,
+        ADD_USER_TO_NOTIFICATION: `${BASE_URL}/travellers/addToNotification`,
     },
     USER: {
         GET_INFORMATION: `${BASE_URL}/user/information`,

@@ -176,6 +176,16 @@ const ShareTrip = () => {
     const files = event.target.files;
     if (!files) return;
 
+    const maxSize = 2 * 1024 * 1024;
+    const oversizedFiles = Array.from(files).filter((file : any) => file.size > maxSize);
+
+    if (oversizedFiles.length > 0) {
+      toast.error("Some files exceed the maximum size of 2 MB", {
+        position: "top-center",
+      });
+      return;
+    }
+
     if (files.length + selectedPhotos.length > 5) {
       toast.error("You can only upload up to 5 photos", {
         position: "top-center",

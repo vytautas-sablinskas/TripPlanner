@@ -425,7 +425,7 @@ const TripDetails = () => {
                   {budget.spentAmount.toFixed(2).toLocaleString()}
                 </p>
                 <p className="total-budget-amount">
-                  {budget.unlimitedBudget ? "Unlimited Budget" : `Budget: ${budget.currency} ${budget.budgetAmount.toLocaleString()}`}
+                  {budget.unlimitedBudget ? "Unlimited Budget" : `Budget: ${budget.currency} ${budget.budgetAmount.toFixed(2).toLocaleString()}`}
                 </p>
               </div>
               <Progress value={getSpentAmountPercentage()} className="h-2" />
