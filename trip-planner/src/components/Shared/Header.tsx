@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-const Header = () => {
+const Header = ({ isHomePage } : any) => {
   const {
     isAuthenticated,
     hasNotifications,
@@ -86,7 +86,7 @@ const Header = () => {
   }, [location?.pathname]);
 
   return (
-    <header className="header-container">
+    <header className={`${isHomePage ? "header-container-home" : "header-container"}`}>
       <div className="flex justify-center items-end">
         <Link to={Paths.HOME}>
           <img src="/logo.png" alt="Logo" className="h-[80px]" />
