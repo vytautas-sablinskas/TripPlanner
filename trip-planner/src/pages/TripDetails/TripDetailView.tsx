@@ -36,7 +36,7 @@ const TripDetailView = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, id: userId } =
     useUser();
   const [isAddDocumentDialogOpen, setIsAddDocumentDialogOpen] = useState(false);
   const [isAddDocumentSubmitting, setIsAddDocumentSubmitting] = useState(false);
@@ -105,6 +105,7 @@ const TripDetailView = () => {
         notes: data.notes,
         startTime: data.startTime,
         endTime: data.endTime,
+        permissions: data.permissions,
       });
       setTravellers(data.travellers);
       setActiveDocumentCount(data.activeDocuments);
@@ -315,37 +316,40 @@ const TripDetailView = () => {
       </span>
       <span className="trip-first-row">
         <h1 className="trip-name-title">{tripDetail.name}</h1>
-        <span className="change-info-buttons">
-          <Button
-            className="mr-3"
-            variant="ghost"
-            onClick={() =>
-              navigate(
-                Paths.TRIP_DETAILS_EDIT.replace(":tripId", getTripId()).replace(
-                  ":planId",
-                  getTripDetailId()
-                )
-              )
-            }
-          >
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit Plan
-          </Button>
-          <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(true)}>
-            <CircleX className="mr-2 h-4 w-4" />
-            Delete Plan
-          </Button>
-          <DeleteDialog
-            open={isDeleteDialogOpen}
-            title="Delete Plan"
-            description="Are you sure you want to delete this plan? This will permanently delete this plan and its contents. You and all trip participants will not be able to access the plan or any documents related to this plan anymore."
-            dialogButtonText="Delete Plan"
-            onDelete={handleDelete}
-            isLoading={isLoading}
-            onClose={() => setIsDeleteDialogOpen(false)}
-            setOpen={setIsDeleteDialogOpen}
-          />
-        </span>
+        {(tripDetail.permissions === 1 || tripDetail.permissions === 2) &&
+          <span className="change-info-buttons">
+              <Button
+                className="mr-3"
+                variant="ghost"
+                onClick={() =>
+                  navigate(
+                    Paths.TRIP_DETAILS_EDIT.replace(":tripId", getTripId()).replace(
+                      ":planId",
+                      getTripDetailId()
+                    )
+                  )
+                }
+              >
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit Plan
+              </Button>
+              <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(true)}>
+                <CircleX className="mr-2 h-4 w-4" />
+                Delete Plan
+              </Button>
+              <DeleteDialog
+                open={isDeleteDialogOpen}
+                title="Delete Plan"
+                description="Are you sure you want to delete this plan? This will permanently delete this plan and its contents. You and all trip participants will not be able to access the plan or any documents related to this plan anymore."
+                dialogButtonText="Delete Plan"
+                onDelete={handleDelete}
+                isLoading={isLoading}
+                onClose={() => setIsDeleteDialogOpen(false)}
+                setOpen={setIsDeleteDialogOpen}
+              />
+            </span>
+
+        }
       </span>
       <Card className="trip-detail-view-information-container">
         <CardContent>
@@ -421,6 +425,8 @@ const TripDetailView = () => {
               onEdit={handleEditDocument}
               isEditLoading={isEditDocumentSubmitting}
               members={travellers}
+              permissions={tripDetail.permissions}
+              userId={userId}
             />
           ))}
         </div>

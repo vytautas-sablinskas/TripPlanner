@@ -46,9 +46,6 @@ const TripDetails = () => {
   const [budget, setBudget] = useState<any>(null);
   const [mapInformation, setMapInformation] = useState<any>([]);
   const [isBreakdownOpen, setIsBreakdownOpen] = useState<any>(false);
-  const [breakdownTrips, setBreakdownTrips] = useState<any>([]);
-
-  console.log(tripDetails);
 
   const getTripId = () => {
     const paths = location.pathname.split("/");
@@ -135,6 +132,7 @@ const TripDetails = () => {
     const tripDetails = {
       tripInformation: data.tripInformation,
       data: tripDetailsByDay,
+      permissions: data.tripPermissions
     };
   
     setIsLoading(false);
@@ -376,16 +374,18 @@ const TripDetails = () => {
       <div className="trip-details-main-container">
         <div className="trip-details-information">
           <p className="trip-details-itinerary">Itinerary</p>
-          <Button
-            onClick={() =>
-              navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))
-            }
-            className="rounded-xl"
-            variant="ghost"
-          >
-            <CirclePlus className="mr-2" />
-            Add New Plan
-          </Button>
+          {(tripDetails.permissions === 1 || tripDetails.permissions === 2) &&
+              <Button
+                onClick={() =>
+                  navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))
+                }
+                className="rounded-xl"
+                variant="ghost"
+              >
+                <CirclePlus className="mr-2" />
+                Add New Plan
+            </Button>
+          }
         </div>
         <Separator className="my-4" />
       </div>
@@ -393,6 +393,7 @@ const TripDetails = () => {
         <TripDetailsAccordion
           tripDetails={tripDetails.data}
           onDelete={handleDelete}
+          permissions={tripDetails.permissions}
         />
       </div>
       {budgetIds && budgetIds.length > 0 && budget && (

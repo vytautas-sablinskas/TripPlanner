@@ -72,7 +72,7 @@ public class TripBudgetsService : ITripBudgetsService
         var totalBudget = budget.Budget;
         if (budget.Type == BudgetTypes.IndividualWithFixedAmount)
         {
-            spentAmount = expenses.Sum(e => e.Amount);
+            spentAmount = expenses.Sum(e => e.AmountInMainCurrency);
             var member = await _tripBudgetMembersRepository.FindByCondition(m => m.TripBudgetId == budgetId && m.UserId == userId)
                 .FirstOrDefaultAsync();
             totalBudget = member.Amount;
@@ -254,12 +254,13 @@ public class TripBudgetsService : ITripBudgetsService
             return budget;
         }).ToList();
 
-        var budgetDtos = _mapper.Map<IEnumerable<TripBudgetDto>>(budgets);
-        budgetDtos = budgetDtos.Select((budget) =>
+        var budgetDtos = budgets.Select((budget) =>
         {
+            var budgetDto = _mapper.Map<TripBudgetDto>(budget);
             budget.SpentAmount = budget.SpentAmount;
+            budgetDto.IsCreator = budget.CreatorId == userId;
 
-            return budget;
+            return budgetDto;
         }).ToList();
 
         return budgetDtos;

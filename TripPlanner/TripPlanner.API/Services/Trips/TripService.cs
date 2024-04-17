@@ -19,8 +19,9 @@ public class TripService : ITripService
     private readonly IRepository<TripInformationShare> _tripInformationShareRepository;
     private readonly IRepository<TripSharePhoto> _tripSharePhotoRepository;
     private readonly IRepository<TripDetail> _tripDetailRepository;
+    private readonly IRepository<Traveller> _travellerRepository;
 
-    public TripService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IMapper mapper, IAzureBlobStorageService azureBlobStorageService, IRepository<TripInformationShare> tripInformationShareRepository, IRepository<TripSharePhoto> tripSharePhotoRepository, IRepository<TripDetail> tripDetailRepository)
+    public TripService(IRepository<Trip> tripRepository, IRepository<AppUser> appUserRepository, IMapper mapper, IAzureBlobStorageService azureBlobStorageService, IRepository<TripInformationShare> tripInformationShareRepository, IRepository<TripSharePhoto> tripSharePhotoRepository, IRepository<TripDetail> tripDetailRepository, IRepository<Traveller> travellerRepository)
     {
         _tripRepository = tripRepository;
         _appUserRepository = appUserRepository;
@@ -29,6 +30,7 @@ public class TripService : ITripService
         _tripInformationShareRepository = tripInformationShareRepository;
         _tripSharePhotoRepository = tripSharePhotoRepository;
         _tripDetailRepository = tripDetailRepository;
+        _travellerRepository = travellerRepository;
     }
 
     public async Task<Guid> CreateNewTrip(CreateTripDto tripDto, string userId)
@@ -85,11 +87,18 @@ public class TripService : ITripService
         await _tripRepository.Update(trip);
     }
 
-    public async Task DeleteTrip(Guid tripId)
+    public async Task DeleteTrip(Guid tripId, string userId)
     {
         var trip = await _tripRepository.FindByCondition(t => t.Id == tripId)
                                   .Include(t => t.TripDetails)
                                   .FirstOrDefaultAsync();
+        var userTraveller = await _travellerRepository.FindByCondition(t => t.UserId == userId && t.TripId == tripId)
+            .FirstOrDefaultAsync();
+        if (userTraveller.Permissions != TripPermissions.Administrator)
+        {
+            await _travellerRepository.Delete(userTraveller);
+            return;
+        }
 
         if (!trip.PhotoUri.StartsWith("/default"))
         {
@@ -134,9 +143,9 @@ public class TripService : ITripService
         switch (filter)
         {
             case TripFilter.Upcoming:
-                return await GetUpcomingTrips(tripsQuery, page);
+                return await GetUpcomingTrips(tripsQuery, page, userId);
             case TripFilter.Past:
-                return await GetPastTrips(tripsQuery, page);
+                return await GetPastTrips(tripsQuery, page, userId);
             default:
                 break;
         }
@@ -146,10 +155,24 @@ public class TripService : ITripService
 
     public async Task<IEnumerable<TripDto>> GetAllUserTrips(string userId)
     {
+        var user = await _appUserRepository.FindByCondition(t => t.Id == userId)
+            .FirstOrDefaultAsync();
+        if (user == null)
+        {
+            return new List<TripDto>();
+        }
+
         var trips = await _tripRepository.FindByCondition(t => t.Travellers.Any(traveller => traveller.UserId == userId && traveller.Status == TravellerStatus.Joined && t.EndDate > DateTime.UtcNow))
+            .Include(t => t.Travellers)
             .ToListAsync();
 
-        var mappedTrips = trips.Select(_mapper.Map<TripDto>);
+        var mappedTrips = trips.Select(trip =>
+        {
+            var tripDto = _mapper.Map<TripDto>(trip);
+            var user = trip.Travellers.FirstOrDefault(t => t.UserId == userId && t.Permissions == TripPermissions.Administrator);
+            tripDto.IsCreator = user != null;
+            return tripDto;
+        });
 
         return mappedTrips;
     }
@@ -263,7 +286,7 @@ public class TripService : ITripService
         return new TripShareInformationViewDto(detailsDto, tripDto, shareInformationDto, $"{shareInformation.User.Name} {shareInformation.User.Surname}");
     }
 
-    private async Task<TripsDto> GetUpcomingTrips(IQueryable<Trip> tripsQuery, int page)
+    private async Task<TripsDto> GetUpcomingTrips(IQueryable<Trip> tripsQuery, int page, string userId)
     {
         var tripsCount = await tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
                                    .CountAsync();
@@ -273,12 +296,18 @@ public class TripService : ITripService
                         .Take(FetchSizes.DEFAULT_SIZE)
                         .ToListAsync();
 
-        var mappedTrips = trips.Select(_mapper.Map<TripDto>);
+        var mappedTrips = trips.Select(trip =>
+        {
+            var tripDto = _mapper.Map<TripDto>(trip);
+            var user = trip.Travellers.FirstOrDefault(t => t.UserId == userId && t.Permissions == TripPermissions.Administrator);
+            tripDto.IsCreator = user != null;
+            return tripDto;
+        });
 
         return new TripsDto(mappedTrips, tripsCount);
     }
 
-    private async Task<TripsDto> GetPastTrips(IQueryable<Trip> tripsQuery, int page)
+    private async Task<TripsDto> GetPastTrips(IQueryable<Trip> tripsQuery, int page, string userId)
     {
         var tripsCount = await tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
                                    .CountAsync();
@@ -288,7 +317,13 @@ public class TripService : ITripService
                          .Take(FetchSizes.DEFAULT_SIZE)
                          .ToListAsync();
 
-        var mappedTrips = trips.Select(_mapper.Map<TripDto>);
+        var mappedTrips = trips.Select(trip =>
+        {
+            var tripDto = _mapper.Map<TripDto>(trip);
+            var user = trip.Travellers.FirstOrDefault(t => t.UserId == userId && t.Permissions == TripPermissions.Administrator);
+            tripDto.IsCreator = user != null;
+            return tripDto;
+        });
 
         return new TripsDto(mappedTrips, tripsCount);
     }

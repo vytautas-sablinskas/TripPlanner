@@ -22,7 +22,12 @@ import {
 } from "lucide-react";
 import { DateTimeFormatOptions } from "luxon";
 
-const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
+const TripDetailCard = ({
+  detail,
+  onDelete,
+  isButtonsOff = false,
+  permissions,
+}: any) => {
   const startTime = detail.startTime ? new Date(detail.startTime) : null;
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,8 +40,12 @@ const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
   };
 
   function formatTime(time: any) {
-    const options : DateTimeFormatOptions = { hour: "numeric", minute: "2-digit", hour12: true };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const options: DateTimeFormatOptions = {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    };
+    const formatter = new Intl.DateTimeFormat("en-US", options);
     return formatter.format(time);
   }
 
@@ -131,37 +140,41 @@ const TripDetailCard = ({ detail, onDelete, isButtonsOff = false }: any) => {
           )}
           <p className="text-xs">{detail.address}</p>
         </div>
-        {!isButtonsOff && (
-          <div className="separator-div">
-            <Separator orientation="vertical" className="mx-5" />
-          </div>
-        )}
-        {!isButtonsOff && (
-          <div className="content-buttons">
-            <Button
-              onClick={() =>
-                navigate(
-                  Paths.TRIP_DETAILS_EDIT.replace(
-                    ":tripId",
-                    getTripId()
-                  ).replace(":planId", detail.id)
-                )
-              }
-              className="w-full py-0"
-              variant="outline"
-            >
-              <Pencil className="w-4 h-4 mr-2" />
-              Edit Plan
-            </Button>
-            <DeleteDialogButton
-              buttonText="Delete Plan"
-              title="Delete Plan"
-              description="Are you sure you want to delete this plan? This will permanently delete this plan and its contents. You and all trip participants will not be able to access the plan or any documents related to this plan anymore."
-              dialogButtonText="Delete"
-              onDelete={handleDelete}
-              isLoading={isLoading}
-            />
-          </div>
+        {(permissions === 1 || permissions === 2) && (
+          <>
+            {!isButtonsOff && (
+              <div className="separator-div">
+                <Separator orientation="vertical" className="mx-5" />
+              </div>
+            )}
+            {!isButtonsOff && (
+              <div className="content-buttons">
+                <Button
+                  onClick={() =>
+                    navigate(
+                      Paths.TRIP_DETAILS_EDIT.replace(
+                        ":tripId",
+                        getTripId()
+                      ).replace(":planId", detail.id)
+                    )
+                  }
+                  className="w-full py-0"
+                  variant="outline"
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit Plan
+                </Button>
+                <DeleteDialogButton
+                  buttonText="Delete Plan"
+                  title="Delete Plan"
+                  description="Are you sure you want to delete this plan? This will permanently delete this plan and its contents. You and all trip participants will not be able to access the plan or any documents related to this plan anymore."
+                  dialogButtonText="Delete"
+                  onDelete={handleDelete}
+                  isLoading={isLoading}
+                />
+              </div>
+            )}
+          </>
         )}
       </CardContent>
     </Card>

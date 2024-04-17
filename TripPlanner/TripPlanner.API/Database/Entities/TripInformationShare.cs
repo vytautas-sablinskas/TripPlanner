@@ -14,9 +14,9 @@ public class TripInformationShare
     public IEnumerable<TripSharePhoto> Photos { get; set; } = new List<TripSharePhoto>();
     
     [DeleteBehavior(DeleteBehavior.Restrict)]
-    public Trip Trip { get; set; }
+    public Trip? Trip { get; set; }
 
-    public Guid TripId { get; set; }
+    public Guid? TripId { get; set; }
 
     [DeleteBehavior(DeleteBehavior.Restrict)]
     public AppUser User { get; set; }

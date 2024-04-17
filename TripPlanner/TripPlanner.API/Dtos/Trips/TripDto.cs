@@ -1,17 +1,20 @@
 ﻿namespace TripPlanner.API.Dtos.Trips;
 
-public record TripDto(
-    Guid Id,
+public class TripDto
+{
+    public Guid Id { get; set; }
 
-    string Title,
+    public string Title { get; set; }
 
-    string Description,
+    public string Description { get; set; }
 
-    string DestinationCountry,
+    public string DestinationCountry { get; set; }
 
-    string PhotoUri,
+    public string PhotoUri { get; set; }
 
-    DateTime StartDate,
+    public DateTime StartDate { get; set; }
 
-    DateTime EndDate
-);
+    public DateTime EndDate { get; set; }
+
+    public bool IsCreator { get; set; }
+}

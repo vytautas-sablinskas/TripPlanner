@@ -12,4 +12,6 @@ public class TripBudgetDto
     public double SpentAmount { get; set; }
     public bool UnlimitedBudget { get; set; }
     public string MainCurrency { get; set; }
+
+    public bool IsCreator { get; set; }
 }

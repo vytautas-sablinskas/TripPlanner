@@ -7,6 +7,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { BarChart, LineChart } from "@tremor/react";
+import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 
 const TripBudgetBreakdownDialog = ({
   open,
@@ -59,7 +60,12 @@ const TripBudgetBreakdownDialog = ({
   function getDates(startDate: any, endDate: any) {
     const dates = [];
     while (startDate <= endDate) {
-      dates.push(startDate.toISOString().split("T")[0]);
+      const time = getUtcTimeWithoutChangingTime(startDate);
+      if (!time) {
+        continue;
+      }
+
+      dates.push(time.split("T")[0]);
       startDate.setDate(startDate.getDate() + 1);
     }
     return dates;
@@ -87,7 +93,7 @@ const TripBudgetBreakdownDialog = ({
 
     const result = Object.keys(amountSpentByDay).map((date) => ({
       date,
-      [daysKey]: amountSpentByDay[date] || 0,
+      [daysKey]: amountSpentByDay[date].toFixed(2) || 0,
     }));
 
     return result;
@@ -108,7 +114,7 @@ const TripBudgetBreakdownDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[825px]">
+      <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle className="text-left">Budget Breakdown</DialogTitle>
         </DialogHeader>
@@ -128,13 +134,12 @@ const TripBudgetBreakdownDialog = ({
         </Tabs>
         {tabSelected === "days" && (
           <LineChart
-            className="h-72"
             data={allDateSpendings}
             key={allDateSpendings.length}
             index="date"
             categories={[daysKey]}
             colors={["blue-700"]}
-            yAxisWidth={30}
+            yAxisWidth={80}
           />
         )}
         {tabSelected === "categories" && (
@@ -144,7 +149,7 @@ const TripBudgetBreakdownDialog = ({
             categories={[key]}
             colors={["blue"]}
             valueFormatter={dataFormatter}
-            yAxisWidth={48}
+            yAxisWidth={80}
           />
         )}
       </DialogContent>
