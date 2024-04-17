@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { editTripDetails, getTripDetailById } from "@/api/TripDetailService";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
-import { getLocalTimeISOFromDate, getLocalTimeISOFromString, getUtcTimeWithoutChangingTime } from "@/utils/date";
+import { getLocalTimeISOFromDate, getUtcTimeWithoutChangingTime } from "@/utils/date";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
@@ -62,7 +62,7 @@ const TripDetailEdit = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDataSubmitting, setIsDataSubmitting] = useState(false);
   const [autocompleteSearchType, setAutocompleteSearchType] = useState<any>("address");
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
     useUser();
   const location = useLocation();
   const [tripTime, setTripTime] = useState<any>();
@@ -128,6 +128,11 @@ const TripDetailEdit = () => {
       setTripTime({ startDate: data.tripStartTime, endDate: data.tripEndTime });
       setIsLoading(false);
     };
+
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
 
     tryFetchingTripTime();
   }, []);

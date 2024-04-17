@@ -62,7 +62,7 @@ const EditTrip = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [uploadedImage, setUploadedImage] = useState<any>("/default.jpg");
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
     useUser();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
@@ -138,6 +138,11 @@ const EditTrip = () => {
         setLoadingData(false);
       }
     };
+
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
 
     tryFetchingTrip();
   }, []);

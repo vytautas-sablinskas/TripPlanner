@@ -36,7 +36,7 @@ const TripDetailView = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, id: userId } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, id: userId, isAuthenticated } =
     useUser();
   const [isAddDocumentDialogOpen, setIsAddDocumentDialogOpen] = useState(false);
   const [isAddDocumentSubmitting, setIsAddDocumentSubmitting] = useState(false);
@@ -111,6 +111,11 @@ const TripDetailView = () => {
       setActiveDocumentCount(data.activeDocuments);
       setIsLoading(false);
     };
+
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
 
     tryFetchingDetails();
   }, []);

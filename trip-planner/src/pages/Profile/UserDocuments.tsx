@@ -6,7 +6,6 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
-import { getNotifications, markNotificationsAsRead } from "@/api/NotificationService";
 import { UserDocumentsList } from "./UserDocumentsList";
 import { getUserDocuments } from "@/api/TripDocumentService";
 
@@ -14,7 +13,7 @@ const UserDocuments = () => {
     const navigate = useNavigate();
     const [documents, setDocuments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, changeHasNotifications } = useUser();
+    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } = useUser();
 
     useEffect(() => {
         const validateAccessToken = async () => {
@@ -54,6 +53,11 @@ const UserDocuments = () => {
             const data = await response.json();
             setDocuments(data);
             setIsLoading(false);
+        }
+        
+        if (!isAuthenticated) {
+            navigate(Paths.LOGIN);
+            return;
         }
 
         tryFetchingDocuments();

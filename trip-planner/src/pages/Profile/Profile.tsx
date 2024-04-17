@@ -70,7 +70,7 @@ const Profile = () => {
     },
   });
 
-  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } =
+  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, isAuthenticated } =
     useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -118,6 +118,11 @@ const Profile = () => {
       setIsLoading(false);
     };
 
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
+
     tryFetchingUserInformation();
   }, []);
 
@@ -151,8 +156,6 @@ const Profile = () => {
   };
 
   const onChangePersonalInfromation = async (formValues: any) => {
-    console.log(formValues);
-
     setIsSubmitting(true);
     const accessToken = localStorage.getItem("accessToken");
 

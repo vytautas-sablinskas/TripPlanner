@@ -15,8 +15,7 @@ import { getTripBudgets } from "@/api/TripBudgetsService";
 const BudgetList = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } =
-    useUser();
+  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, isAuthenticated } = useUser();
   const [budgets, setBudgets] = useState([]);
 
   const getTripId = () => {
@@ -53,6 +52,7 @@ const BudgetList = () => {
         toast.error("Unexpected error. Try refreshing page", {
           position: "top-center",
         });
+        setIsLoading(false);
         return;
       }
 
@@ -61,8 +61,17 @@ const BudgetList = () => {
       setIsLoading(false);
     };
 
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
+
     fetchBudgets();
   }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className="main-budget-list-container">

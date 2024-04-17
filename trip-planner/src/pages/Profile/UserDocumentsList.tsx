@@ -87,7 +87,7 @@ export function UserDocumentsList({ data, onStatusChange } : any) {
         const [isMenuOpen, setIsMenuOpen] = React.useState(false);
         const [isLoading, setIsLoading] = React.useState(false);
         const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
-        const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
+        const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } = useUser();
         const navigate = useNavigate();
   
         const handleAccessToken = async () => {

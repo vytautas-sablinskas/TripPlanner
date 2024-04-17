@@ -3,7 +3,7 @@ import { Step, Stepper, useStepper } from "@/components/ui/stepper";
 import FirstStepCard from "./FirstStepCard";
 import SecondStepCard from "./SecondStepCard";
 import FinalStepCard from "./FinalStepCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreateEditLoadingButton } from "@/components/Extra/LoadingButton";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
@@ -37,6 +37,14 @@ export default function Recommendations() {
     { id: "distance", isEnabled: true },
     { id: "price", isEnabled: true }
   ]);
+  const { isAuthenticated } = useUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+    }
+  }, []);
 
 
   const getStepCard = (index: number) => {
@@ -102,7 +110,6 @@ export default function Recommendations() {
           {steps.map((stepProps, index) => {
             return (
               <Step key={stepProps.label} {...stepProps}>
-
                 {getStepCard(index)}
               </Step>
             );

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -61,7 +61,7 @@ const formSchema = z.object({
 const CreateTrip = () => {
   const navigate = useNavigate();
   const [uploadedImage, setUploadedImage] = useState<any>("/default.jpg");
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
     useUser();
   const [loading, setLoading] = useState(false);
 
@@ -77,6 +77,12 @@ const CreateTrip = () => {
       image: undefined,
     },
   });
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+    }
+  }, []);
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
