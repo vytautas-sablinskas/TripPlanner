@@ -72,7 +72,7 @@ public class TripBudgetsService : ITripBudgetsService
         var totalBudget = budget.Budget;
         if (budget.Type == BudgetTypes.IndividualWithFixedAmount)
         {
-            spentAmount = expenses.Sum(e => e.Amount);
+            spentAmount = expenses.Sum(e => e.AmountInMainCurrency);
             var member = await _tripBudgetMembersRepository.FindByCondition(m => m.TripBudgetId == budgetId && m.UserId == userId)
                 .FirstOrDefaultAsync();
             totalBudget = member.Amount;

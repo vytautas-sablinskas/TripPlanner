@@ -86,7 +86,10 @@ public class TripDetailsService : ITripDetailsService
         var detailsDto = details.Select(_mapper.Map<TripDetailMinimalDto>);
         var tripDto = _mapper.Map<TripDto>(trip);
 
-        return new TripDetailsDto(detailsDto, tripDto, budgetIds);
+        var traveller = await _travellerRepository.FindByCondition(t => t.UserId == userId && t.TripId == tripId)
+            .FirstOrDefaultAsync();
+
+        return new TripDetailsDto(detailsDto, tripDto, budgetIds, traveller.Permissions);
     }
 
     public async Task<GetEditTripDetailsDto> GetTripDetailById(Guid tripId, Guid detailId)
@@ -126,7 +129,9 @@ public class TripDetailsService : ITripDetailsService
             .Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile, d.CreatorId));
         var activeDocumentsCount = await _tripDocumentRepository.FindByCondition(t => t.CreatorId == userId).CountAsync();
 
-        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, activeDocumentsCount, tripDetail.Trip.StartDate, tripDetail.Trip.EndDate, documents, travellerMinimalDtos);
+        var traveller = await travellers.FirstOrDefaultAsync(t => t.UserId == userId && t.TripId == tripId);
+
+        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, activeDocumentsCount, traveller.Permissions, tripDetail.Trip.StartDate, tripDetail.Trip.EndDate, documents, travellerMinimalDtos);
 
         return (true, tripDetailViewDto);
     }

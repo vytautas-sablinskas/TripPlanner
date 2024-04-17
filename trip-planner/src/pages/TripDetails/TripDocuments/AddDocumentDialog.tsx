@@ -234,7 +234,7 @@ const AddDocumentDialog = ({
             )}
             <DialogFooter className="flex flex-col mt-4">
               <DialogClose>
-                <Button className="w-full mb-4" disabled={isLoading}>
+                <Button className="w-full mb-4" type="button" disabled={isLoading}>
                   Cancel
                 </Button>
               </DialogClose>

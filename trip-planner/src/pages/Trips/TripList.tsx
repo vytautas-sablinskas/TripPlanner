@@ -101,7 +101,7 @@ const TripList = () => {
         </Button>
         <Tabs value={tabSelected} onValueChange={setTabSelected}>
           <TabsList>
-            <TabsTrigger value="Upcoming">Upcoming Trips</TabsTrigger>
+            <TabsTrigger value="Upcoming">Current Trips</TabsTrigger>
             <TabsTrigger value="Past">Past Trips</TabsTrigger>
           </TabsList>
         </Tabs>
