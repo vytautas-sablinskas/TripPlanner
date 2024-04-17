@@ -22,13 +22,9 @@ const Notifications = () => {
             if (!checkTokenValidity(accessToken || "")) {
                 const result = await refreshAccessToken();
                 if (!result.success) {
-                    toast.error("Session has expired. Login again!", {
-                    position: "top-center",
-                    });
-
                     changeUserInformationToLoggedOut();
                     navigate(Paths.LOGIN);
-                    return;
+                    return false;
                 }
 
                 changeUserInformationToLoggedIn(
@@ -37,10 +33,17 @@ const Notifications = () => {
                     result.data.id
                 );
             }
+
+            return true;
         }
 
         const tryFetchingNotifications = async () => {
-            await validateAccessToken();
+            setIsLoading(true);
+            const isValid = await validateAccessToken();
+            if (!isValid) {
+                return;
+            }
+
             setIsLoading(true);
 
             const response = await getNotifications();
@@ -51,7 +54,6 @@ const Notifications = () => {
             }
 
             const data = await response.json();
-            console.log(data);
             setNotifications(data);
             setIsLoading(false);
         }
@@ -73,6 +75,10 @@ const Notifications = () => {
 
         dataCopy.splice(index, 1);
         setNotifications(dataCopy);
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>
     }
 
     return (
