@@ -63,6 +63,12 @@ const ShareTrip = () => {
     "font",
   ];
 
+  const ACCEPTED_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+  ];
+
   useEffect(() => {
     const fetchSharedInformation = async () => {
       const accessToken = localStorage.getItem("accessToken");
@@ -190,6 +196,12 @@ const ShareTrip = () => {
       toast.error("You can only upload up to 5 photos", {
         position: "top-center",
       });
+      return;
+    }
+
+    const invalidFiles = Array.from(files).filter((file : any) => !ACCEPTED_IMAGE_TYPES.includes(file.type));
+    if (invalidFiles) {
+      toast.error("Some files had invalid type. Only JPG and PNG files are allowed", { position: "top-center" });
       return;
     }
 

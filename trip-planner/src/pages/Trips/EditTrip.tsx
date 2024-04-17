@@ -30,7 +30,6 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
   "image/png",
-  "image/webp",
 ];
 
 const formSchema = z.object({
@@ -150,12 +149,12 @@ const EditTrip = () => {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("File is too large! 2MB Max.", { position: "bottom-right" });
+      toast.error("File is too large! 2MB Max.", { position: "top-center" });
       return;
     }
 
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-      toast.error("Invalid file type!", { position: "bottom-right" });
+      toast.error("Some files had invalid type. Only JPG and PNG files are allowed", { position: "top-center" });
       return;
     }
 

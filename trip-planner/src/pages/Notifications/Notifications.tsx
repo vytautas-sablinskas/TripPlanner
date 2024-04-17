@@ -44,8 +44,6 @@ const Notifications = () => {
                 return;
             }
 
-            setIsLoading(true);
-
             const response = await getNotifications();
             if (!response.ok) {
                 toast.error("Unexpected error. Try again later", {
