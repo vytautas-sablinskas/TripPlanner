@@ -20,7 +20,7 @@ import { useReactToPrint } from "react-to-print";
 
 const ExportInformationTrip = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
     useUser();
   const navigate = useNavigate();
   const [trips, setTrips] = useState<any>([]);
@@ -100,6 +100,11 @@ const ExportInformationTrip = () => {
       setTripInformation(data.tripInformation);
       setIsLoading(false);
     };
+
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
 
     fetchTripDetails();
   }, []);

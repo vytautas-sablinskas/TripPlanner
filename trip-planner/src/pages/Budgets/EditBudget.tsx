@@ -58,7 +58,7 @@ import {
     const [selectedMemberBudgets, setSelectedMemberBudgets] = useState<any>([]);
     const [loading, setLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
       useUser();
     const navigate = useNavigate();
     const [travellers, setTravellers] = useState<any>([]);
@@ -140,6 +140,11 @@ import {
 
         setLoading(false);
       };
+
+      if (!isAuthenticated) {
+        navigate(Paths.LOGIN);
+        return;
+      }
   
       fetchTravellers();
     }, []);

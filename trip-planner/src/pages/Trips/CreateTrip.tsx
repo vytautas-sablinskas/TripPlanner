@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,7 +18,7 @@ import Paths from "@/routes/Paths";
 import "./styles/create-edit-trip.css";
 import { toast } from "sonner";
 import { addTrip } from "@/api/TripService";
-import { getUtcTime, getUtcTimeWithoutChangingTime } from "@/utils/date";
+import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/api/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
@@ -30,7 +30,6 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
   "image/png",
-  "image/webp",
 ];
 
 const formSchema = z.object({
@@ -62,7 +61,7 @@ const formSchema = z.object({
 const CreateTrip = () => {
   const navigate = useNavigate();
   const [uploadedImage, setUploadedImage] = useState<any>("/default.jpg");
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
     useUser();
   const [loading, setLoading] = useState(false);
 
@@ -79,6 +78,12 @@ const CreateTrip = () => {
     },
   });
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+    }
+  }, []);
+
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     if (!file) {
@@ -86,12 +91,12 @@ const CreateTrip = () => {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("File is too large! 2MB Max.", { position: "bottom-right" });
+      toast.error("File is too large! 2MB Max.", { position: "top-center" });
       return;
     }
-
+    
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-      toast.error("Invalid file type!", { position: "bottom-right" });
+      toast.error("Only JPG and PNG files are allowed", { position: "top-center" });
       return;
     }
 

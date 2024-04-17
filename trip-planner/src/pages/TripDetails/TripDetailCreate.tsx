@@ -63,7 +63,7 @@ const TripDetailCreate = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [autocompleteSearchType, setAutocompleteSearchType] = useState<any>("address");
   const [isDataSubmitting, setIsDataSubmitting] = useState(false);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
     useUser();
   const location = useLocation();
   const [tripTime, setTripTime] = useState<any>(null);
@@ -112,6 +112,11 @@ const TripDetailCreate = () => {
       });
       setIsLoading(false);
     };
+
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
 
     tryFetchingTripTime();
   }, []);

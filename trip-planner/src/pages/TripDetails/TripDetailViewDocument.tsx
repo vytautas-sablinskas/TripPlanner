@@ -22,9 +22,7 @@ const TripDetailViewDocument = ({
     await onEdit({ id: document.id, ...editedDocument });
     setIsEditDialogOpen(false);
   };
-
-  console.log(document);
-
+  
   return (
     <div className="document-card-container">
       <img
@@ -41,7 +39,7 @@ const TripDetailViewDocument = ({
       <a className="document-card-text" href={document.linkToFile}>
         {document.name}
       </a>
-      {(permissions === 2 || userId === document.userId) && (
+      {(permissions === 1 || permissions === 2 || userId === document.userId) && (
         <div className="flex-1 flex items-start">
           <Button
             variant="ghost"

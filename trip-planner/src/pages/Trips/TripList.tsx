@@ -23,13 +23,13 @@ const TripList = () => {
   const totalTripsCount = useRef(0);
   const [loading, setLoading] = useState(true);
   const [trips, setTrips] = useState([]);
-  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn } =
+  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, isAuthenticated } =
     useUser();
   const navigate = useNavigate();
 
   const tryFetchingTrips = async () => {
-    const accessToken = localStorage.getItem("accessToken");
     setLoading(true);
+    const accessToken = localStorage.getItem("accessToken");
 
     if (!checkTokenValidity(accessToken || "")) {
       const result = await refreshAccessToken();
@@ -76,16 +76,22 @@ const TripList = () => {
   }
 
   useEffect(() => {
-    setCurrentPage(1);
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
+
     tryFetchingTrips();
+  }, [page, tabSelected]);
+
+
+  useEffect(() => {
+    setCurrentPage(1);
   }, [tabSelected]);
 
   useEffect(() => {
-    tryFetchingTrips();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [page]);
-
-  console.log(trips);
 
   return (
     <div className="trip-list-container">

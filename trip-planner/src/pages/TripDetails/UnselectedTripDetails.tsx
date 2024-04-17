@@ -14,10 +14,14 @@ const UnselectedTripDetails = () => {
     const navigate = useNavigate();
     const [plans, setPlans] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, changeHasNotifications } = useUser();
+    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } = useUser();
     const [availableTrips, setAvailableTrips] = useState<any>([]);
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            navigate(Paths.LOGIN);
+        }
+
         const validateAccessToken = async () => {
             const accessToken = localStorage.getItem("accessToken");
 

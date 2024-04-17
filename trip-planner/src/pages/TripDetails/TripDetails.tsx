@@ -31,7 +31,7 @@ import TripBudgetBreakdownDialog from "./TripBudgetBreakdownDialog";
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
     useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -183,6 +183,11 @@ const TripDetails = () => {
   }, [selectedBudget]);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
+    }
+
     tryFetchingTripDetails();
   }, []);
 

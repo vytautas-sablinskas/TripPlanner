@@ -1,7 +1,5 @@
-import React from "react";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Auth/Login";
-import PageNotFound from "../pages/Other/PageNotFound";
 import Register from "../pages/Auth/Register";
 import TripList from "../pages/Trips/TripList";
 import Paths from "./Paths";
@@ -42,7 +40,7 @@ const AppRoutes = [
   },
   {
     path: '*',
-    element: <PageNotFound />
+    element: <Home />
   },
   {
     path: Paths.TRIPS,
