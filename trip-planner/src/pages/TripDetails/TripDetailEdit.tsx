@@ -55,6 +55,8 @@ const formSchema = z.object({
   notes: z.string().optional(),
   website: z.string().optional(),
   phoneNumber: z.string().optional(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
 });
 
 const TripDetailEdit = () => {
@@ -110,6 +112,7 @@ const TripDetailEdit = () => {
       }
 
       const data = await response.json();
+      console.log(data);
       const startDate = new Date(data.startTime);
       const endDate = data.endTime ? new Date(data.endTime) : undefined;
       form.reset({
@@ -123,6 +126,8 @@ const TripDetailEdit = () => {
         notes: data.notes || "",
         website: data.website || "",
         phoneNumber: data.phoneNumber || "",
+        latitude: data.latitude || null,
+        longitude: data.longitude || null,
       });
 
       setTripTime({ startDate: data.tripStartTime, endDate: data.tripEndTime });
@@ -148,7 +153,9 @@ const TripDetailEdit = () => {
         endDate: undefined,
       },
       website: "",
-      phoneNumber: ""
+      phoneNumber: "",
+      longitude: null,
+      latitude: null,
     },
   });
 
@@ -214,6 +221,9 @@ const TripDetailEdit = () => {
       );
     }
 
+    const longitude = (geometry && geometry.longitude) || data.longitude || null;
+    const latitude = (geometry && geometry.latitude) || (data && data.latitude) || null;
+
     const response = await editTripDetails({
       name: data.name,
       eventType: Number(data.eventType),
@@ -224,8 +234,8 @@ const TripDetailEdit = () => {
       id: getTripDetailsId(),
       phoneNumber: data.phoneNumber,
       website: data.website,
-      longitude: geometry?.longitude || data.longitude || null,
-      latitude: geometry?.latitude || data.latitude || null,
+      longitude,
+      latitude,
     });
     if (!response || !response.ok) {
       toast.error("Unexpected error. Try again later", {

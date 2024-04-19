@@ -176,7 +176,6 @@
               colors={["blue-700", "gray-400", colorOfSpendings]}
               maxValue={maxValue}
               yAxisWidth={80}
-              tickGap={5}
               valueFormatter={valueFormatterLineChart}
               showAnimation
             />
