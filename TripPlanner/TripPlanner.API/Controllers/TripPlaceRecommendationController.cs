@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using TripPlanner.API.Database.Roles;
 using TripPlanner.API.Dtos.TripPlaceRecommendations;
 using TripPlanner.API.Services.TripPLaceRecommendations;
 
@@ -23,6 +25,7 @@ public class TripPlaceRecommendationController : ControllerBase
     }
 
     [HttpGet("recommendations/weights")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetRecommendationWeights()
     {
         var recommendations = await _tripPlaceRecommendationService.GetRecommendationWeights();
@@ -31,6 +34,7 @@ public class TripPlaceRecommendationController : ControllerBase
     }
 
     [HttpPut("recommendations/weights")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> EditRecommendationWeights([FromBody] EditTripRecommendationDto dto)
     {
         await _tripPlaceRecommendationService.EditRecommendationWeights(dto);

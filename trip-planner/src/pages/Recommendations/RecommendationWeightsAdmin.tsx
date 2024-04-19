@@ -17,6 +17,7 @@ const RecommendationWeightsAdmin = () => {
     changeUserInformationToLoggedIn,
     changeUserInformationToLoggedOut,
     isAuthenticated,
+    role,
   } = useUser();
   const [weights, setWeights] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<any>(true);
@@ -136,6 +137,18 @@ const RecommendationWeightsAdmin = () => {
     if (!isAuthenticated) {
       navigate(Paths.LOGIN);
       return;
+    }
+
+    if (Array.isArray(role)) {
+        if (!role.includes("Admin")) {
+            navigate(Paths.HOME);
+            return;
+        }
+    } else {
+        if (role !== "Admin") {
+            navigate(Paths.HOME);
+            return;
+        }
     }
 
     tryFetchingRecommendations();
