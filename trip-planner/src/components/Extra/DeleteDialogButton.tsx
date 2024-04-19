@@ -18,9 +18,11 @@ export function DeleteDialogButton({
   dialogButtonText,
   onDelete,
   isLoading,
+  open,
+  setOpen
 }: any) {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full p-0">
           <CircleX className="mr-2 h-4 w-4" />

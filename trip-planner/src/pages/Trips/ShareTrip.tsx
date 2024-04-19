@@ -192,16 +192,17 @@ const ShareTrip = () => {
       return;
     }
 
-    if (files.length + selectedPhotos.length > 5) {
-      toast.error("You can only upload up to 5 photos", {
+    if (files.length + selectedPhotos.length > 10) {
+      toast.error("You can only upload up to 10 photos", {
         position: "top-center",
       });
       return;
     }
 
-    const invalidFiles = Array.from(files).filter((file : any) => !ACCEPTED_IMAGE_TYPES.includes(file.type));
-    if (invalidFiles) {
-      toast.error("Some files had invalid type. Only JPG and PNG files are allowed", { position: "top-center" });
+    debugger;
+    const hasInvalidType = Array.from(files).filter((file : any) => !ACCEPTED_IMAGE_TYPES.includes(file.type));
+    if (hasInvalidType.length > 0) {
+      toast.error("Some files had invalid types. Only JPG and PNG files are allowed", { position: "top-center" });
       return;
     }
 
@@ -241,7 +242,7 @@ const ShareTrip = () => {
               />
               <CirclePlus className="ml-2 h-4 w-4" />
             </Button>
-            <Label className="ml-2">Up to 5 photos</Label>
+            <Label className="ml-2">Up to 10 photos</Label>
             <div className="flex flex-wrap gap-10 min-h-[240px] p-2 border">
               {selectedPhotos &&
                 Array.from(selectedPhotos).map((photo: any, index: any) => (

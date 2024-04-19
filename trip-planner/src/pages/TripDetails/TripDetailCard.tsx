@@ -34,6 +34,7 @@ const TripDetailCard = ({
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
     useUser();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<any>(false);
 
   const getTripId = () => {
     return location.pathname.split("/").pop() || "";
@@ -171,6 +172,8 @@ const TripDetailCard = ({
                   dialogButtonText="Delete"
                   onDelete={handleDelete}
                   isLoading={isLoading}
+                  open={isDeleteDialogOpen}
+                  setOpen={setIsDeleteDialogOpen}
                 />
               </div>
             )}
