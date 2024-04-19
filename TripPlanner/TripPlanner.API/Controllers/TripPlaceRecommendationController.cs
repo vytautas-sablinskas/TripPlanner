@@ -21,4 +21,20 @@ public class TripPlaceRecommendationController : ControllerBase
         var recommendations = await _tripPlaceRecommendationService.GetRecommendations(dto);
         return Ok(recommendations);
     }
+
+    [HttpGet("recommendations/weights")]
+    public async Task<IActionResult> GetRecommendationWeights()
+    {
+        var recommendations = await _tripPlaceRecommendationService.GetRecommendationWeights();
+
+        return Ok(recommendations);
+    }
+
+    [HttpPut("recommendations/weights")]
+    public async Task<IActionResult> EditRecommendationWeights([FromBody] EditTripRecommendationDto dto)
+    {
+        await _tripPlaceRecommendationService.EditRecommendationWeights(dto);
+
+        return NoContent();
+    }
 }

@@ -142,6 +142,12 @@ const Header = ({ isHomePage } : any) => {
                 >
                   Recommendations
                 </Link>
+                <Link
+                  to={Paths.RECOMMENDATION_WEIGHTS}
+                  className="link font-bold !mr-1"
+                >
+                  Manage Recommendations
+                </Link>
               </>
             )}
 

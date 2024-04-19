@@ -23,6 +23,7 @@ const Paths = {
     UNSELECTED_PLANS: '/unselected-plans',
     USER_DOCUMENTS: '/user-documents',
     TRIP_INVITATION: '/trips/:tripId/invitation/:email',
+    RECOMMENDATION_WEIGHTS: '/recommendations/weights'
 }
 
 export default Paths

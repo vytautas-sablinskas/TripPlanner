@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Text;
+using TripPlanner.API.Database.DataAccess;
+using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.TripPlaceRecommendations;
 using TripPlanner.API.Extensions;
 using TripPlanner.API.Services.TripPlaceRecommendations;
@@ -11,12 +14,29 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
     private readonly string _googleApiKey;
+    private readonly IRepository<RecommendationWeight> _recommendationWeightRepository;
 
-    public TripPlaceRecommendationService(HttpClient httpClient, IConfiguration configuration)
+    private readonly List<RecommendationWeightDto> DEFAULT_WEIGHTS = new List<RecommendationWeightDto>()
+     {
+            new RecommendationWeightDto { Name = "RatingNotImportant", Value = 30 },
+            new RecommendationWeightDto { Name = "RatingModeratelyImportant", Value = 60 },
+            new RecommendationWeightDto { Name = "RatingImportant", Value = 90 },
+            new RecommendationWeightDto { Name = "RatingCountNotImportant", Value = 30 },
+            new RecommendationWeightDto { Name = "RatingCountModeratelyImportant", Value = 60 },
+            new RecommendationWeightDto { Name = "RatingCountImportant", Value = 90 },
+            new RecommendationWeightDto { Name = "DistanceNotImportant", Value = 30 },
+            new RecommendationWeightDto { Name = "DistanceModeratelyImportant", Value = 60 },
+            new RecommendationWeightDto { Name = "DistanceImportant", Value = 90 },
+            new RecommendationWeightDto { Name = "Price", Value = 20 },
+            new RecommendationWeightDto { Name = "NoPriceFound", Value = 50 }
+     };
+
+    public TripPlaceRecommendationService(HttpClient httpClient, IConfiguration configuration, IRepository<RecommendationWeight> recommendationWeightRepository)
     {
         _httpClient = httpClient;
         _configuration = configuration;
         _googleApiKey = _configuration["Google:Key"];
+        _recommendationWeightRepository = recommendationWeightRepository;
     }
 
     public async Task<IEnumerable<CategoryRecommendation>> GetRecommendations(TripPlaceRecommendationRequestDto dto)
@@ -257,6 +277,58 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 return "Very Expensive";
             default:
                 return null;
+        }
+    }
+
+    public async Task<IEnumerable<RecommendationWeightDto>> GetRecommendationWeights()
+    {
+        var weights = await _recommendationWeightRepository.FindAll()
+            .ToListAsync();
+        foreach (var weight in DEFAULT_WEIGHTS)
+        {
+            var weightInRepo = await _recommendationWeightRepository.FindByCondition(t => t.Name == weight.Name)
+                .FirstOrDefaultAsync();
+            if (weightInRepo == null)
+            {
+                _recommendationWeightRepository.Create(new RecommendationWeight
+                {
+                    Name = weight.Name,
+                    Value = weight.Value
+                });
+            }
+        }
+
+        if (weights == null || weights.Count == 0)
+        {
+            return DEFAULT_WEIGHTS;
+        }
+
+        return weights.Select(w => new RecommendationWeightDto
+        {
+            Name = w.Name,
+            Value = w.Value
+        });
+    }
+
+    public async Task EditRecommendationWeights(EditTripRecommendationDto dto)
+    {
+        foreach (var weight in dto.RecommendationWeights)
+        {
+            var weightInRepo = await _recommendationWeightRepository.FindByCondition(t => t.Name == weight.Name)
+                .FirstOrDefaultAsync();
+            if (weightInRepo == null)
+            {
+                _recommendationWeightRepository.Create(new RecommendationWeight
+                {
+                    Name = weight.Name,
+                    Value = weight.Value
+                });
+            }
+            else
+            {
+                weightInRepo.Value = weight.Value;
+                await _recommendationWeightRepository.Update(weightInRepo);
+            }
         }
     }
 }

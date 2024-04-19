@@ -73,6 +73,8 @@ const ENDPOINTS = {
     },
     RECOMMENDATIONS: {
         GET_RECOMMENDATIONS: `${BASE_URL}/recommendations`,
+        GET_RECOMMENDATION_WEIGHTS: `${BASE_URL}/recommendations/weights`,
+        EDIT_RECOMMENDATION_WEIGHTS: `${BASE_URL}/recommendations/weights`,
     }
 };
 

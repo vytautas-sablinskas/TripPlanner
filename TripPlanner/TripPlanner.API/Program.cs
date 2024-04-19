@@ -105,6 +105,7 @@ public static class Program
         services.AddScoped<IRepository<TripDocumentMember>, Repository<TripDocumentMember>>();
         services.AddScoped<IRepository<TripInformationShare>, Repository<TripInformationShare>>();
         services.AddScoped<IRepository<TripSharePhoto>, Repository<TripSharePhoto>>();
+        services.AddScoped<IRepository<RecommendationWeight>, Repository<RecommendationWeight>>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITripService, TripService>();
