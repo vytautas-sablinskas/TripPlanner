@@ -306,6 +306,13 @@ const TripDetailView = () => {
     setIsEditDocumentSubmitting(false);
   };
 
+  const websiteUrl = tripDetail.website;
+  const getHref = () => {
+    if (!tripDetail.website) return null;
+
+    return websiteUrl.startsWith('http://') || websiteUrl.startsWith('https://') ? websiteUrl : 'https://' + websiteUrl;
+  }
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -397,7 +404,7 @@ const TripDetailView = () => {
               </a>
             )}
             {tripDetail.website && (
-              <a href={tripDetail.website} target="_blank">
+              <a href={getHref()} target="_blank">
                 <Globe className="w-4 h-4 mr-2" />
                 {tripDetail.website}
               </a>

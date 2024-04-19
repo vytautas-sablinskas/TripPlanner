@@ -158,7 +158,7 @@ const EditTrip = () => {
       return;
     }
 
-    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+    if (!ACCEPTED_IMAGE_TYPES.some(acceptedType => acceptedType === file.type)) {
       toast.error("Some files had invalid type. Only JPG and PNG files are allowed", { position: "top-center" });
       return;
     }

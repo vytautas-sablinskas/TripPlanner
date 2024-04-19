@@ -28,4 +28,8 @@ public class GetEditTripDetailsDto
     public DateTime TripStartTime { get; set; }
 
     public DateTime TripEndTime { get; set; }
+
+    public double Latitude { get; set; }
+
+    public double Longitude { get; set; }
 }

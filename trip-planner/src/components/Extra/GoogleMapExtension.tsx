@@ -33,7 +33,9 @@ function MyComponent({ mapLocations } : any) {
   );
   const [shouldRender, setShouldRender] = useState<any>(false);
   const [isGetRoutesDisabled, setIsGetRoutesDisabled] = useState<any>(false);
-  const [travelMode, setTravelMode] = useState<any>("DRIVING");
+  const [travelMode, setTravelMode] = useState<any>("WALKING");
+  const [distance, setDistance] = useState<any>(null);
+  const [duration, setDuration] = useState<any>(null);
  
   const handleMarkerClick = (marker: any) => {
     const newPosition = { lat: marker.lat, lng: marker.lng };
@@ -133,6 +135,7 @@ function MyComponent({ mapLocations } : any) {
               <SelectGroup>
                 <SelectLabel>Travel Mode</SelectLabel>
                 {Object.keys(google.maps.TravelMode)
+                  .reverse()
                   .filter(mode => mode !== "TWO_WHEELER" && mode !== "TRANSIT" && mode !== "BICYCLING")
                   .map((mode: any) => (
                     <SelectItem value={mode} key={mode}>
@@ -166,7 +169,7 @@ function MyComponent({ mapLocations } : any) {
             </SelectGroup>
           </SelectContent>
         </Select>
-        
+
       </div>
       <Map
         defaultCenter={center}
@@ -186,6 +189,9 @@ function MyComponent({ mapLocations } : any) {
         zoomToPlace={getBounds}
         setIsGetRoutesDisabled={setIsGetRoutesDisabled}
         travelMode={travelMode}
+        selectedMarker={selectedMarker}
+        setDistance={setDistance}
+        setDuration={setDuration}
         />
         {mapLocations[selectedDay] && mapLocations[selectedDay].map((location: any, index: any) => {
           return (
@@ -206,7 +212,9 @@ function MyComponent({ mapLocations } : any) {
           >
             <div>
               <h2>{selectedMarker.title}</h2>
-              <p>{selectedMarker.info}</p>
+              {(duration && distance) &&
+                <p>{duration}, {distance}</p>
+              }
             </div>
           </InfoWindow>
         )}
@@ -215,66 +223,71 @@ function MyComponent({ mapLocations } : any) {
   );
 }
 
-function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, zoomToPlace, setIsGetRoutesDisabled, travelMode } : any) {
+function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, zoomToPlace, setIsGetRoutesDisabled, travelMode, selectedMarker, setDistance, setDuration } : any) {
   const map = useMap();
   const routesLibrary = useMapsLibrary("routes");
-  const [directionsRenderers, setDirectionsRenderers] = useState<any>([]);
-  const [routes, setRoutes] = useState<google.maps.DirectionsRoute[]>([]);
+  const [directionsRenderer, setDirectionsRenderer] = useState<any>(null);
+  const [route, setRoute] = useState<google.maps.DirectionsRoute | null>(null);
 
   useEffect(() => {
-    directionsRenderers.forEach((directionsRenderer: any) => { 
+    if (directionsRenderer) {
       directionsRenderer.setMap(null);
-    });
-
-    setIsGetRoutesDisabled(false);
-    setRoutes([]);
-  }, [selectedDay, travelMode]);
-
-  useEffect(() => {
-    if (!routesLibrary || !map || !shouldRender) return;
-
-    const newDirectionsRenderers = mapLocations[selectedDay].map((_ : any, index : any) => {
-      return new routesLibrary.DirectionsRenderer({ map, suppressMarkers: true, preserveViewport: true});
-    });
-
-    setDirectionsRenderers(newDirectionsRenderers);
-  }, [routesLibrary, map, mapLocations, selectedDay, shouldRender]);
-
-  useEffect(() => {
-    if (directionsRenderers.length === 0 || !mapLocations[selectedDay] || !mapLocations[selectedDay].length || !shouldRender) return;
-
-    const locations = mapLocations[selectedDay];
-
-    for (let i = 0; i < locations.length - 1; i++) {
-      const origin = locations[i];
-      const destination = locations[i + 1];
-
-      const directionsService = routesLibrary ? new routesLibrary.DirectionsService() : null;
-      const directionsRenderer = directionsRenderers[i];
-
-      directionsService?.route(
-        {
-          origin,
-          destination,
-          travelMode,
-          provideRouteAlternatives: true,
-        },
-        (response: any, status: any) => {
-          if (status === "OK") {
-            directionsRenderer.setDirections(response);
-            setRoutes(prevRoutes => [...prevRoutes, ...response.routes]);
-            setShouldRender(false);
-            map?.fitBounds(zoomToPlace());
-            setIsGetRoutesDisabled(true);
-          } else {
-            console.error("Directions request failed due to " + status);
-          }
-        }
-      );
     }
-  }, [directionsRenderers, mapLocations, selectedDay]);
 
-  console.log(routes);
+    setShouldRender(false);
+    setDistance(null);
+    setRoute(null);
+    setDuration(null);
+    setIsGetRoutesDisabled(false);
+  }, [selectedMarker, travelMode]);
+
+  useEffect(() => {
+    if (route || mapLocations[selectedDay]?.findIndex((location: any) => location === selectedMarker) === mapLocations[selectedDay]?.length - 1) {
+      setShouldRender(false);
+      return;
+    }
+
+    if (!routesLibrary || !map || !shouldRender || !selectedMarker) return;
+
+    const origin = selectedMarker;
+    const destinationIndex = mapLocations[selectedDay].findIndex((location: any) => location === selectedMarker) + 1;
+
+    const destination = mapLocations[selectedDay][destinationIndex];
+
+    const directionsService = new routesLibrary.DirectionsService();
+
+    directionsService.route(
+      {
+        origin,
+        destination,
+        travelMode,
+        optimizeWaypoints: true,
+      },
+      (response: any, status: any) => {
+        if (status === "OK") {
+          const route = response.routes[0];
+          const leg = route.legs[0];
+
+          setRoute(route);
+          setDistance(leg.distance.text);
+          setDuration(leg.duration.text);
+
+          if (directionsRenderer) {
+            directionsRenderer.setMap(null);
+          }
+
+          const newDirectionsRenderer = new routesLibrary.DirectionsRenderer({ map, suppressMarkers: true, preserveViewport: true });
+          newDirectionsRenderer.setDirections(response);
+          setDirectionsRenderer(newDirectionsRenderer);
+
+          setShouldRender(false);
+          map?.fitBounds(zoomToPlace());
+        } else {
+          console.error("Directions request failed due to " + status);
+        }
+      }
+    );
+  }, [mapLocations, selectedDay, shouldRender, selectedMarker]);
 
   return null;
 }
