@@ -563,6 +563,7 @@ const TripDetails = () => {
             tripEndDate={tripDetails.tripInformation.endDate}
             mainCurrency={budget.currency}
             totalBudget={budget.budgetAmount}
+            isUnlimited={budget.unlimitedBudget}
           />
         </div>
       )}
