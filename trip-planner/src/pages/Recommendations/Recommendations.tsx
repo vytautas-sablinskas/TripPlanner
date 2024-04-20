@@ -25,9 +25,9 @@ export default function Recommendations() {
   const [categoryError, setCategoryError] = useState<any>(null);
   const [radius, setRadius] = useState<any>(500);
   const [categories, setCategories] = useState<any>([]);
-  const [selectedRating, setSelectedRating] = useState<any>("60");
-  const [selectedRatingCount, setSelectedRatingCount] = useState<any>("60");
-  const [selectedDistance, setSelectedDistance] = useState<any>("60");
+  const [selectedRating, setSelectedRating] = useState<any>("RatingModeratelyImportant");
+  const [selectedRatingCount, setSelectedRatingCount] = useState<any>("RatingCountModeratelyImportant");
+  const [selectedDistance, setSelectedDistance] = useState<any>("DistanceModeratelyImportant");
   const [selectedPrice, setSelectedPrice] = useState<any>("2");
   const [isDataLoading, setIsDataLoading] = useState<any>(false);
   const [recommendations, setRecommendations] = useState<any>([]);
@@ -88,9 +88,9 @@ export default function Recommendations() {
     setCategoryError(null);
     setCategories([]);
     setRadius(500);
-    setSelectedRating("60");
-    setSelectedRatingCount("60");
-    setSelectedDistance("60");
+    setSelectedRating("RatingModeratelyImportant");
+    setSelectedRatingCount("RatingCountModeratelyImportant");
+    setSelectedDistance("DistanceModeratelyImportant");
     setSelectedPrice("2");
     setIsDataLoading(false);
     setRecommendations([]);
@@ -121,9 +121,9 @@ export default function Recommendations() {
             setCategoryError={setCategoryError}
             setAddressError={setAddressError}
             dto={{
-              ratingWeight: enabled.find((e : any) => e.id === "rating")?.isEnabled ? Number(selectedRating) / 100 : 0,
-              ratingCountWeight: enabled.find((e : any) => e.id === "ratingCount")?.isEnabled ? Number(selectedRatingCount) / 100 : 0,
-              distanceWeight: enabled.find((e : any) => e.id === "distance")?.isEnabled ? Number(selectedDistance) / 100 : 0,
+              ratingWeight: enabled.find((e : any) => e.id === "rating")?.isEnabled ? selectedRating : "None",
+              ratingCountWeight: enabled.find((e : any) => e.id === "ratingCount")?.isEnabled ? selectedRatingCount : "None",
+              distanceWeight: enabled.find((e : any) => e.id === "distance")?.isEnabled ? selectedDistance : "None",
               categories: categories.map((category: any) => Number(category)),
               latitude: geometry?.latitude,
               longitude: geometry?.longitude,
@@ -179,7 +179,7 @@ const Footer = ({ geometry, address, setAddressError, categories, setCategoryErr
           result.data.id
         );
       }
-      
+
       try {
         const response = await getRecommendations(dto);
         if (!response.ok) {

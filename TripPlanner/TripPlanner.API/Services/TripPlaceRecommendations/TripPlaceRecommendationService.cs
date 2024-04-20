@@ -59,7 +59,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 continue;
             }
 
-            var recommendations = GenerateRecommendations(response.Places, dto, category);
+            var recommendations = await GenerateRecommendations(response.Places, dto, category);
             allCategoryRecommendations.Add(new CategoryRecommendation
             {
                 Category = category.ToString(),
@@ -119,11 +119,21 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         }
     }
 
-    private static IEnumerable<PlaceRecommendation> GenerateRecommendations(IEnumerable<Place> places, TripPlaceRecommendationRequestDto dto, RecommendationCategories mainCategory)
+    private async Task<IEnumerable<PlaceRecommendation>> GenerateRecommendations(IEnumerable<Place> places, TripPlaceRecommendationRequestDto dto, RecommendationCategories mainCategory)
     {
         var ratingPlacesOrdered = places.OrderByDescending(r => r.Rating).ToList();
         var ratingCountPlacesOrdered = places.OrderByDescending(r => r.UserRatingCount).ToList();
         var mainCategoryFormatted = mainCategory.ToString().SeparateByUpperAndAddSpaces();
+        var ratingWeightRecommendation = await _recommendationWeightRepository.FindByCondition(t => t.Name == dto.RatingWeight)
+            .FirstOrDefaultAsync();
+        var ratingCountWeightRecommendation = await _recommendationWeightRepository.FindByCondition(t => t.Name == dto.RatingCountWeight)
+            .FirstOrDefaultAsync();
+        var distanceWeightRecommendation = await _recommendationWeightRepository.FindByCondition(t => t.Name == dto.DistanceWeight)
+            .FirstOrDefaultAsync();
+
+        double actualRatingWeight = ratingWeightRecommendation == null ? 0d : ratingWeightRecommendation.Value / 100d;
+        double actualRatingCountWeight = ratingCountWeightRecommendation == null ? 0d : ratingCountWeightRecommendation.Value / 100d;
+        double actualDistanceWeight = distanceWeightRecommendation == null ? 0d : distanceWeightRecommendation.Value / 100d;
 
         var totalCount = places.Count();
         var recommendations = places
@@ -145,9 +155,9 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
                 PriceLevel = GetPriceLevel(place.PriceLevel),
                 Location = place.Location
             },
-            Score = (dto.RatingWeight * GetScoreFromOrderedList(ratingPlacesOrdered, place)) +
-                    (dto.RatingCountWeight * GetScoreFromOrderedList(ratingCountPlacesOrdered, place)) +
-                    (dto.DistanceWeight * CalculatePositionScoreBeforeWeight(index, totalCount)) +
+            Score = (actualRatingWeight * GetScoreFromOrderedList(ratingPlacesOrdered, place)) +
+                    (actualRatingCountWeight * GetScoreFromOrderedList(ratingCountPlacesOrdered, place)) +
+                    (actualDistanceWeight * CalculatePositionScoreBeforeWeight(index, totalCount)) +
                     CalculatePriceWeight(dto.PriceLevel, place.PriceLevel),
             PhotoUri = place.Photos.Count > 0 ? place.Photos[0].Name : null,
         }).ToList();
@@ -161,7 +171,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         return recommendations;
     }
 
-    private static double CalculatePriceWeight(GooglePriceLevel preferedPriceLevel, string? actualPriceLevel)
+    private double CalculatePriceWeight(GooglePriceLevel preferedPriceLevel, string? actualPriceLevel)
     {
         if (preferedPriceLevel == GooglePriceLevel.NO_RATING)
         {
@@ -170,13 +180,27 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
 
         if (string.IsNullOrEmpty(actualPriceLevel))
         {
-            return 0.45;
+            var priceWeightWhenNotFound = _recommendationWeightRepository.FindByCondition(t => t.Name == "NoPriceFound")
+                .FirstOrDefault();
+            if (priceWeightWhenNotFound == null)
+            {
+                return 0;
+            }
+
+            return priceWeightWhenNotFound.Value / (double)100;
+        }
+
+        var priceWeight = _recommendationWeightRepository.FindByCondition(t => t.Name == "Price")
+            .FirstOrDefault();
+        if (priceWeight == null)
+        {
+            return 0;
         }
 
         var actualPriceLevelEnum = ConvertToPriceLevelEnum(actualPriceLevel);
         var distance = Math.Abs((int)preferedPriceLevel - (int)actualPriceLevelEnum);
 
-        var score = 0.9 - (0.2 * distance) < 0 ? 0 : 0.9 - (0.2 * distance);
+        var score = 1 - ((priceWeight.Value / (double)100) * distance);
 
         return score;
     }

@@ -6,9 +6,9 @@ public record TripPlaceRecommendationRequestDto(
     double Radius,
     double Longitude,
     double Latitude,
-    double RatingWeight,
-    double RatingCountWeight,
-    double DistanceWeight,
+    string RatingWeight,
+    string RatingCountWeight,
+    string DistanceWeight,
     IEnumerable<RecommendationCategories> Categories,
     GooglePriceLevel PriceLevel
 );

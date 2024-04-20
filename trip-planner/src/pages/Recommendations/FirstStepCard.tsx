@@ -67,7 +67,7 @@ const FirstStepCard = ({
         </div>
         <Slider
           min={500}
-          max={3000}
+          max={5000}
           step={1}
           defaultValue={[radius]}
           onValueChange={(value: any) => {
