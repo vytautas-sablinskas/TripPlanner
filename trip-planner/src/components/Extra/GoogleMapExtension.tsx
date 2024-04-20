@@ -82,7 +82,6 @@ function MyComponent({ mapLocations } : any) {
       setTimeout(() => {
         setIsZoomedIn(true);
       }, 200)
-      return;
     } else {
       const z = google.maps.event.addListener(
         map,
@@ -291,7 +290,7 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
         }
       }
     );
-  }, [mapLocations, selectedDay, shouldRender, selectedMarker]);
+  }, [shouldRender]);
 
   return null;
 }
