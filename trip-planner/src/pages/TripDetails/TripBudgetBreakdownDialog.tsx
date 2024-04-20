@@ -6,7 +6,7 @@
   } from "@/components/ui/dialog";
   import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
   import { useEffect, useState } from "react";
-  import { AreaChart, BarChart, LineChart } from "@tremor/react";
+  import { AreaChart, BarChart } from "@tremor/react";
   import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 
   const TripBudgetBreakdownDialog = ({
@@ -16,7 +16,8 @@
     tripStartDate,
     tripEndDate,
     mainCurrency,
-    totalBudget
+    totalBudget,
+    isUnlimited
   }: any) => {
     const budgetTypes = [
       "Activity",
@@ -107,12 +108,19 @@
         averageSpendingByDay[date] = budgetPerDay * (index + 1);
       });
     
-      const result = Object.keys(amountSpentByDay).map((date) => ({
-        date,
-        [daysKey]: amountSpentByDay[date].toFixed(2) || 0 ,
-        [expectedSpendingKey]: averageSpendingByDay[date].toFixed(2) || 0,
-        [totalSpentToDateKey]: totalSpentByDay[date].toFixed(2) || 0,
-      }));
+      const result = Object.keys(amountSpentByDay).map((date) => {
+        const entry : any = {
+          date,
+          [daysKey]: amountSpentByDay[date].toFixed(2) || 0,
+          [totalSpentToDateKey]: totalSpentByDay[date].toFixed(2) || 0,
+        };
+      
+        if (!isUnlimited) {
+          entry[expectedSpendingKey] = averageSpendingByDay[date].toFixed(2) || 0;
+        }
+      
+        return entry;
+      });
     
       return result;
     }
@@ -145,8 +153,14 @@
       return max === null ? dayValue : Math.max(max, dayValue);
     }, null);
 
-    console.log(maxValue);
+    const categoriesOfLineChart = !isUnlimited
+    ? [daysKey, expectedSpendingKey, totalSpentToDateKey]
+    : [daysKey, totalSpentToDateKey];
     const colorOfSpendings = Number(allDateSpendings[allDateSpendings?.length - 1][totalSpentToDateKey]) > Number(allDateSpendings[allDateSpendings?.length - 1][expectedSpendingKey]) ? "red" : "green-600";
+    const colorsOfLineChart = !isUnlimited 
+    ? ["blue-700", "gray-400", colorOfSpendings] 
+    : ["blue-700", colorOfSpendings];
+
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[1000px]">
@@ -172,8 +186,8 @@
               data={allDateSpendings}
               key={allDateSpendings.length}
               index="date"
-              categories={[daysKey, expectedSpendingKey, totalSpentToDateKey]}
-              colors={["blue-700", "gray-400", colorOfSpendings]}
+              categories={categoriesOfLineChart}
+              colors={colorsOfLineChart}
               maxValue={maxValue}
               yAxisWidth={80}
               valueFormatter={valueFormatterLineChart}

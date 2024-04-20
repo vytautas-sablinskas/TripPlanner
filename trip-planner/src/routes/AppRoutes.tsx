@@ -23,6 +23,7 @@ import ShareTripView from "@/pages/Trips/ShareTripView";
 import UnselectedTripDetails from "@/pages/TripDetails/UnselectedTripDetails";
 import UserDocuments from "@/pages/Profile/UserDocuments";
 import TripInvitation from "@/pages/Trips/TripInvitation";
+import RecommendationWeightsAdmin from "@/pages/Recommendations/RecommendationWeightsAdmin";
 
 const AppRoutes = [
   {
@@ -125,6 +126,10 @@ const AppRoutes = [
   {
     path: Paths.TRIP_INVITATION,
     element: <TripInvitation />
+  },
+  {
+    path: Paths.RECOMMENDATION_WEIGHTS,
+    element: <RecommendationWeightsAdmin />
   }
 ];
 

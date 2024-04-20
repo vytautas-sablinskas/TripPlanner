@@ -300,7 +300,6 @@ const TripDetails = () => {
   };
 
   const handeEditSubmit = (formValues: any, response : any) => {
-    debugger;
     setBudget({
       ...budget,
       spentAmount: response.amount,
@@ -564,6 +563,7 @@ const TripDetails = () => {
             tripEndDate={tripDetails.tripInformation.endDate}
             mainCurrency={budget.currency}
             totalBudget={budget.budgetAmount}
+            isUnlimited={budget.unlimitedBudget}
           />
         </div>
       )}

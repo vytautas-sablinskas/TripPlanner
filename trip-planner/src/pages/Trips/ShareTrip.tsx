@@ -199,7 +199,6 @@ const ShareTrip = () => {
       return;
     }
 
-    debugger;
     const hasInvalidType = Array.from(files).filter((file : any) => !ACCEPTED_IMAGE_TYPES.includes(file.type));
     if (hasInvalidType.length > 0) {
       toast.error("Some files had invalid types. Only JPG and PNG files are allowed", { position: "top-center" });

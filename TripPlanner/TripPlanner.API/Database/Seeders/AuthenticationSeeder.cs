@@ -38,7 +38,7 @@ public class AuthenticationSeeder : IAuthenticationSeeder
         if (adminUserExists != null)
             return;
 
-        var createAdminUserResult = await _userManager.CreateAsync(newAdminUser, "Password1!");
+        var createAdminUserResult = await _userManager.CreateAsync(newAdminUser, "Test1!");
         if (createAdminUserResult.Succeeded)
         {
             await _userManager.AddToRolesAsync(newAdminUser, UserRoles.All);

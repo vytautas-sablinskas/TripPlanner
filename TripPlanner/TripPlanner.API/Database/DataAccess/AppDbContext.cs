@@ -32,6 +32,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<TripSharePhoto> TripSharePhotos { get; set; }
 
+    public DbSet<RecommendationWeight> RecommendationWeights { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
     {

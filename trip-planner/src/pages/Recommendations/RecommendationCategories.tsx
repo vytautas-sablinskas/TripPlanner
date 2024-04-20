@@ -200,15 +200,15 @@ const RecommendationCategories = ({
               onValueChange={setSelectedRating}
             >
               <div className="flex items-center space-x-2 mr-2">
-                <RadioGroupItem value="30" id="30" />
+                <RadioGroupItem value="RatingNotImportant" id="RatingNotImportant" />
                 <Label htmlFor="option-one">Not Important</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="60" id="60" />
+                <RadioGroupItem value="RatingModeratelyImportant" id="RatingModeratelyImportant" />
                 <Label htmlFor="option-two">Moderately Important</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="90" id="90" />
+                <RadioGroupItem value="RatingImportant" id="RatingImportant" />
                 <Label htmlFor="option-two">Important</Label>
               </div>
             </RadioGroup>
@@ -263,15 +263,15 @@ const RecommendationCategories = ({
               onValueChange={setSelectedRatingCount}
             >
               <div className="flex items-center space-x-2 mr-2">
-                <RadioGroupItem value="30" id="30" />
+                <RadioGroupItem value="RatingCountNotImportant" id="RatingCountNotImportant" />
                 <Label htmlFor="option-one">Not Important</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="60" id="60" />
+                <RadioGroupItem value="RatingCountModeratelyImportant" id="RatingCountModeratelyImportant" />
                 <Label htmlFor="option-two">Moderately Important</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="90" id="90" />
+                <RadioGroupItem value="RatingCountImportant" id="RatingCountImportant" />
                 <Label htmlFor="option-two">Important</Label>
               </div>
             </RadioGroup>
@@ -324,15 +324,15 @@ const RecommendationCategories = ({
               onValueChange={setSelectedDistance}
             >
               <div className="flex items-center space-x-2 mr-2">
-                <RadioGroupItem value="30" id="30" />
+                <RadioGroupItem value="DistanceNotImportant" id="DistanceNotImportant" />
                 <Label htmlFor="option-one">Not Important</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="60" id="60" />
+                <RadioGroupItem value="DistanceModeratelyImportant" id="DistanceModeratelyImportant" />
                 <Label htmlFor="option-two">Moderately Important</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="90" id="90" />
+                <RadioGroupItem value="DistanceImportant" id="DistanceImportant" />
                 <Label htmlFor="option-two">Important</Label>
               </div>
             </RadioGroup>

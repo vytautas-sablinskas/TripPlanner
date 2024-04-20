@@ -4,7 +4,7 @@ import Paths from "../../routes/Paths";
 import { useUser } from "../../providers/user-provider/UserContext";
 import { logout, refreshAccessToken } from "../../api/AuthenticationService";
 import { BellDot, File, LogOut, Menu, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { toast } from "sonner";
 import { getUserInformation } from "@/api/UserService";
@@ -17,18 +17,43 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-const Header = ({ isHomePage } : any) => {
+const Header = ({ isHomePage }: any) => {
   const {
     isAuthenticated,
     hasNotifications,
     changeUserInformationToLoggedOut,
     changeUserInformationToLoggedIn,
     changeHasNotifications,
+    role,
   } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");
+  const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");   
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const isAdmin = useRef(false);
+
+  console.log(role);
+  console.log(isAdmin);
+
+  useEffect(() => {
+    if (!role) {
+      return;
+    }
+
+    if (Array.isArray(role)) {
+      if (!role.includes("Admin")) {
+        isAdmin.current = false;
+        return;
+      }
+    } else {
+      if (role !== "Admin" && !role.split(",").includes("Admin")) {
+        isAdmin.current = false;
+        return;
+      }
+    }
+
+    isAdmin.current = true;
+  }, [role]);
 
   const checkIsSmallScreen = () => {
     setIsSmallScreen(window.innerWidth <= 768);
@@ -86,7 +111,9 @@ const Header = ({ isHomePage } : any) => {
   }, [location?.pathname]);
 
   return (
-    <header className={`${isHomePage ? "header-container-home" : "header-container"}`}>
+    <header
+      className={`${isHomePage ? "header-container-home" : "header-container"}`}
+    >
       <div className="flex justify-center items-end">
         <Link to={Paths.HOME}>
           <img src="/logo.png" alt="Logo" className="h-[80px]" />
@@ -104,9 +131,12 @@ const Header = ({ isHomePage } : any) => {
           </>
         ) : (
           <div className="flex items-center">
-            {isSmallScreen ? (
+            {isSmallScreen && !isAdmin.current ? (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild className="cursor-pointer mb-1 mr-1 px-3 link">
+                <DropdownMenuTrigger
+                  asChild
+                  className="cursor-pointer mb-1 mr-1 px-3 link"
+                >
                   <div>
                     <Menu className="w-5 h-5 notification" />
                   </div>
@@ -114,10 +144,16 @@ const Header = ({ isHomePage } : any) => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Menu</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate(Paths.TRIPS)} className="cursor-pointer">
+                  <DropdownMenuItem
+                    onClick={() => navigate(Paths.TRIPS)}
+                    className="cursor-pointer"
+                  >
                     Trips
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate(Paths.UNSELECTED_PLANS)} className="cursor-pointer">
+                  <DropdownMenuItem
+                    onClick={() => navigate(Paths.UNSELECTED_PLANS)}
+                    className="cursor-pointer"
+                  >
                     Plans
                   </DropdownMenuItem>
                   <DropdownMenuItem
@@ -130,25 +166,41 @@ const Header = ({ isHomePage } : any) => {
               </DropdownMenu>
             ) : (
               <>
-                <Link to={Paths.TRIPS} className="link font-bold !mr-1">
-                  Trips
-                </Link>
-                <Link to={Paths.UNSELECTED_PLANS} className="link font-bold !mr-1">
-                  Plans
-                </Link>
-                <Link
-                  to={Paths.RECOMMENDATIONS}
-                  className="link font-bold !mr-1"
-                >
-                  Recommendations
-                </Link>
+                {!isAdmin.current && (
+                  <>
+                    <Link to={Paths.TRIPS} className="link font-bold !mr-1">
+                      Trips
+                    </Link>
+                    <Link
+                      to={Paths.UNSELECTED_PLANS}
+                      className="link font-bold !mr-1"
+                    >
+                      Plans
+                    </Link>
+                    <Link
+                      to={Paths.RECOMMENDATIONS}
+                      className="link font-bold !mr-1"
+                    >
+                      Recommendations
+                    </Link>
+                  </>
+                )}
+                {isAdmin.current && (
+                  <Link
+                    to={Paths.RECOMMENDATION_WEIGHTS}
+                    className="link font-bold !mr-1"
+                  >
+                    Manage Recommendations
+                  </Link>
+                )}
               </>
             )}
-
-            <Link to={Paths.NOTIFICATIONS} className="link mr-3 notification">
-              <BellDot className="w-5 h-5" />
-              <span className={hasNotifications ? "badge" : ""} />
-            </Link>
+            {!isAdmin.current && (
+              <Link to={Paths.NOTIFICATIONS} className="link mr-3 notification">
+                <BellDot className="w-5 h-5" />
+                <span className={hasNotifications ? "badge" : ""} />
+              </Link>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <img
@@ -162,18 +214,24 @@ const Header = ({ isHomePage } : any) => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>User Information</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => navigate(Paths.PROFILE)}
                   className="cursor-pointer"
                 >
                   <User className="w-4 h-4 mr-4" />
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(Paths.USER_DOCUMENTS)} className="cursor-pointer">
-                  <File className="w-4 h-4 mr-4" />
-                  Documents
-                </DropdownMenuItem>
-                <DropdownMenuItem 
+                {!isAdmin.current && (
+                  <DropdownMenuItem
+                    onClick={() => navigate(Paths.USER_DOCUMENTS)}
+                    className="cursor-pointer"
+                  >
+                    <File className="w-4 h-4 mr-4" />
+                    Documents
+                  </DropdownMenuItem>
+                )}
+
+                <DropdownMenuItem
                   onClick={handleLogout}
                   className="cursor-pointer"
                 >

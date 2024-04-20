@@ -45,7 +45,8 @@ public class CurrencyExchangeService : ICurrencyExchangeService
         double toCurrencyRate = 0;
         var API_KEY = _configuration["OpenExchangeAPI:Key"];
 
-        HttpResponseMessage response = await _httpClient.GetAsync($"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{mainCurrency}");
+        var link = $"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{mainCurrency}";
+        HttpResponseMessage response = await _httpClient.GetAsync(link);
 
         if (response.IsSuccessStatusCode)
         {
