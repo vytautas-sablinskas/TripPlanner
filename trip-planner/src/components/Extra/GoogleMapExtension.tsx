@@ -36,9 +36,11 @@ function MyComponent({ mapLocations } : any) {
   const [travelMode, setTravelMode] = useState<any>("WALKING");
   const [distance, setDistance] = useState<any>(null);
   const [duration, setDuration] = useState<any>(null);
+  const [isZoomedIn, setIsZoomedIn] = useState<any>(false);
  
   const handleMarkerClick = (marker: any) => {
     const newPosition = { lat: marker.lat, lng: marker.lng };
+    setIsZoomedIn(false);
     map?.panTo(newPosition);
     smoothZoom(map, 14, map?.getZoom());
     setSelectedMarker(marker);
@@ -77,6 +79,9 @@ function MyComponent({ mapLocations } : any) {
 
   function smoothZoom(map: any, max: any, cnt: any) {
     if (cnt >= max) {
+      setTimeout(() => {
+        setIsZoomedIn(true);
+      }, 200)
       return;
     } else {
       const z = google.maps.event.addListener(
@@ -89,7 +94,7 @@ function MyComponent({ mapLocations } : any) {
       );
       setTimeout(function () {
         map.setZoom(cnt);
-      }, 200);
+      }, 150);
     }
   }
 
@@ -204,7 +209,7 @@ function MyComponent({ mapLocations } : any) {
             />
           );
         })}
-        {selectedMarker && (
+        {(selectedMarker && isZoomedIn) && (
           <InfoWindow
             position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
             onCloseClick={handleCloseInfoWindow}
@@ -281,7 +286,6 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
           setDirectionsRenderer(newDirectionsRenderer);
 
           setShouldRender(false);
-          map?.fitBounds(zoomToPlace());
         } else {
           console.error("Directions request failed due to " + status);
         }
