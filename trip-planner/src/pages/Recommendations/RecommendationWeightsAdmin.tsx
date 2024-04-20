@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { DEFAULT_WEIGHTS } from "./RecommendationWeights";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 
 const RecommendationWeightsAdmin = () => {
   const navigate = useNavigate();
@@ -145,7 +145,7 @@ const RecommendationWeightsAdmin = () => {
             return;
         }
     } else {
-        if (role !== "Admin") {
+        if (role !== "Admin" && !role.split(',').includes('Admin')) {
             navigate(Paths.HOME);
             return;
         }
@@ -162,12 +162,14 @@ const RecommendationWeightsAdmin = () => {
     setWeights((prevWeights: any) => {
         const updatedWeights = prevWeights.map((weight: any) => {
             if (weight.name === name) {
-                return { ...weight, value: Number(value)};
+                return { ...weight, value: Number(value[0])};
             }
             return weight;
         });
         return updatedWeights;
     });
+
+    console.log(weights);
   };
 
   function splitWordsByUpperCase(word : any) {
@@ -177,7 +179,7 @@ const RecommendationWeightsAdmin = () => {
   return (
     <div className="w-full flex flex-wrap justify-center">
       <div className="w-2/4">
-        <div className="flex flex-col gap-3 my-4">
+        <div className="flex flex-col gap-4 my-4">
           <p className="text-2xl font-bold">Rating Weights</p>
           {DEFAULT_WEIGHTS.slice(0, 3).map((defaultWeight, index) => {
             const weight = weights.find(
@@ -187,9 +189,12 @@ const RecommendationWeightsAdmin = () => {
               const errorMessage = errors.find((error: any) => error.name === weight.name)?.error;
 
               return (
-                <div key={index} className="flex flex-col flex-1">
-                    <Label>{splitWordsByUpperCase(weight.name)} (0 - 100)</Label>
-                    <Input type="number" className="mt-1" value={weight.value} placeholder={`Select ${splitWordsByUpperCase(weight.name)}`} min={0} max={100} onChange={(e) => handleWeightChange(weight.name, e.target.value)}/>
+                <div key={index} className="flex flex-col flex-1 gap-3">
+                    <div className="flex justify-between">
+                      <Label>{splitWordsByUpperCase(weight.name)} (0 - 100)</Label>
+                      <Label>{weight.value}</Label>
+                    </div>
+                    <Slider defaultValue={[Number(weight.value)]} max={100} step={1} onValueChange={(value) => handleWeightChange(weight.name, value)}/>
                     {errorMessage && <p className="text-red-500 text-sm mt-1">{splitWordsByUpperCase(errorMessage)}</p>}
                 </div>
               );
@@ -197,7 +202,7 @@ const RecommendationWeightsAdmin = () => {
             return null;
           })}
         </div>
-        <div className="flex flex-col gap-3 my-4">
+        <div className="flex flex-col gap-4 my-4">
           <p className="text-2xl font-bold">Rating Count Weights</p>
           {DEFAULT_WEIGHTS.slice(3, 6).map((defaultWeight, index) => {
             const weight = weights.find(
@@ -207,9 +212,12 @@ const RecommendationWeightsAdmin = () => {
               const errorMessage = errors.find((error: any) => error.name === weight.name)?.error;
 
               return (
-                <div key={index} className="flex flex-col flex-1">
-                    <Label>{splitWordsByUpperCase(weight.name)} (0 - 100)</Label>
-                    <Input type="number" className="mt-1" value={weight.value} placeholder={`Select ${splitWordsByUpperCase(weight.name)}`} min={0} max={100} onChange={(e) => handleWeightChange(weight.name, e.target.value)}/>
+                <div key={index} className="flex flex-col flex-1 gap-3">
+                    <div className="flex justify-between">
+                      <Label>{splitWordsByUpperCase(weight.name)} (0 - 100)</Label>
+                      <Label>{weight.value}</Label>
+                    </div>
+                    <Slider defaultValue={[Number(weight.value)]} max={100} step={1} onValueChange={(value) => handleWeightChange(weight.name, value)}/>
                     {errorMessage && <p className="text-red-500 text-sm mt-1">{splitWordsByUpperCase(errorMessage)}</p>}
                 </div>
               );
@@ -217,7 +225,7 @@ const RecommendationWeightsAdmin = () => {
             return null;
           })}
         </div>
-        <div className="flex flex-col gap-3 my-4">
+        <div className="flex flex-col gap-4 my-4">
           <p className="text-2xl font-bold">Distance Weights</p>
           {DEFAULT_WEIGHTS.slice(6, 9).map((defaultWeight, index) => {
             const weight = weights.find(
@@ -227,9 +235,12 @@ const RecommendationWeightsAdmin = () => {
               const errorMessage = errors.find((error: any) => error.name === weight.name)?.error;
 
               return (
-                <div key={index} className="flex flex-col flex-1">
-                    <Label>{splitWordsByUpperCase(weight.name)} (0 - 100)</Label>
-                    <Input type="number" className="mt-1" value={weight.value} placeholder={`Select ${splitWordsByUpperCase(weight.name)}`} min={0} max={100} onChange={(e) => handleWeightChange(weight.name, e.target.value)}/>
+                <div key={index} className="flex flex-col flex-1 gap-3">
+                    <div className="flex justify-between">
+                      <Label>{splitWordsByUpperCase(weight.name)} (0 - 100)</Label>
+                      <Label>{weight.value}</Label>
+                    </div>
+                    <Slider defaultValue={[Number(weight.value)]} max={100} step={1} onValueChange={(value) => handleWeightChange(weight.name, value)}/>
                     {errorMessage && <p className="text-red-500 text-sm mt-1">{splitWordsByUpperCase(errorMessage)}</p>}
                 </div>
               );
@@ -237,7 +248,7 @@ const RecommendationWeightsAdmin = () => {
             return null;
           })}
         </div>
-        <div className="flex flex-col gap-2 my-4">
+        <div className="flex flex-col gap-4 my-4">
           <p className="text-2xl font-bold mt-4 mb-1">Price Weight</p>
           {DEFAULT_WEIGHTS.slice(9).map((defaultWeight, index) => {
             const weight = weights.find(
@@ -247,9 +258,12 @@ const RecommendationWeightsAdmin = () => {
               const errorMessage = errors.find((error: any) => error.name === weight.name)?.error;
 
               return (
-                <div key={index} className="flex flex-col">
-                  <Label>{splitWordsByUpperCase(weight.name)} {weight.name === "Price" ? "(0 - 20)" : "(0 - 100)"}</Label>
-                  <Input type="number" className="mt-1" value={weight.value} placeholder="Select Price Rate" min={0} max={weight.name === "Price" ? 20 : 100} onChange={(e) => handleWeightChange(weight.name, e.target.value)}/>
+                <div key={index} className="flex flex-col gap-3">
+                  <div className="flex justify-between">
+                      <Label>{splitWordsByUpperCase(weight.name)} {weight.name === "Price" ? "(0 - 20)" : "(0 - 100)"}</Label>
+                      <Label>{weight.value}</Label>
+                    </div>
+                  <Slider defaultValue={[Number(weight.value)]} max={weight.name === "Price" ? 20 : 100} step={1} onValueChange={(value) => handleWeightChange(weight.name, value)}/>
                   {errorMessage && <p className="text-red-500 text-sm mt-1">{splitWordsByUpperCase(errorMessage)}</p>}
                 </div>
               );

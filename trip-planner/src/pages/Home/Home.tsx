@@ -3,10 +3,15 @@ import Paths from "@/routes/Paths";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated, role } = useUser();
   const navigate = useNavigate();
 
   const onExploreClick = () => {
+    if (isAuthenticated && ((Array.isArray(role) && role.includes("Admin")) || role === "Admin" || role.split(",").includes("Admin"))) {
+      navigate(Paths.RECOMMENDATION_WEIGHTS);
+      return;
+    }
+
     if (isAuthenticated) {
       navigate(Paths.TRIPS);
       return;

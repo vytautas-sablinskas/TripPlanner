@@ -28,9 +28,12 @@ const Header = ({ isHomePage }: any) => {
   } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");
+  const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");   
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const isAdmin = useRef(false);
+
+  console.log(role);
+  console.log(isAdmin);
 
   useEffect(() => {
     if (!role) {
@@ -43,7 +46,7 @@ const Header = ({ isHomePage }: any) => {
         return;
       }
     } else {
-      if (role !== "Admin") {
+      if (role !== "Admin" && !role.split(",").includes("Admin")) {
         isAdmin.current = false;
         return;
       }
@@ -218,7 +221,7 @@ const Header = ({ isHomePage }: any) => {
                   <User className="w-4 h-4 mr-4" />
                   Profile
                 </DropdownMenuItem>
-                {!isAdmin && (
+                {!isAdmin.current && (
                   <DropdownMenuItem
                     onClick={() => navigate(Paths.USER_DOCUMENTS)}
                     className="cursor-pointer"

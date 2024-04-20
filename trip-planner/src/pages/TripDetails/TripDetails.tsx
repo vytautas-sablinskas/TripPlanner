@@ -300,7 +300,6 @@ const TripDetails = () => {
   };
 
   const handeEditSubmit = (formValues: any, response : any) => {
-    debugger;
     setBudget({
       ...budget,
       spentAmount: response.amount,
