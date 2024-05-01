@@ -10,11 +10,11 @@ public interface ITripService
 
     Task DeleteTrip(Guid tripId, string userId);
 
-    TripDto GetTrip(Guid tripId);
+    Task<TripDto> GetTrip(Guid tripId);
 
     Task<TripShareInformationDto> GetTripShareInformation(Guid tripId, string userId);
 
-    TripTimeDto GetTripTime(Guid tripId);
+    Task<TripTimeDto> GetTripTime(Guid tripId);
 
     Task<TripsDto> GetUserTrips(string userId, TripFilter filter, int page);
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TripPlanner.API.Database.DataAccess;
+﻿using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Enums;
 using TripPlanner.API.Dtos.Notifications;
@@ -17,8 +16,8 @@ public class NotificationService : INotificationService
 
     public async Task ReadUserNotifications(string userId)
     {
-        var notifications = await _notificationRepository.FindByCondition(n => n.UserId == userId)
-            .ToListAsync();
+        var notifications = await _notificationRepository.GetListByConditionAsync(n => n.UserId == userId);
+
         foreach (var notification in notifications)
         {
             notification.Status = NotificationStatus.Read;
@@ -28,8 +27,7 @@ public class NotificationService : INotificationService
 
     public async Task<IEnumerable<NotificationDto>> GetNotifications(string userId)
     {
-        var notifications = await _notificationRepository.FindByCondition(n => n.UserId == userId)
-            .ToListAsync();
+        var notifications = await _notificationRepository.GetListByConditionAsync(n => n.UserId == userId);
 
         return notifications.Select(t => new NotificationDto
         {

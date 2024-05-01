@@ -21,8 +21,7 @@ public class UserService : IUserService
     {
         var hasUnreadNotifications = _notificationRepository.FindByCondition(n => n.UserId == userId)
             .Any(n => n.Status == NotificationStatus.Unread);
-        var user = await _appUserRepository.FindByCondition(u => u.Id == userId)
-            .FirstOrDefaultAsync();
+        var user = await _appUserRepository.GetFirstOrDefaultAsync(u => u.Id == userId);
 
         return new UserInformationDto
         {

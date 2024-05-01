@@ -2,16 +2,17 @@
 using System.Net.Http;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
+using TripPlanner.API.Wrappers;
 
 namespace TripPlanner.API.Services.CurrencyExchangeService;
 
 public class CurrencyExchangeService : ICurrencyExchangeService
 {
     private readonly IRepository<CurrencyExchangeRate> _currencyExchangeRateRepository;
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientWrapper _httpClient;
     private readonly IConfiguration _configuration;
 
-    public CurrencyExchangeService(IRepository<CurrencyExchangeRate> currencyExchangeRateRepository, HttpClient httpClient, IConfiguration configuration)
+    public CurrencyExchangeService(IRepository<CurrencyExchangeRate> currencyExchangeRateRepository, IHttpClientWrapper httpClient, IConfiguration configuration)
     {
         _currencyExchangeRateRepository = currencyExchangeRateRepository;
         _httpClient = httpClient;
@@ -20,10 +21,10 @@ public class CurrencyExchangeService : ICurrencyExchangeService
 
     public async Task<double> GetCurrencyInformation(DateTime date, string mainCurrency, string currencyToGet)
     {
-        var exchangeRate = await _currencyExchangeRateRepository.FindByCondition(c => c.FromCurrency == currencyToGet &&
+        var exchangeRate = await _currencyExchangeRateRepository.GetFirstOrDefaultAsync(c => c.FromCurrency == currencyToGet &&
                                                         c.ToCurrency == mainCurrency &&
                                                         c.Date.Date == date.Date
-        ).FirstOrDefaultAsync();
+        );
 
         if (exchangeRate == null)
         {

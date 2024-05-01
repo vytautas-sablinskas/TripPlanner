@@ -1,6 +1,6 @@
 ﻿using System.Net.Mail;
 
-namespace TripPlanner.API.Services.Email;
+namespace TripPlanner.API.Wrappers;
 
 public interface ISmtpClientWrapper
 {

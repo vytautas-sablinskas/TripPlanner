@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using TripPlanner.API.Database.DataAccess;
+﻿using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Database.Roles;
 using TripPlanner.API.Dtos.Authentication;
 using TripPlanner.API.Utils;
+using TripPlanner.API.Wrappers;
 
 namespace TripPlanner.API.Services.Authentication;
 
@@ -60,8 +59,7 @@ public class AuthenticationService : IAuthenticationService
 
         await _userManager.AddToRoleAsync(newUser, UserRoles.User);
 
-        var notifications = await _notificationRepository.FindByCondition(n => n.Email != null && n.Email.ToLower() == userDto.Email.ToLower())
-            .ToListAsync();
+        var notifications = await _notificationRepository.GetListByConditionAsync(n => n.Email != null && n.Email.ToLower() == userDto.Email.ToLower());
 
         foreach (var notification in notifications)
         {
@@ -69,8 +67,7 @@ public class AuthenticationService : IAuthenticationService
             await _notificationRepository.Update(notification);
         }
 
-        var travellers = await _travellerRepository.FindByCondition(t => t.Email.ToLower() == userDto.Email.ToLower())
-            .ToListAsync();
+        var travellers = await _travellerRepository.GetListByConditionAsync(t => t.Email.ToLower() == userDto.Email.ToLower());
         foreach (var traveller in travellers)
         {
             traveller.UserId = newUser.Id;

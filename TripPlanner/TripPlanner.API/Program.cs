@@ -28,6 +28,8 @@ using TripPlanner.API.Services.TripPLaceRecommendations;
 using TripPlanner.API.Services.Trips;
 using TripPlanner.API.Services.TripTravellers;
 using TripPlanner.API.Services.User;
+using TripPlanner.API.Wrappers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TripPlanner.API;
 
@@ -126,6 +128,8 @@ public static class Program
         services.AddScoped<ISmtpClientWrapper, SmtpClientWrapper>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IUserManagerWrapper, UserManagerWrapper>();
+        services.AddScoped<IBlobContainerClientWrapper, BlobContainerClientWrapper>();
+        services.AddScoped<IHttpClientWrapper, HttpClientWrapper>();
 
         services.AddAutoMapper(typeof(Program));
 

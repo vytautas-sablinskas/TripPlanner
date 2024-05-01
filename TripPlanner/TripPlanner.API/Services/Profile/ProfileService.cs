@@ -2,15 +2,16 @@
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.Profile;
 using TripPlanner.API.Services.AzureBlobStorage;
+using TripPlanner.API.Wrappers;
 
 namespace TripPlanner.API.Services.Profile;
 
 public class ProfileService : IProfileService
 {
-    private readonly UserManager<AppUser> _userManager;
+    private readonly IUserManagerWrapper _userManager;
     private readonly IAzureBlobStorageService _azureBlobStorageService;
 
-    public ProfileService(UserManager<AppUser> userManager, IAzureBlobStorageService azureBlobStorageService)
+    public ProfileService(IUserManagerWrapper userManager, IAzureBlobStorageService azureBlobStorageService)
     {
         _userManager = userManager;
         _azureBlobStorageService = azureBlobStorageService;        

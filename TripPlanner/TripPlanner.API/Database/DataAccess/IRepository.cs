@@ -4,9 +4,13 @@ namespace TripPlanner.API.Database.DataAccess;
 
 public interface IRepository<T> where T : class
 {
-    IQueryable<T> FindAll();
+    Task<IEnumerable<T>> FindAll();
 
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
+
+    Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> expression);
+
+    Task<IEnumerable<T>> GetListByConditionAsync(Expression<Func<T, bool>> expression);
 
     T Create(T entity);
 

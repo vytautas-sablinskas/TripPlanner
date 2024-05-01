@@ -24,8 +24,7 @@ public class TripDocumentService : ITripDocumentService
 
     public async Task<IEnumerable<TripDocumentDto>> GetUserDocuments(string userId)
     {
-        var documents = await _tripDocumentRepository.FindByCondition(t => t.CreatorId == userId)
-            .ToListAsync();
+        var documents = await _tripDocumentRepository.GetListByConditionAsync(t => t.CreatorId == userId);
 
         return documents.Select(d => new TripDocumentDto(d.Name, d.LinkToFile, d.Id, d.TypeOfFile, d.CreatorId));
     }
@@ -51,15 +50,14 @@ public class TripDocumentService : ITripDocumentService
 
         var document = _tripDocumentRepository.Create(tripDocument);
 
-        var members = await _appUserRepository.FindByCondition(u => dto.MemberIds.Contains(u.Id))
-            .Select(m => new TripDocumentMember
-            {
-                MemberId = m.Id,
-                TripDocumentId = document.Id
+        var members = await _appUserRepository.GetListByConditionAsync(u => dto.MemberIds.Contains(u.Id));
+        var documentMembers = members.Select(m => new TripDocumentMember
+        {
+            MemberId = m.Id,
+            TripDocumentId = document.Id
 
-            })
-            .ToListAsync();
-        foreach (var member in members)
+        });
+        foreach (var member in documentMembers)
         {
             _tripDocumentMemberRepository.Create(member);
         }
@@ -69,9 +67,9 @@ public class TripDocumentService : ITripDocumentService
 
     public async Task<TripDocumentAndMemberDto> GetDocumentMembers(Guid documentId)
     {
-        var document = await _tripDocumentRepository.FindByCondition(d => d.Id == documentId)
+        var document = _tripDocumentRepository.FindByCondition(d => d.Id == documentId)
             .Include(d => d.Members)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
 
         var dto = new TripDocumentAndMemberDto(
             document.IsPrivateDocument,
@@ -83,15 +81,13 @@ public class TripDocumentService : ITripDocumentService
 
     public async Task<bool> EditDocument(Guid documentId, EditDocumentDto dto)
     {
-        var document = await _tripDocumentRepository.FindByCondition(t => t.Id == documentId)
-            .FirstOrDefaultAsync();
+        var document = await _tripDocumentRepository.GetFirstOrDefaultAsync(t => t.Id == documentId);
         if (document == null)
         {
             return false;
         }
 
-        var members = await _tripDocumentMemberRepository.FindByCondition(m => m.TripDocumentId == documentId)
-            .ToListAsync();
+        var members = await _tripDocumentMemberRepository.GetListByConditionAsync(m => m.TripDocumentId == documentId);
         foreach (var member in members)
         {
             await _tripDocumentMemberRepository.Delete(member);
@@ -116,8 +112,7 @@ public class TripDocumentService : ITripDocumentService
     public async Task<bool> DeleteDocument(Guid documentId)
     {
 
-        var document = await _tripDocumentRepository.FindByCondition(t => t.Id == documentId)
-            .FirstOrDefaultAsync();
+        var document = await _tripDocumentRepository.GetFirstOrDefaultAsync(t => t.Id == documentId);
         if (document == null)
         {
             return false;

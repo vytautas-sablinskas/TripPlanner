@@ -1,5 +1,8 @@
-﻿namespace TripPlanner.API.Services.TripPlaceRecommendations;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace TripPlanner.API.Services.TripPlaceRecommendations;
+
+[ExcludeFromCodeCoverage]
 public class PlaceMinimal
 {
     public List<string> Types { get; set; } = new List<string>();

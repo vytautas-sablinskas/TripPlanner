@@ -14,8 +14,8 @@ public class Repository<T> : IRepository<T> where T : class
         _table = _context.Set<T>();
     }
 
-    public IQueryable<T> FindAll()
-        => _context.Set<T>();
+    public async Task<IEnumerable<T>> FindAll()
+        => await _context.Set<T>().ToListAsync();
 
     public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression)
         =>
@@ -55,4 +55,10 @@ public class Repository<T> : IRepository<T> where T : class
         _table.Remove(entity);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<T>> GetListByConditionAsync(Expression<Func<T, bool>> expression)
+        => await _context.Set<T>().Where(expression).ToListAsync();
+
+    public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> expression)
+        => await _context.Set<T>().Where(expression).FirstOrDefaultAsync();
 }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Diagnostics.CodeAnalysis;
 using TripPlanner.API.Database.Entities;
 
-namespace TripPlanner.API.Services.Authentication;
+namespace TripPlanner.API.Wrappers;
 
+[ExcludeFromCodeCoverage]
 public class UserManagerWrapper : IUserManagerWrapper
 {
     private readonly UserManager<AppUser> _userManager;
@@ -40,5 +42,15 @@ public class UserManagerWrapper : IUserManagerWrapper
     public async Task<AppUser?> FindByIdAsync(string userId)
     {
         return await _userManager.FindByIdAsync(userId);
+    }
+
+    public async Task<IdentityResult> ChangePasswordAsync(AppUser user, string currentPassword, string newPassword)
+    {
+        return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+    }
+
+    public async Task<IdentityResult> UpdateAsync(AppUser user)
+    {
+        return await _userManager.UpdateAsync(user);
     }
 }
