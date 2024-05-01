@@ -1,13 +1,14 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using TripPlanner.API.Wrappers;
 
 namespace TripPlanner.API.Services.AzureBlobStorage;
 
 public class AzureBlobStorageService : IAzureBlobStorageService
 {
-    private readonly BlobContainerClient _blobContainerClient;
+    private readonly IBlobContainerClientWrapper _blobContainerClient;
 
-    public AzureBlobStorageService(BlobContainerClient blobContainerClient)
+    public AzureBlobStorageService(IBlobContainerClientWrapper blobContainerClient)
     {
         _blobContainerClient = blobContainerClient;
     }

@@ -1,5 +1,8 @@
-﻿namespace TripPlanner.API.Services.TripPlaceRecommendations;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace TripPlanner.API.Services.TripPlaceRecommendations;
+
+[ExcludeFromCodeCoverage]
 public class CategoryRecommendation
 {
     public string Category { get; set; } = "Unknown Category";

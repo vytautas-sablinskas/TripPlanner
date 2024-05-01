@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
+using TripPlanner.API.Wrappers;
 
 namespace TripPlanner.API.Services.Authentication;
 
@@ -21,7 +22,8 @@ public class JwtTokenService : IJwtTokenService
     {
         _audience = configuration["JWT:ValidAudience"];
         _issuer = configuration["JWT:ValidIssuer"];
-        _authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+        var secretKey = configuration["JWT:Secret"];
+        _authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey ?? "987654321fqrfdggxx22ggjklqwertyu"));
         _refreshTokenRepository = refreshTokenRepository;
         this.userManagerWrapper = userManagerWrapper;
     }

@@ -23,9 +23,7 @@ public class ExpenseService : IExpenseService
 
     public async Task<CreatedExpenseResponseDto> AddExpense(Guid budgetId, string userId, AddExpenseDto dto)
     {
-        var budget = await _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
-            .FirstOrDefaultAsync();
-
+        var budget = await _tripBudgetRepository.GetFirstOrDefaultAsync(t => t.Id == budgetId);
         if (budget == null)
         {
             return null;
@@ -37,9 +35,7 @@ public class ExpenseService : IExpenseService
         budget.SpentAmount += spentAmountInMainCurrency;
         await _tripBudgetRepository.Update(budget);
 
-        var user = await _appUserRepository.FindByCondition(t => t.Id == userId)
-            .FirstOrDefaultAsync();
-
+        var user = await _appUserRepository.GetFirstOrDefaultAsync(t => t.Id == userId);
         var expense = new Expense
         {
             Amount = dto.Amount,
@@ -59,15 +55,13 @@ public class ExpenseService : IExpenseService
 
     public async Task<DeleteExpenseResponseDto> DeleteExpense(Guid expenseId)
     {
-        var expense = await _expenseRepository.FindByCondition(e => e.Id == expenseId)
-            .FirstOrDefaultAsync();
+        var expense = await _expenseRepository.GetFirstOrDefaultAsync(e => e.Id == expenseId);
         if (expense == null)
         {
             return null;
         }
 
-        var budget = await _tripBudgetRepository.FindByCondition(b => b.Id == expense.TripBudgetId)
-            .FirstOrDefaultAsync();
+        var budget = await _tripBudgetRepository.GetFirstOrDefaultAsync(b => b.Id == expense.TripBudgetId);
         if (budget == null)
         {
             return null;
@@ -85,8 +79,7 @@ public class ExpenseService : IExpenseService
 
     public async Task<EditExpenseResponseDto> EditExpense(Guid budgetId, Guid expenseId, AddExpenseDto dto)
     {
-        var budget = await _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
-            .FirstOrDefaultAsync();
+        var budget = await _tripBudgetRepository.GetFirstOrDefaultAsync(t => t.Id == budgetId);
 
         if (budget == null)
         {
@@ -95,8 +88,7 @@ public class ExpenseService : IExpenseService
 
         var rate = await _currencyExchangeService.GetCurrencyInformation(DateTime.UtcNow, budget.MainCurrency, dto.Currency);
 
-        var currentExpense = await _expenseRepository.FindByCondition(t => t.Id == expenseId)
-            .FirstOrDefaultAsync();
+        var currentExpense = await _expenseRepository.GetFirstOrDefaultAsync(t => t.Id == expenseId);
 
         var spentAmountInMainCurrency = rate * dto.Amount;
         var newAmount = budget.SpentAmount - currentExpense.AmountInMainCurrency + spentAmountInMainCurrency;

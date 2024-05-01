@@ -43,9 +43,9 @@ public class TripBudgetsService : ITripBudgetsService
 
     public async Task<TripBudgetMainViewDto> GetTripBudgetById(Guid budgetId, string userId)
     {
-        var budget = await _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
+        var budget = _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
             .Include(b => b.Expenses)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
 
         var expenses = budget.Expenses
             .Where(e => budget.Type == BudgetTypes.IndividualWithFixedAmount ? e.UserId == userId : true);
@@ -73,8 +73,7 @@ public class TripBudgetsService : ITripBudgetsService
         if (budget.Type == BudgetTypes.IndividualWithFixedAmount)
         {
             spentAmount = expenses.Sum(e => e.AmountInMainCurrency);
-            var member = await _tripBudgetMembersRepository.FindByCondition(m => m.TripBudgetId == budgetId && m.UserId == userId)
-                .FirstOrDefaultAsync();
+            var member = await _tripBudgetMembersRepository.GetFirstOrDefaultAsync(m => m.TripBudgetId == budgetId && m.UserId == userId);
             totalBudget = member.Amount;
         }
 
@@ -93,8 +92,8 @@ public class TripBudgetsService : ITripBudgetsService
         var travellers = _travellersRepository.FindByCondition(t => t.TripId == tripId)
             .Include(t => t.User);
 
-        var travellerMinimalDtos = await travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}", t.User.PhotoUri))
-            .ToListAsync();
+        var travellerMinimalDtos = travellers.Select(t => new TripTravellerMinimalDto(t.User.Id, t.User.Email, $"{t.User.Name} {t.User.Surname}", t.User.PhotoUri))
+            .ToList();
 
         var budget = _tripBudgetRepository.FindByCondition(t => t.Id == budgetId)
             .Include(b => b.BudgetMembers)
@@ -125,7 +124,7 @@ public class TripBudgetsService : ITripBudgetsService
 
     public async Task AddTripBudget(Guid tripId, string userId, AddTripBudgetDto addBudgetDto)
     {
-        var user = _appUserRepository.FindByCondition(t => t.Id == userId).FirstOrDefault();
+        var user = await _appUserRepository.GetFirstOrDefaultAsync(t => t.Id == userId);
 
         var budget = new TripBudget
         {
@@ -160,8 +159,8 @@ public class TripBudgetsService : ITripBudgetsService
         {
             foreach (var member in addBudgetDto.Members)
             {
-                var userToAdd = _appUserRepository.FindByCondition(t => t.Email == member.Email)
-                    .FirstOrDefault();
+                var userToAdd = await _appUserRepository
+                    .GetFirstOrDefaultAsync(t => t.Email == member.Email);
                 var budgetMember = new TripBudgetMember
                 {
                     UserId = userToAdd.Id,
@@ -176,16 +175,15 @@ public class TripBudgetsService : ITripBudgetsService
 
     public async Task EditTripBudget(Guid budgetId, EditBudgetDto dto)
     {
-        var budget = _tripBudgetRepository.FindByCondition(b => b.Id == budgetId)
-            .FirstOrDefault();
+        var budget = await _tripBudgetRepository
+            .GetFirstOrDefaultAsync(b => b.Id == budgetId);
         if (budget is null)
         {
             return;
         }
 
         double newSpentAmount = 0;
-        var expenses = await _expenseRepository.FindByCondition(e => e.TripBudgetId == budgetId)
-            .ToListAsync();
+        var expenses = await _expenseRepository.GetListByConditionAsync(e => e.TripBudgetId == budgetId);
         foreach (var expense in expenses)
         {
             var newRate = await _currencyExchangeService.GetCurrencyInformation(DateTime.UtcNow, dto.MainCurrency, expense.Currency);
@@ -206,8 +204,7 @@ public class TripBudgetsService : ITripBudgetsService
 
         await _tripBudgetRepository.Update(budget);
 
-        var oldMembers = await _tripBudgetMembersRepository.FindByCondition(t => t.TripBudgetId == budgetId)
-            .ToListAsync();
+        var oldMembers = await _tripBudgetMembersRepository.GetListByConditionAsync(t => t.TripBudgetId == budgetId);
         foreach (var member in oldMembers)
         {
             await _tripBudgetMembersRepository.Delete(member);
@@ -217,8 +214,7 @@ public class TripBudgetsService : ITripBudgetsService
         {
             foreach (var member in dto.Members)
             {
-                var userToAdd = _appUserRepository.FindByCondition(t => t.Email == member.Email)
-                    .FirstOrDefault();
+                var userToAdd = await _appUserRepository.GetFirstOrDefaultAsync(t => t.Email == member.Email);
                 var budgetMember = new TripBudgetMember
                 {
                     UserId = userToAdd.Id,
@@ -233,8 +229,7 @@ public class TripBudgetsService : ITripBudgetsService
 
     public async Task<IEnumerable<TripBudgetDto>> GetTripBudgets(Guid tripId, string userId)
     {
-        var budgets = await _tripBudgetRepository.FindByCondition(t => t.TripId == tripId && (t.CreatorId == userId || t.BudgetMembers != null && t.BudgetMembers.Any(m => m.UserId == userId)))
-            .ToListAsync();
+        var budgets = await _tripBudgetRepository.GetListByConditionAsync(t => t.TripId == tripId && (t.CreatorId == userId || t.BudgetMembers != null && t.BudgetMembers.Any(m => m.UserId == userId)));
 
         if (budgets == null)
         {
@@ -268,8 +263,7 @@ public class TripBudgetsService : ITripBudgetsService
 
     public async Task DeleteTripBudget(Guid budgetId)
     {
-        var budget = _tripBudgetRepository.FindByCondition(b => b.Id == budgetId)
-            .FirstOrDefault();
+        var budget = await _tripBudgetRepository.GetFirstOrDefaultAsync(b => b.Id == budgetId);
         if (budget == null)
         {
             return;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TripPlanner.API.Database.Entities;
 
-namespace TripPlanner.API.Services.Authentication;
+namespace TripPlanner.API.Wrappers;
 
 public interface IUserManagerWrapper
 {
@@ -16,4 +16,8 @@ public interface IUserManagerWrapper
     Task<IdentityResult> AddToRoleAsync(AppUser user, string role);
 
     Task<AppUser?> FindByIdAsync(string userId);
+
+    Task<IdentityResult> ChangePasswordAsync(AppUser user, string currentPassword, string newPassword);
+
+    Task<IdentityResult> UpdateAsync(AppUser user);
 }

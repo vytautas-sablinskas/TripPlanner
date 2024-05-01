@@ -1,5 +1,5 @@
 ﻿using System.Net.Mail;
-using System.Web;
+using TripPlanner.API.Wrappers;
 
 namespace TripPlanner.API.Services.Email;
 

@@ -1,8 +1,11 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Identity;
+using Moq;
+using System.Linq.Expressions;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.Authentication;
 using TripPlanner.API.Services.Authentication;
+using TripPlanner.API.Wrappers;
 
 namespace TripPlanner.API.UnitTests.Services.Authentication;
 
@@ -25,7 +28,7 @@ public class AuthenticationServiceTests
     }
 
     [Fact]
-    public async Task Test()
+    public async Task Login_GivenValidData_ShouldReturnExpectedLoginData()
     {
         var user = new AppUser { UserName = "testusername", Id = "test" };
         var expectedAccessToken = "access";
@@ -46,5 +49,50 @@ public class AuthenticationServiceTests
         Assert.True(result.Success);
         Assert.True(data?.AccessToken == expectedAccessToken);
         Assert.True(data.RefreshToken == expectedRefreshToken);
+    }
+
+    [Fact]
+    public async Task Register_WhenGivenCorrectInformation_ShouldReturnSuccessWithDataOfRegistration()
+    {
+        var user = new AppUser { UserName = "testusername", Id = "test" };
+        var expectedAccessToken = "access";
+        var expectedRefreshToken = "refresh";
+        var notifications = new List<Notification>() { new Notification { UserId = user.Id } };
+        var travellers = new List<Traveller>() { new Traveller() };
+
+        _userManagerMock.Setup(v => v.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+        _notificationRepositoryMock.Setup(v => v.GetListByConditionAsync(It.IsAny<Expression<Func<Notification, bool>>>()))
+            .ReturnsAsync(notifications);
+        _travellerRepositoryMock.Setup(v => v.GetListByConditionAsync(It.IsAny<Expression<Func<Traveller, bool>>>()))
+            .ReturnsAsync(travellers);
+
+        var result = await _service.Register(new RegisterUserDto("name", "surname", "email", "password"));
+
+        Assert.True(result.Success);
+        Assert.True(result.Data?.Email == "email");
+    }
+
+    [Fact]
+    public async Task Logout_WhenGivenRefreshToken_ShouldSucceed()
+    {
+        _jwtTokenServiceMock.Setup(v => v.RevokeToken(It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var result = await _service.Logout(new RefreshTokenDto("test"));
+
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task RefreshToken_WhenGivenCorrectData_ShouldRefreshToken()
+    {
+        _jwtTokenServiceMock.Setup(v => v.RefreshTokensAsync(It.IsAny<string>()))
+            .ReturnsAsync((string refreshToken) => (AccessToken: "access", RefreshToken: "refresh"));
+
+        var result = await _service.RefreshToken(new RefreshTokenDto("refreshToken"));
+
+        Assert.True(result.Success);
+        Assert.True(result.Data?.RefreshToken == "refresh");
     }
 }

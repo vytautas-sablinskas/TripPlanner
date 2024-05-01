@@ -6,12 +6,13 @@ using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.TripPlaceRecommendations;
 using TripPlanner.API.Extensions;
 using TripPlanner.API.Services.TripPlaceRecommendations;
+using TripPlanner.API.Wrappers;
 
 namespace TripPlanner.API.Services.TripPLaceRecommendations;
 
 public class TripPlaceRecommendationService : ITripPlaceRecommendationService
 {
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientWrapper _httpClient;
     private readonly IConfiguration _configuration;
     private readonly string _googleApiKey;
     private readonly IRepository<RecommendationWeight> _recommendationWeightRepository;
@@ -31,18 +32,18 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             new RecommendationWeightDto { Name = "NoPriceFound", Value = 50 }
      };
 
-    public TripPlaceRecommendationService(HttpClient httpClient, IConfiguration configuration, IRepository<RecommendationWeight> recommendationWeightRepository)
+    public TripPlaceRecommendationService(IHttpClientWrapper httpClient, IConfiguration configuration, IRepository<RecommendationWeight> recommendationWeightRepository)
     {
         _httpClient = httpClient;
         _configuration = configuration;
-        _googleApiKey = _configuration["Google:Key"];
+        _googleApiKey = _configuration["Google:Key"] ?? "";
         _recommendationWeightRepository = recommendationWeightRepository;
     }
 
     public async Task<IEnumerable<CategoryRecommendation>> GetRecommendations(TripPlaceRecommendationRequestDto dto)
     {
-        _httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", _googleApiKey);
-        _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "places.rating,places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri,places.photos.name,places.displayName.text,places.formattedAddress,places.internationalPhoneNumber,places.primaryTypeDisplayName.text,places.regularOpeningHours.weekdayDescriptions,places.websiteUri,places.location");
+        _httpClient.AddDefaultHeader("X-Goog-Api-Key", _googleApiKey);
+        _httpClient.AddDefaultHeader("X-Goog-FieldMask", "places.rating,places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri,places.photos.name,places.displayName.text,places.formattedAddress,places.internationalPhoneNumber,places.primaryTypeDisplayName.text,places.regularOpeningHours.weekdayDescriptions,places.websiteUri,places.location");
 
         var allCategoryRecommendations = new List<CategoryRecommendation>();
         foreach (var category in dto.Categories)
@@ -124,12 +125,9 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
         var ratingPlacesOrdered = places.OrderByDescending(r => r.Rating).ToList();
         var ratingCountPlacesOrdered = places.OrderByDescending(r => r.UserRatingCount).ToList();
         var mainCategoryFormatted = mainCategory.ToString().SeparateByUpperAndAddSpaces();
-        var ratingWeightRecommendation = await _recommendationWeightRepository.FindByCondition(t => t.Name == dto.RatingWeight)
-            .FirstOrDefaultAsync();
-        var ratingCountWeightRecommendation = await _recommendationWeightRepository.FindByCondition(t => t.Name == dto.RatingCountWeight)
-            .FirstOrDefaultAsync();
-        var distanceWeightRecommendation = await _recommendationWeightRepository.FindByCondition(t => t.Name == dto.DistanceWeight)
-            .FirstOrDefaultAsync();
+        var ratingWeightRecommendation = await _recommendationWeightRepository.GetFirstOrDefaultAsync(t => t.Name == dto.RatingWeight);
+        var ratingCountWeightRecommendation = await _recommendationWeightRepository.GetFirstOrDefaultAsync(t => t.Name == dto.RatingCountWeight);
+        var distanceWeightRecommendation = await _recommendationWeightRepository.GetFirstOrDefaultAsync(t => t.Name == dto.DistanceWeight);
 
         double actualRatingWeight = ratingWeightRecommendation == null ? 0d : ratingWeightRecommendation.Value / 100d;
         double actualRatingCountWeight = ratingCountWeightRecommendation == null ? 0d : ratingCountWeightRecommendation.Value / 100d;
@@ -221,8 +219,8 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
 
     private async Task FetchAndAssignPhotos(List<CategoryRecommendation> recommendations)
     {
-        _httpClient.DefaultRequestHeaders.Remove("X-Goog-FieldMask");
-        _httpClient.DefaultRequestHeaders.Remove("X-Goog-Api-Key");
+        _httpClient.RemoveDefaultHeader("X-Goog-FieldMask");
+        _httpClient.RemoveDefaultHeader("X-Goog-Api-Key");
 
         try
         {
@@ -306,12 +304,10 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
 
     public async Task<IEnumerable<RecommendationWeightDto>> GetRecommendationWeights()
     {
-        var weights = await _recommendationWeightRepository.FindAll()
-            .ToListAsync();
+        var weights = await _recommendationWeightRepository.FindAll();
         foreach (var weight in DEFAULT_WEIGHTS)
         {
-            var weightInRepo = await _recommendationWeightRepository.FindByCondition(t => t.Name == weight.Name)
-                .FirstOrDefaultAsync();
+            var weightInRepo = await _recommendationWeightRepository.GetFirstOrDefaultAsync(t => t.Name == weight.Name);
             if (weightInRepo == null)
             {
                 _recommendationWeightRepository.Create(new RecommendationWeight
@@ -322,7 +318,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
             }
         }
 
-        if (weights == null || weights.Count == 0)
+        if (weights == null || weights.Count() == 0)
         {
             return DEFAULT_WEIGHTS;
         }
@@ -338,8 +334,7 @@ public class TripPlaceRecommendationService : ITripPlaceRecommendationService
     {
         foreach (var weight in dto.RecommendationWeights)
         {
-            var weightInRepo = await _recommendationWeightRepository.FindByCondition(t => t.Name == weight.Name)
-                .FirstOrDefaultAsync();
+            var weightInRepo = await _recommendationWeightRepository.GetFirstOrDefaultAsync(t => t.Name == weight.Name);
             if (weightInRepo == null)
             {
                 _recommendationWeightRepository.Create(new RecommendationWeight
