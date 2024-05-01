@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TripPlanner.API", "TripPlanner.API\TripPlanner.API.csproj", "{6521CE84-8048-432D-827E-FE64175867D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TripPlanner.API", "TripPlanner.API\TripPlanner.API.csproj", "{6521CE84-8048-432D-827E-FE64175867D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TripPlanner.API.UnitTests", "TripPlanner.API.UnitTests\TripPlanner.API.UnitTests.csproj", "{2D25287B-3B2F-41B1-830E-8258B52AE9EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{6521CE84-8048-432D-827E-FE64175867D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6521CE84-8048-432D-827E-FE64175867D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6521CE84-8048-432D-827E-FE64175867D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D25287B-3B2F-41B1-830E-8258B52AE9EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D25287B-3B2F-41B1-830E-8258B52AE9EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D25287B-3B2F-41B1-830E-8258B52AE9EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D25287B-3B2F-41B1-830E-8258B52AE9EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,13 +15,15 @@ public class JwtTokenService : IJwtTokenService
     private readonly string? _issuer;
     private readonly SymmetricSecurityKey _authSigningKey;
     private readonly IRepository<RefreshToken> _refreshTokenRepository;
+    private readonly IUserManagerWrapper userManagerWrapper;
 
-    public JwtTokenService(IConfiguration configuration, IRepository<RefreshToken> refreshTokenRepository)
+    public JwtTokenService(IConfiguration configuration, IRepository<RefreshToken> refreshTokenRepository, IUserManagerWrapper userManagerWrapper)
     {
         _audience = configuration["JWT:ValidAudience"];
         _issuer = configuration["JWT:ValidIssuer"];
         _authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
         _refreshTokenRepository = refreshTokenRepository;
+        this.userManagerWrapper = userManagerWrapper;
     }
 
     public (string AccessToken, string RefreshToken) CreateTokens(string userName, string userId, IEnumerable<string> userRoles)
@@ -42,7 +44,7 @@ public class JwtTokenService : IJwtTokenService
         return (accessToken, refreshTokenString);
     }
 
-    public async Task<(string AccessToken, string RefreshToken)?> RefreshTokensAsync(UserManager<AppUser> userManager, string refreshToken)
+    public async Task<(string AccessToken, string RefreshToken)?> RefreshTokensAsync(string refreshToken)
     {
         var storedToken = _refreshTokenRepository.FindByCondition(r => r.Token == refreshToken).FirstOrDefault();
 
@@ -51,16 +53,16 @@ public class JwtTokenService : IJwtTokenService
             return null;
         }
 
-        var user = await userManager.FindByIdAsync(storedToken.UserId);
-        var userRoles = await userManager.GetRolesAsync(user);
+        var user = await userManagerWrapper.FindByIdAsync(storedToken.UserId);
+        var userRoles = await userManagerWrapper.GetRolesAsync(user);
         var (newAccessToken, newRefreshToken) = CreateTokens(user.UserName, user.Id, userRoles);
 
-        _refreshTokenRepository.Delete(storedToken);
+        await _refreshTokenRepository.Delete(storedToken);
 
         return (newAccessToken, newRefreshToken);
     }
 
-    public bool RevokeToken(string refreshToken)
+    public async Task<bool> RevokeToken(string refreshToken)
     {
         var storedToken = _refreshTokenRepository.FindByCondition(r => r.Token == refreshToken).FirstOrDefault();
 
@@ -69,7 +71,7 @@ public class JwtTokenService : IJwtTokenService
             return false;
         }
 
-        _refreshTokenRepository.Delete(storedToken);
+        await _refreshTokenRepository.Delete(storedToken);
 
         return true;
     }
