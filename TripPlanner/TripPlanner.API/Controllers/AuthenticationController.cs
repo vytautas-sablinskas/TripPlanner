@@ -40,9 +40,9 @@ public class AuthenticationController : ControllerBase
 
     [HttpPost]
     [Route("logout")]
-    public IActionResult Logout([FromBody] RefreshTokenDto tokenDto)
+    public async Task<IActionResult> Logout([FromBody] RefreshTokenDto tokenDto)
     {
-        var result = _authService.Logout(tokenDto);
+        var result = await _authService.Logout(tokenDto);
         if (!result.Success)
             return BadRequest(new { errorMessage = result.Message });
 
@@ -58,12 +58,5 @@ public class AuthenticationController : ControllerBase
             return BadRequest(new { errorMessage = result.Message });
 
         return Ok(result.Message);
-    }
-
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> GetUserInformation()
-    {
-        return Ok();
     }
 }

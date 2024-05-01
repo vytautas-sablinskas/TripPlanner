@@ -9,7 +9,7 @@ public interface IAuthenticationService
 
     Task<Result<UserDto>> Register(RegisterUserDto userDto);
 
-    Result Logout(RefreshTokenDto tokenDto);
+    Task<Result> Logout(RefreshTokenDto tokenDto);
 
     Task<Result<SuccessfulLoginDto>> RefreshToken(RefreshTokenDto tokenDto);
 }

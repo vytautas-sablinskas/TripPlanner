@@ -125,6 +125,7 @@ public static class Program
         services.AddScoped<ITripPlaceRecommendationService, TripPlaceRecommendationService>();
         services.AddScoped<ISmtpClientWrapper, SmtpClientWrapper>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IUserManagerWrapper, UserManagerWrapper>();
 
         services.AddAutoMapper(typeof(Program));
 

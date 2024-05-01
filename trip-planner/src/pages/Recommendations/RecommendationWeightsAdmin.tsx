@@ -27,7 +27,7 @@ const RecommendationWeightsAdmin = () => {
 
   const onSubmit = async () => {
     const priceWeight = weights.find((weight: any) => weight.name === "Price");
-    if (!priceWeight || priceWeight.value <= 0 || priceWeight.value > 20) {
+    if (!priceWeight || priceWeight.value < 0 || priceWeight.value > 20) {
         priceErrorCount += 1;
         const existingError = errors.find((error: any) => error.name === "Price");
         if (existingError) {

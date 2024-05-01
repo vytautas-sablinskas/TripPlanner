@@ -10,12 +10,12 @@ namespace TripPlanner.API.Services.Authentication;
 
 public class AuthenticationService : IAuthenticationService
 {
-    private readonly UserManager<AppUser> _userManager;
+    private readonly IUserManagerWrapper _userManager;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IRepository<Notification> _notificationRepository;
     private readonly IRepository<Traveller> _travellerRepository;
 
-    public AuthenticationService(UserManager<AppUser> userManager, IJwtTokenService jwtTokenService, IRepository<Notification> notificationRepository, IRepository<Traveller> travellerRepository)
+    public AuthenticationService(IUserManagerWrapper userManager, IJwtTokenService jwtTokenService, IRepository<Notification> notificationRepository, IRepository<Traveller> travellerRepository)
     {
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
@@ -80,12 +80,12 @@ public class AuthenticationService : IAuthenticationService
         return new Result<UserDto>(Success: true, Message: "", Data: new UserDto(newUser.Id, newUser.UserName, newUser.Email));
     }
 
-    public Result Logout(RefreshTokenDto tokenDto)
+    public async Task<Result> Logout(RefreshTokenDto tokenDto)
     {
         if (string.IsNullOrEmpty(tokenDto.RefreshToken))
             return new Result(Success: false, Message: "Refresh token is required.");
 
-        var tokenWasRevoked = _jwtTokenService.RevokeToken(tokenDto.RefreshToken);
+        var tokenWasRevoked = await _jwtTokenService.RevokeToken(tokenDto.RefreshToken);
         if (!tokenWasRevoked)
             return new Result(Success: false, Message: "Invalid token or token not found.");
 
@@ -97,7 +97,7 @@ public class AuthenticationService : IAuthenticationService
         if (string.IsNullOrEmpty(tokenDto.RefreshToken))
             return new Result<SuccessfulLoginDto>(Success: false, Message: "Refresh token is required.", Data: null);
 
-        var refreshedTokens = await _jwtTokenService.RefreshTokensAsync(_userManager, tokenDto.RefreshToken);
+        var refreshedTokens = await _jwtTokenService.RefreshTokensAsync(tokenDto.RefreshToken);
 
         if (refreshedTokens == null)
             return new Result<SuccessfulLoginDto>(Success: false, Message: "Invalid or expired refresh token", Data: null);
