@@ -28,9 +28,9 @@ public class TripController : ControllerBase
 
     [HttpGet("trips/{id}")]
     [Authorize]
-    public IActionResult GetTrip(Guid id)
+    public async Task<IActionResult> GetTrip(Guid id)
     {
-        var tripDto = _tripService.GetTrip(id);
+        var tripDto = await _tripService.GetTrip(id);
 
         return Ok(tripDto);
     }
@@ -64,9 +64,9 @@ public class TripController : ControllerBase
 
     [HttpGet("trips/{id}/time")]
     [Authorize]
-    public IActionResult GetTripTime(Guid id)
+    public async Task<IActionResult> GetTripTime(Guid id)
     {
-        var timeDto = _tripService.GetTripTime(id);
+        var timeDto = await _tripService.GetTripTime(id);
 
         return Ok(timeDto);
     }

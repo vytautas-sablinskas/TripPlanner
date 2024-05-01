@@ -40,8 +40,7 @@ public class TripService : ITripService
         var trip = _mapper.Map<Trip>(tripDto);
         trip.PhotoUri = imageUri;
 
-        var user = _appUserRepository.FindByCondition(t => t.Id == userId)
-                                     .FirstOrDefault();
+        var user = _appUserRepository.GetFirstOrDefaultAsync(t => t.Id == userId);
         if (user != null)
         {
             var traveller = new Traveller
@@ -70,8 +69,7 @@ public class TripService : ITripService
 
     public async Task EditTrip(EditTripDto tripDto, Guid tripId)
     {
-        var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
-                                  .FirstOrDefault();
+        var trip = await _tripRepository.GetFirstOrDefaultAsync(t => t.Id == tripId);
 
         if (tripDto.Image != null)
         {
@@ -89,11 +87,10 @@ public class TripService : ITripService
 
     public async Task DeleteTrip(Guid tripId, string userId)
     {
-        var trip = await _tripRepository.FindByCondition(t => t.Id == tripId)
+        var trip = _tripRepository.FindByCondition(t => t.Id == tripId)
                                   .Include(t => t.TripDetails)
-                                  .FirstOrDefaultAsync();
-        var userTraveller = await _travellerRepository.FindByCondition(t => t.UserId == userId && t.TripId == tripId)
-            .FirstOrDefaultAsync();
+                                  .FirstOrDefault();
+        var userTraveller = await _travellerRepository.GetFirstOrDefaultAsync(t => t.UserId == userId && t.TripId == tripId);
         if (userTraveller.Permissions != TripPermissions.Administrator)
         {
             await _travellerRepository.Delete(userTraveller);
@@ -108,17 +105,17 @@ public class TripService : ITripService
         await _tripRepository.Delete(trip);
     }
 
-    public TripDto GetTrip(Guid tripId)
+    public async Task<TripDto> GetTrip(Guid tripId)
     {
-        var trip = _tripRepository.FindByCondition(t => t.Id == tripId).FirstOrDefault();
+        var trip = await _tripRepository.GetFirstOrDefaultAsync(t => t.Id == tripId);
         var tripDto = _mapper.Map<TripDto>(trip);
 
         return tripDto;
     }
 
-    public TripTimeDto GetTripTime(Guid tripId)
+    public async Task<TripTimeDto> GetTripTime(Guid tripId)
     {
-        var trip = _tripRepository.FindByCondition(t => t.Id == tripId).FirstOrDefault();
+        var trip = await _tripRepository.GetFirstOrDefaultAsync(t => t.Id == tripId);
         var tripTimeDto = _mapper.Map<TripTimeDto>(trip);
 
         return tripTimeDto;
@@ -126,9 +123,9 @@ public class TripService : ITripService
 
     public async Task<TripShareInformationDto> GetTripShareInformation(Guid tripId, string userId)
     {
-        var shareInformation = await _tripInformationShareRepository.FindByCondition(t => t.TripId == tripId && t.UserId == userId)
+        var shareInformation = _tripInformationShareRepository.FindByCondition(t => t.TripId == tripId && t.UserId == userId)
             .Include(t => t.Photos)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
 
         var shareInformationDto = new TripShareInformationDto(shareInformation.Title, shareInformation.DescriptionHtml, shareInformation.Photos.Select(p => p.PhotoUri), shareInformation.LinkGuid != null ? $"http://localhost:5173/trips/shared/{shareInformation.LinkGuid}" : null);
 
@@ -155,16 +152,15 @@ public class TripService : ITripService
 
     public async Task<IEnumerable<TripDto>> GetAllUserTrips(string userId)
     {
-        var user = await _appUserRepository.FindByCondition(t => t.Id == userId)
-            .FirstOrDefaultAsync();
+        var user = await _appUserRepository.GetFirstOrDefaultAsync(t => t.Id == userId);
         if (user == null)
         {
             return new List<TripDto>();
         }
 
-        var trips = await _tripRepository.FindByCondition(t => t.Travellers.Any(traveller => traveller.UserId == userId && traveller.Status == TravellerStatus.Joined && t.EndDate > DateTime.UtcNow))
+        var trips = _tripRepository.FindByCondition(t => t.Travellers.Any(traveller => traveller.UserId == userId && traveller.Status == TravellerStatus.Joined && t.EndDate > DateTime.UtcNow))
             .Include(t => t.Travellers)
-            .ToListAsync();
+            .ToList();
 
         var mappedTrips = trips.Select(trip =>
         {
@@ -179,9 +175,9 @@ public class TripService : ITripService
 
     public async Task<bool> UpdateShareTripInformation(string userId, Guid tripId, UpdateTripShareInformationDto dto)
     {
-        var shareInformation = await _tripInformationShareRepository.FindByCondition(t => t.UserId == userId && t.TripId == tripId)
+        var shareInformation = _tripInformationShareRepository.FindByCondition(t => t.UserId == userId && t.TripId == tripId)
             .Include(t => t.Photos)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
         if (shareInformation == null)
         {
             return false;
@@ -213,8 +209,7 @@ public class TripService : ITripService
             }
         }
 
-        var allPhotos = await _tripSharePhotoRepository.FindByCondition(t => t.TripInformationShareId == shareInformation.Id)
-            .ToListAsync();
+        var allPhotos = await _tripSharePhotoRepository.GetListByConditionAsync(t => t.TripInformationShareId == shareInformation.Id);
         foreach (var photo in allPhotos)
         {
             await _tripSharePhotoRepository.Delete(photo);
@@ -236,8 +231,7 @@ public class TripService : ITripService
 
     public async Task<string?> UpdateTripShareInformationLink(Guid tripId, string userId)
     {
-        var shareInformation = await _tripInformationShareRepository.FindByCondition(t => t.TripId == tripId && t.UserId == userId)
-            .FirstOrDefaultAsync();
+        var shareInformation = await _tripInformationShareRepository.GetFirstOrDefaultAsync(t => t.TripId == tripId && t.UserId == userId);
         if (shareInformation == null)
         {
             return null;
@@ -260,24 +254,22 @@ public class TripService : ITripService
 
     public async Task<TripShareInformationViewDto> GetShareTripViewInformation(Guid linkId)
     {
-        var shareInformation = await _tripInformationShareRepository.FindByCondition(t => t.LinkGuid == linkId)
+        var shareInformation = _tripInformationShareRepository.FindByCondition(t => t.LinkGuid == linkId)
             .Include(p => p.Photos)
             .Include(p => p.User)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
         if (shareInformation == null)
         {
             return null;
         }
 
-        var trip = await _tripRepository.FindByCondition(t => t.Id == shareInformation.TripId)
-            .FirstOrDefaultAsync();
+        var trip = await _tripRepository.GetFirstOrDefaultAsync(t => t.Id == shareInformation.TripId);
         if (trip == null)
         {
             return null;
         }
 
-        var tripDetails = await _tripDetailRepository.FindByCondition(t => t.TripId == shareInformation.TripId)
-            .ToListAsync();
+        var tripDetails = await _tripDetailRepository.GetListByConditionAsync(t => t.TripId == shareInformation.TripId);
 
         var detailsDto = tripDetails.Select(_mapper.Map<TripDetailMinimalDto>);
         var tripDto = _mapper.Map<TripDto>(trip);
@@ -288,13 +280,13 @@ public class TripService : ITripService
 
     private async Task<TripsDto> GetUpcomingTrips(IQueryable<Trip> tripsQuery, int page, string userId)
     {
-        var tripsCount = await tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
-                                   .CountAsync();
+        var tripsCount = tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
+                                   .Count();
 
-        var trips = await tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
+        var trips = tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
                         .Skip((page - 1) * FetchSizes.DEFAULT_SIZE)
                         .Take(FetchSizes.DEFAULT_SIZE)
-                        .ToListAsync();
+                        .ToList();
 
         var mappedTrips = trips.Select(trip =>
         {
@@ -309,13 +301,13 @@ public class TripService : ITripService
 
     private async Task<TripsDto> GetPastTrips(IQueryable<Trip> tripsQuery, int page, string userId)
     {
-        var tripsCount = await tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
-                                   .CountAsync();
+        var tripsCount = tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
+                                   .Count();
 
-        var trips = await tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
+        var trips = tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
                          .Skip((page - 1) * FetchSizes.DEFAULT_SIZE)
                          .Take(FetchSizes.DEFAULT_SIZE)
-                         .ToListAsync();
+                         .ToList();
 
         var mappedTrips = trips.Select(trip =>
         {

@@ -60,21 +60,18 @@ public class TripTravellersService : ITripTravellersService
             .FirstOrDefault();
 
         var invitesLower = invitationDto.Invites.Select(i => i.ToLower());
-        var usersToInvite = _appUserRepository
-                .FindByCondition(t => invitesLower.Contains(t.UserName.ToLower()))
-                .ToList();
+        var usersToInvite = await _appUserRepository.GetListByConditionAsync(t => invitesLower.Contains(t.UserName.ToLower()));
 
         var updatedTravelers = trip.Travellers.ToList();
         foreach (var email in invitationDto.Invites)
         {
-            var user = usersToInvite.Find(t => t.Email.ToLower() == email.ToLower());
+            var user = usersToInvite.FirstOrDefault(t => t.Email.ToLower() == email.ToLower());
             if (trip.Travellers.Any(t => user != null && t.UserId == user.Id))
             {
                 continue;
             }
 
-            var inviter = _appUserRepository.FindByCondition(t => t.Id == userId)
-                    .FirstOrDefault();
+            var inviter = await _appUserRepository.GetFirstOrDefaultAsync(t => t.Id == userId);
 
             updatedTravelers.Add(new Traveller
             {
@@ -84,8 +81,7 @@ public class TripTravellersService : ITripTravellersService
                 Email = email,
             });
 
-            var presentNotification = await _notificationRepository.FindByCondition(n => n.Email != null && n.Email.ToLower() == email.ToLower() && n.TripId == tripId)
-                .FirstOrDefaultAsync();
+            var presentNotification = await _notificationRepository.GetFirstOrDefaultAsync(n => n.Email != null && n.Email.ToLower() == email.ToLower() && n.TripId == tripId);
 
             if (presentNotification == null)
             {
@@ -120,15 +116,13 @@ public class TripTravellersService : ITripTravellersService
 
     public async Task UpdateTravellerInformation(Guid tripId, Guid travellerId, UpdateTravellerInfoDto dto, string userId)
     {
-        var requester = _travellerRepository.FindByCondition(t => t.UserId == userId && t.TripId == tripId)
-            .FirstOrDefault();
+        var requester = await _travellerRepository.GetFirstOrDefaultAsync(t => t.UserId == userId && t.TripId == tripId);
         if (requester is null || requester.Permissions != TripPermissions.Administrator)
         {
             return;
         }
 
-        var traveller = _travellerRepository.FindByCondition(t => t.Id == travellerId)
-            .FirstOrDefault();
+        var traveller = await _travellerRepository.GetFirstOrDefaultAsync(t => t.Id == travellerId);
         if (traveller != null)
         {
             traveller.Permissions = dto.Permissions;
@@ -138,10 +132,8 @@ public class TripTravellersService : ITripTravellersService
 
     public async Task UpdateTripStatus(Guid notificationId, UpdateInvitationDto dto, string userId)
     {
-        var notification = _notificationRepository.FindByCondition(t => t.Id == notificationId)
-            .FirstOrDefault();
-        var traveller = _travellerRepository.FindByCondition(t => t.UserId == userId && t.TripId == notification.TripId)
-            .FirstOrDefault();
+        var notification = await _notificationRepository.GetFirstOrDefaultAsync(t => t.Id == notificationId);
+        var traveller = await _travellerRepository.GetFirstOrDefaultAsync(t => t.UserId == userId && t.TripId == notification.TripId);
 
         if (dto.Status == InvitationUpdateStatus.Declined)
         {
@@ -198,17 +190,14 @@ public class TripTravellersService : ITripTravellersService
             .Include(t => t.Travellers)
             .FirstOrDefault();
 
-        var user = _appUserRepository.FindByCondition(a => a.UserName.ToLower() == userToDeleteEmail.ToLower())
-            .FirstOrDefault();
-        var traveller = _travellerRepository.FindByCondition(t => t.UserId == user.Id)
-            .FirstOrDefault();
+        var user = await _appUserRepository.GetFirstOrDefaultAsync(a => a.UserName.ToLower() == userToDeleteEmail.ToLower());
+        var traveller = await _travellerRepository.GetFirstOrDefaultAsync(t => t.UserId == user.Id);
         if (traveller != null) 
         {
             await _travellerRepository.Delete(traveller);
         }
 
-        var notificationFromThisTrip = _notificationRepository.FindByCondition(n => n.TripId == tripId && n.UserId == user.Id)
-            .FirstOrDefault();
+        var notificationFromThisTrip = await _notificationRepository.GetFirstOrDefaultAsync(n => n.TripId == tripId && n.UserId == user.Id);
         if (notificationFromThisTrip != null)
         {
             await _notificationRepository.Delete(notificationFromThisTrip);
