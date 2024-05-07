@@ -336,9 +336,9 @@ const TripDetails = () => {
           id: response.id,
           name: formValues.name,
           currency: formValues.currency,
+          type: formValues.type,
           amount: formValues.amount,
           amountInMainCurrency: Number(response.amountInMainCurrency),
-          type: formValues.type,
           personPhoto: response.personPhoto,
           personName: response.personName,
           date: formValues.date,
@@ -346,6 +346,8 @@ const TripDetails = () => {
       ],
     });
   };
+
+  console.log(budget);
 
   return isLoading ? (
     <div>Loading</div>
@@ -463,7 +465,6 @@ const TripDetails = () => {
                       <div className="w-[32px] h-[32px] rounded-full mr-3 bg-gray-300 flex justify-center items-center">
                         {getBudgetPhoto(expense.type)}
                       </div>
-
                       <div className="flex flex-col justify-start">
                         <p className="font-bold">{expense.name}</p>
                         <p>{getBudgetType(expense.type)}</p>

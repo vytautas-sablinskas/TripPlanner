@@ -98,9 +98,9 @@ public class ExpenseService : IExpenseService
 
         currentExpense.Currency = dto.Currency;
         currentExpense.AmountInMainCurrency = dto.Amount * rate;
+        currentExpense.Type = dto.Type;
         currentExpense.Amount = dto.Amount;
         currentExpense.Name = dto.Name;
-        currentExpense.Type = dto.Type;
         currentExpense.Date = dto.Date;
         await _expenseRepository.Update(currentExpense);
 

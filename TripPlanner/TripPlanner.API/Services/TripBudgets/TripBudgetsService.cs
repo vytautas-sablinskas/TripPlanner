@@ -50,6 +50,10 @@ public class TripBudgetsService : ITripBudgetsService
         var expenses = budget.Expenses
             .Where(e => budget.Type == BudgetTypes.IndividualWithFixedAmount ? e.UserId == userId : true);
 
+        var traveller = _travellersRepository.FindByCondition(t => t.UserId == userId)
+            .Include(t => t.User)
+            .FirstOrDefault();
+
         var expensesDto = expenses
             .Select(e => {
             var user = _appUserRepository.FindByCondition(t => t.Id == e.UserId)
@@ -63,7 +67,7 @@ public class TripBudgetsService : ITripBudgetsService
                 e.Name,
                 e.Type,
                 user.PhotoUri,
-                $"{user.Name} {user.Surname}",
+                $"{traveller.User.Name} {traveller.User.Surname}",
                 e.Date
             );   
         });

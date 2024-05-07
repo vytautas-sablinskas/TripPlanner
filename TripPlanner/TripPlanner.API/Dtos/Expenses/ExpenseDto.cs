@@ -8,7 +8,7 @@ public record ExpenseDto(
     double Amount,
     double AmountInMainCurrency,
     string Name,
-    BudgetTypes Type,
+    TripDetailTypes Type,
     string PersonPhoto,
     string PersonName,
     DateTime? Date

@@ -9,7 +9,7 @@ public class Expense
 
     public string Name { get; set; } 
 
-    public BudgetTypes Type { get; set; }
+    public TripDetailTypes Type { get; set; }
 
     public double Amount { get; set; }
 

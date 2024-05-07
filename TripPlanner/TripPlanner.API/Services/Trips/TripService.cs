@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TripPlanner.API.Constants;
 using TripPlanner.API.Database.DataAccess;
 using TripPlanner.API.Database.Entities;
 using TripPlanner.API.Dtos.TripDetails;
@@ -284,8 +283,8 @@ public class TripService : ITripService
                                    .Count();
 
         var trips = tripsQuery.Where(t => t.EndDate > DateTime.UtcNow)
-                        .Skip((page - 1) * FetchSizes.DEFAULT_SIZE)
-                        .Take(FetchSizes.DEFAULT_SIZE)
+                        .Skip((page - 1) * 5)
+                        .Take(5)
                         .ToList();
 
         var mappedTrips = trips.Select(trip =>
@@ -305,8 +304,8 @@ public class TripService : ITripService
                                    .Count();
 
         var trips = tripsQuery.Where(t => t.EndDate <= DateTime.UtcNow)
-                         .Skip((page - 1) * FetchSizes.DEFAULT_SIZE)
-                         .Take(FetchSizes.DEFAULT_SIZE)
+                         .Skip((page - 1) * 5)
+                         .Take(5)
                          .ToList();
 
         var mappedTrips = trips.Select(trip =>
