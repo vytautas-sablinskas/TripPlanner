@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import FinalStepMoreInformationDialog from "./FinalStepMoreInformationDialog";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
-import { addTripDetails } from "@/api/TripDetailService";
+import { addTripDetails } from "@/services/TripDetailService";
 
 const FinalStepCard = ({ recommendations }: any) => {
   const [viewInformationOpen, setViewInformationOpen] = useState(false);

@@ -1,5 +1,5 @@
-import { refreshAccessToken } from "@/api/AuthenticationService";
-import { editRecommendationWeights, getRecommendationWeights } from "@/api/RecommendationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
+import { editRecommendationWeights, getRecommendationWeights } from "@/services/RecommendationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import Paths from "@/routes/Paths";
 import { checkTokenValidity } from "@/utils/jwtUtils";

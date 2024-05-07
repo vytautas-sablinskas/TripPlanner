@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Paths from "../../routes/Paths";
 import { toast } from "sonner";
-import { login } from "../../api/AuthenticationService";
+import { login } from "../../services/AuthenticationService";
 import { useUser } from "../../providers/user-provider/UserContext";
 import { AuthButton } from "@/pages/Auth/AuthButton";
 import { useForm } from "react-hook-form";

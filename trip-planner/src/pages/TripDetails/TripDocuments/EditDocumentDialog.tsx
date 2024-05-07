@@ -1,5 +1,5 @@
-import { refreshAccessToken } from "@/api/AuthenticationService";
-import { getTripDocumentMembers } from "@/api/TripDocumentService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
+import { getTripDocumentMembers } from "@/services/TripDocumentService";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";

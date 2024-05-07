@@ -1,5 +1,5 @@
-import { refreshAccessToken } from "@/api/AuthenticationService";
-import { getTripDetails } from "@/api/TripDetailService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
+import { getTripDetails } from "@/services/TripDetailService";
 import { Card } from "@/components/ui/card";
 import { useUser } from "@/providers/user-provider/UserContext";
 import Paths from "@/routes/Paths";

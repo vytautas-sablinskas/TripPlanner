@@ -8,10 +8,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { deleteTripBudget } from "@/api/TripBudgetsService";
+import { deleteTripBudget } from "@/services/TripBudgetsService";
 
 const BudgetCard = ({ budget, setData }: any) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);

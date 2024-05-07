@@ -1,5 +1,5 @@
-import { refreshAccessToken } from "@/api/AuthenticationService";
-import { updateShareTripLink } from "@/api/TripService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
+import { updateShareTripLink } from "@/services/TripService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";

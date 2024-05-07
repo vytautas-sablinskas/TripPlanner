@@ -2,12 +2,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./styles/header.css";
 import Paths from "../../routes/Paths";
 import { useUser } from "../../providers/user-provider/UserContext";
-import { logout, refreshAccessToken } from "../../api/AuthenticationService";
+import { logout, refreshAccessToken } from "../../services/AuthenticationService";
 import { BellDot, File, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { toast } from "sonner";
-import { getUserInformation } from "@/api/UserService";
+import { getUserInformation } from "@/services/UserService";
 import {
   DropdownMenu,
   DropdownMenuContent,

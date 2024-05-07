@@ -41,11 +41,11 @@ import { useNavigate } from "react-router-dom"
 import Paths from "@/routes/Paths"
 import DeleteDialog from "@/components/Extra/DeleteDialog"
 import { checkTokenValidity } from "@/utils/jwtUtils"
-import { refreshAccessToken } from "@/api/AuthenticationService"
+import { refreshAccessToken } from "@/services/AuthenticationService"
 import { toast } from "sonner"
 import { useUser } from "@/providers/user-provider/UserContext"
 import "../Notifications/styles/notification-list.css";
-import { addTripToTripDetail, deleteTripDetail } from "@/api/TripDetailService"
+import { addTripToTripDetail, deleteTripDetail } from "@/services/TripDetailService"
 import AddUnselectedDetailToTripDialog from "./AddUnselectedDetailToTripDialog"
  
 export type Notification = {

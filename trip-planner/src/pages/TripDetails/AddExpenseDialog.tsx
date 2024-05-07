@@ -25,12 +25,12 @@ import { ActivityTypes } from "./ActivityTypes";
 import { ValueSelector } from "@/components/Extra/ValueSelector";
 import { Input } from "@/components/ui/input";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
-import { createExpense } from "@/api/ExpensesService";
+import { createExpense } from "@/services/ExpensesService";
 import { DatePicker } from "@/components/Extra/DatePicker";
 import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 

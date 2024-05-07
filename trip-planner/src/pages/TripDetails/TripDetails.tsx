@@ -4,12 +4,12 @@ import { Separator } from "@/components/ui/separator";
 import TripDetailsAccordion from "./TripDetailsAccordion";
 import { useEffect, useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
-import { getTripDetails } from "@/api/TripDetailService";
+import { getTripDetails } from "@/services/TripDetailService";
 import { getFormattedDateRange, getLocalDate, getUtcTimeWithoutChangingTime } from "@/utils/date";
 import { Backpack, BarChart4, BedDouble, CircleHelp, CirclePlus, CircleX, Pencil, PersonStanding, ShoppingCart, Utensils } from "lucide-react";
 import { ValueSelector } from "@/components/Extra/ValueSelector";
@@ -23,8 +23,8 @@ import {
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import AddExpenseDialog from "./AddExpenseDialog";
-import { getTripBudget } from "@/api/TripBudgetsService";
-import { deleteExpense } from "@/api/ExpensesService";
+import { getTripBudget } from "@/services/TripBudgetsService";
+import { deleteExpense } from "@/services/ExpensesService";
 import GoogleMapExtension from "@/components/Extra/GoogleMapExtension";
 import TripBudgetBreakdownDialog from "./TripBudgetBreakdownDialog";
 

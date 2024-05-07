@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TripPlanner.API.Dtos.Trips;
 
-namespace TripPlanner.API.Annotations.Trips;
+namespace TripPlanner.API.Annotations;
 
 public class EndDateValidationEditTripAttribute : ValidationAttribute
 {

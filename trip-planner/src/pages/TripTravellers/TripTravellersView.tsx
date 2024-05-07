@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { TripTravellerList } from "./TripTravellerList";
 import "./styles/trip-travellers-view.css";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
-import { getTripTravellers } from "@/api/TripTravellersService";
+import { getTripTravellers } from "@/services/TripTravellersService";
 
 const TripTravellersView = () => {
     const [travellers, setTravellers] = useState([]);

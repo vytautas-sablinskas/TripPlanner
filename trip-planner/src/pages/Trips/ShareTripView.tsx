@@ -1,4 +1,4 @@
-import { getShareTripInformation } from "@/api/TripService";
+import { getShareTripInformation } from "@/services/TripService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import Paths from "@/routes/Paths";
 import {

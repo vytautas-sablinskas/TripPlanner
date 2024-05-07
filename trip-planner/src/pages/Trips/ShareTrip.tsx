@@ -1,5 +1,5 @@
-import { refreshAccessToken } from "@/api/AuthenticationService";
-import { getTripShareInformation, updateTripShareInformation } from "@/api/TripService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
+import { getTripShareInformation, updateTripShareInformation } from "@/services/TripService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/providers/user-provider/UserContext";

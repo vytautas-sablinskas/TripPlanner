@@ -7,10 +7,10 @@ import { CirclePlus } from "lucide-react";
 import BudgetCard from "./BudgetCard";
 import { useEffect, useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { getTripBudgets } from "@/api/TripBudgetsService";
+import { getTripBudgets } from "@/services/TripBudgetsService";
 
 const BudgetList = () => {
   const navigate = useNavigate();
