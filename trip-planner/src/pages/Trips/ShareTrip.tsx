@@ -119,8 +119,8 @@ const ShareTrip = () => {
 
   const updateInformation = async () => {
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("descriptionInHtml", descriptionInHtml);
+    formData.append("title", title === "null" ? "" : title);
+    formData.append("descriptionInHtml", descriptionInHtml === "null" ? "" : descriptionInHtml);
     Array.from(selectedPhotos).forEach((photo: any) => {
       if (typeof photo === "string") formData.append("existingPhotos", photo);
       else formData.append("photos", photo);
