@@ -1,5 +1,5 @@
-import { refreshAccessToken } from "@/api/AuthenticationService";
-import { getTripShareInformation, updateTripShareInformation } from "@/api/TripService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
+import { getTripShareInformation, updateTripShareInformation } from "@/services/TripService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/providers/user-provider/UserContext";
@@ -119,8 +119,8 @@ const ShareTrip = () => {
 
   const updateInformation = async () => {
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("descriptionInHtml", descriptionInHtml);
+    formData.append("title", title === "null" ? "" : title);
+    formData.append("descriptionInHtml", descriptionInHtml === "null" ? "" : descriptionInHtml);
     Array.from(selectedPhotos).forEach((photo: any) => {
       if (typeof photo === "string") formData.append("existingPhotos", photo);
       else formData.append("photos", photo);

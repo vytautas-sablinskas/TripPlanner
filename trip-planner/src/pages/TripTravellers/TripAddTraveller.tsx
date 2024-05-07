@@ -13,10 +13,10 @@ import { ValueSelector } from "@/components/Extra/ValueSelector";
 import { PermissionTypes } from "./PermissionTypes";
 import { useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { inviteTripTravellers } from "@/api/TripTravellersService";
+import { inviteTripTravellers } from "@/services/TripTravellersService";
 import { CreateEditLoadingButton } from "@/components/Extra/LoadingButton";
 
 const formSchema = z.object({

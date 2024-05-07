@@ -4,7 +4,7 @@ namespace TripPlanner.API.Dtos.Expenses;
 
 public record AddExpenseDto (
     string Currency,
-    BudgetTypes Type,
+    TripDetailTypes Type,
     string Name,
     double Amount,
     DateTime? Date

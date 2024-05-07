@@ -4,12 +4,12 @@ import { Separator } from "@/components/ui/separator";
 import TripDetailsAccordion from "./TripDetailsAccordion";
 import { useEffect, useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
-import { getTripDetails } from "@/api/TripDetailService";
+import { getTripDetails } from "@/services/TripDetailService";
 import { getFormattedDateRange, getLocalDate, getUtcTimeWithoutChangingTime } from "@/utils/date";
 import { Backpack, BarChart4, BedDouble, CircleHelp, CirclePlus, CircleX, Pencil, PersonStanding, ShoppingCart, Utensils } from "lucide-react";
 import { ValueSelector } from "@/components/Extra/ValueSelector";
@@ -23,8 +23,8 @@ import {
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import AddExpenseDialog from "./AddExpenseDialog";
-import { getTripBudget } from "@/api/TripBudgetsService";
-import { deleteExpense } from "@/api/ExpensesService";
+import { getTripBudget } from "@/services/TripBudgetsService";
+import { deleteExpense } from "@/services/ExpensesService";
 import GoogleMapExtension from "@/components/Extra/GoogleMapExtension";
 import TripBudgetBreakdownDialog from "./TripBudgetBreakdownDialog";
 
@@ -336,9 +336,9 @@ const TripDetails = () => {
           id: response.id,
           name: formValues.name,
           currency: formValues.currency,
+          type: formValues.type,
           amount: formValues.amount,
           amountInMainCurrency: Number(response.amountInMainCurrency),
-          type: formValues.type,
           personPhoto: response.personPhoto,
           personName: response.personName,
           date: formValues.date,
@@ -346,6 +346,8 @@ const TripDetails = () => {
       ],
     });
   };
+
+  console.log(budget);
 
   return isLoading ? (
     <div>Loading</div>
@@ -463,7 +465,6 @@ const TripDetails = () => {
                       <div className="w-[32px] h-[32px] rounded-full mr-3 bg-gray-300 flex justify-center items-center">
                         {getBudgetPhoto(expense.type)}
                       </div>
-
                       <div className="flex flex-col justify-start">
                         <p className="font-bold">{expense.name}</p>
                         <p>{getBudgetType(expense.type)}</p>

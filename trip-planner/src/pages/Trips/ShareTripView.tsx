@@ -1,4 +1,4 @@
-import { getShareTripInformation } from "@/api/TripService";
+import { getShareTripInformation } from "@/services/TripService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import Paths from "@/routes/Paths";
 import {
@@ -95,7 +95,7 @@ const ShareTripView = () => {
               Trip Review From {userName}
             </p>
           )}
-          {(sharedInformation.title?.length > 0 || (sharedInformation.descriptionInHtml?.length > 0 && sharedInformation.descriptionInHtml !== "<p><br></p>")) && (
+          {(sharedInformation.title != "null" && sharedInformation.descriptionInHtml != "null") && (sharedInformation.title?.length > 0 || (sharedInformation.descriptionInHtml?.length > 0 && sharedInformation.descriptionInHtml !== "<p><br></p>")) && (
             <Card className="mt-6">
               <CardContent className="py-8 px-4">
                 {sharedInformation.title && (

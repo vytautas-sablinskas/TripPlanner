@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
-import Layout from "./components/Shared/Layout";
+import Layout from "./components/MainLayoutExtra/Layout";
 import UserContextProvider from "./providers/user-provider/UserContextProvider";
 import { APIProvider } from '@vis.gl/react-google-maps';
 

@@ -34,9 +34,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { addTripBudget, getTripTravellersForBudget } from "@/api/TripBudgetsService";
+import { addTripBudget, getTripTravellersForBudget } from "@/services/TripBudgetsService";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";

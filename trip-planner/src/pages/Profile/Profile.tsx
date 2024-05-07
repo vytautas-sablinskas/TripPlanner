@@ -18,9 +18,9 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import Paths from "@/routes/Paths";
-import { changePassword, changeProfileInformation, getUserProfile } from "@/api/ProfileService";
+import { changePassword, changeProfileInformation, getUserProfile } from "@/services/ProfileService";
 import PasswordInput from "@/components/Extra/PasswordInput";
 import { Separator } from "@/components/ui/separator";
 

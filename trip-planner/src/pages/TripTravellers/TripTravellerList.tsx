@@ -42,13 +42,13 @@ import Paths from "@/routes/Paths";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import TripEditTravellerDialog from "./TripEditTravellerDialog";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import {
   deleteTripTraveller,
   editTripTraveller,
-} from "@/api/TripTravellersService";
+} from "@/services/TripTravellersService";
 
 export type Payment = {
   id: string;

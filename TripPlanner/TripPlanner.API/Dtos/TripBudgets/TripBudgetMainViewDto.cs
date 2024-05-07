@@ -1,4 +1,5 @@
-﻿using TripPlanner.API.Dtos.Expenses;
+﻿using TripPlanner.API.Database.Enums;
+using TripPlanner.API.Dtos.Expenses;
 
 namespace TripPlanner.API.Dtos.TripBudgets;
 

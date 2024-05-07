@@ -33,7 +33,7 @@ public class ExpenseServiceTests
         _tripBudgetRepositoryMock.Setup(repo => repo.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<TripBudget, bool>>>()))
             .ReturnsAsync((TripBudget)null);
 
-        var result = await _service.AddExpense(budgetId, userId, new AddExpenseDto("", Database.Enums.BudgetTypes.Shared, "", 1, DateTime.UtcNow));
+        var result = await _service.AddExpense(budgetId, userId, new AddExpenseDto("", Database.Enums.TripDetailTypes.Activity, "", 1, DateTime.UtcNow));
 
         Assert.Null(result);
     }
@@ -43,7 +43,7 @@ public class ExpenseServiceTests
     {
         var budgetId = Guid.NewGuid();
         var userId = "user1";
-        var dto = new AddExpenseDto("USD", Database.Enums.BudgetTypes.Individual, "Expense 1", 100, DateTime.UtcNow);
+        var dto = new AddExpenseDto("USD", Database.Enums.TripDetailTypes.Activity, "Expense 1", 100, DateTime.UtcNow);
         var budget = new TripBudget { Id = budgetId, SpentAmount = 500, MainCurrency = "EUR" };
         var rate = 1.2;
         var user = new AppUser { Id = userId, Name = "John", Surname = "Doe", PhotoUri = "photo.jpg" };
@@ -115,7 +115,7 @@ public class ExpenseServiceTests
     {
         var budgetId = Guid.NewGuid();
         var expenseId = Guid.NewGuid();
-        var dto = new AddExpenseDto("USD", Database.Enums.BudgetTypes.Individual, "Expense 1", 100, DateTime.UtcNow);
+        var dto = new AddExpenseDto("USD", Database.Enums.TripDetailTypes.Activity, "Expense 1", 100, DateTime.UtcNow);
         var budget = new TripBudget { Id = budgetId, SpentAmount = 500, MainCurrency = "EUR" };
         var rate = 1.2;
         var currentExpense = new Expense { Id = expenseId, Amount = 50, Currency = "EUR", AmountInMainCurrency = 60 };

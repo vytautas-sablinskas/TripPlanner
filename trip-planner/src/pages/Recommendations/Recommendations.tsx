@@ -6,12 +6,12 @@ import FinalStepCard from "./FinalStepCard";
 import { useEffect, useState } from "react";
 import { CreateEditLoadingButton } from "@/components/Extra/LoadingButton";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
-import { getRecommendations } from "@/api/RecommendationService";
+import { getRecommendations } from "@/services/RecommendationService";
 
 const steps = [
   { label: "Select Location" },

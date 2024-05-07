@@ -82,8 +82,8 @@ public class TripBudgetServiceTests
             Type = BudgetTypes.IndividualWithFixedAmount,
             Expenses = new List<Expense>
                 {
-                    new Expense { Id = Guid.NewGuid(), Currency = "USD", Amount = 50, AmountInMainCurrency = 50, Name = "Expense 1", Type = BudgetTypes.Individual, UserId = userId, Date = DateTime.UtcNow },
-                    new Expense { Id = Guid.NewGuid(), Currency = "USD", Amount = 60, AmountInMainCurrency = 60, Name = "Expense 2", Type = BudgetTypes.IndividualWithFixedAmount, UserId = "user2", Date = DateTime.UtcNow }
+                    new Expense { Id = Guid.NewGuid(), Currency = "USD", Amount = 50, AmountInMainCurrency = 50, Name = "Expense 1", UserId = userId, Date = DateTime.UtcNow },
+                    new Expense { Id = Guid.NewGuid(), Currency = "USD", Amount = 60, AmountInMainCurrency = 60, Name = "Expense 2", UserId = "user2", Date = DateTime.UtcNow }
                 }
         };
         var user = new AppUser { Id = userId, Name = "John", Surname = "Doe", PhotoUri = "photo1.jpg" };

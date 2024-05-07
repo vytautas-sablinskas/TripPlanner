@@ -13,14 +13,14 @@ import Paths from "@/routes/Paths";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useUser } from "@/providers/user-provider/UserContext";
 import {
   deleteTripDetail,
   getTripDetailForView,
-} from "@/api/TripDetailService";
+} from "@/services/TripDetailService";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import TripDetailViewDocument from "./TripDetailViewDocument";
 import AddDocumentDialog from "./TripDocuments/AddDocumentDialog";
@@ -28,7 +28,7 @@ import {
   addTripDocument,
   deleteTripDocument,
   editTripDocument,
-} from "@/api/TripDocumentService";
+} from "@/services/TripDocumentService";
 import { DateTimeFormatOptions } from "luxon";
 import { formatDateToString } from "@/utils/date";
 

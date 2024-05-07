@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import "../Notifications/styles/notifications.css";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
 import { UserDocumentsList } from "./UserDocumentsList";
-import { getUserDocuments } from "@/api/TripDocumentService";
+import { getUserDocuments } from "@/services/TripDocumentService";
 
 const UserDocuments = () => {
     const navigate = useNavigate();

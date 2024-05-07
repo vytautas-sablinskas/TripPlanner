@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import "../Notifications/styles/notifications.css";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
 import { UnselectedTripDetailsList } from "./UnselectedTripDetailsList";
-import { getUnselectedTrips } from "@/api/TripDetailService";
-import { getAllUserTrips } from "@/api/TripService";
+import { getUnselectedTrips } from "@/services/TripDetailService";
+import { getAllUserTrips } from "@/services/TripService";
 
 const UnselectedTripDetails = () => {
     const navigate = useNavigate();

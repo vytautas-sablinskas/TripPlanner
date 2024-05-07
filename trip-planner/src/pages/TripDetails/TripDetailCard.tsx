@@ -6,10 +6,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Paths from "@/routes/Paths";
 import { DeleteDialogButton } from "@/components/Extra/DeleteDialogButton";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { deleteTripDetail } from "@/api/TripDetailService";
+import { deleteTripDetail } from "@/services/TripDetailService";
 import { useState } from "react";
 import {
   Backpack,

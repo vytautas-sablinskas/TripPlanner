@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { NotificationList } from "./NotificationList";
 import "./styles/notifications.css";
 import { checkTokenValidity } from "@/utils/jwtUtils";
-import { refreshAccessToken } from "@/api/AuthenticationService";
+import { refreshAccessToken } from "@/services/AuthenticationService";
 import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
-import { getNotifications, markNotificationsAsRead } from "@/api/NotificationService";
+import { getNotifications, markNotificationsAsRead } from "@/services/NotificationService";
 
 const Notifications = () => {
     const navigate = useNavigate();

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TripPlanner.API.Annotations.Trips;
+using TripPlanner.API.Annotations;
 
 namespace TripPlanner.API.Dtos.Trips;
 
