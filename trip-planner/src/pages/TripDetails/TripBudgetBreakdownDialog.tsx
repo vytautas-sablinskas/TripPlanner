@@ -144,14 +144,18 @@
     };
 
     const maxValue = allDateSpendings.reduce((max: number | null, day: any) => {
+      const expectedSpending = day[expectedSpendingKey] ? day[expectedSpendingKey] : 0;
+
       const dayValue = Math.max(
         parseFloat(day[daysKey]),
-        parseFloat(day[expectedSpendingKey]),
+        parseFloat(expectedSpending),
         parseFloat(day[totalSpentToDateKey])
       );
     
       return max === null ? dayValue : Math.max(max, dayValue);
     }, null);
+
+    console.log(maxValue);
 
     const categoriesOfLineChart = !isUnlimited
     ? [daysKey, expectedSpendingKey, totalSpentToDateKey]

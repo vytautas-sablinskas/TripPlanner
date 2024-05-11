@@ -123,7 +123,7 @@ public class TripDetailsService : ITripDetailsService
 
         var traveller = travellers.FirstOrDefault(t => t.UserId == userId && t.TripId == tripId);
 
-        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, activeDocumentsCount, traveller.Permissions, tripDetail.Trip.StartDate, tripDetail.Trip.EndDate, documents, travellerMinimalDtos);
+        var tripDetailViewDto = new TripDetailViewDto(tripDetail.Name, tripDetail.Address, tripDetail.PhoneNumber, tripDetail.Website, tripDetail.Notes, activeDocumentsCount, traveller.Permissions, tripDetail.StartTime, tripDetail.EndTime, documents, travellerMinimalDtos);
 
         return (true, tripDetailViewDto);
     }

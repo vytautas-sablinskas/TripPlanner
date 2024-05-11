@@ -75,11 +75,11 @@
 
 @media screen and (max-width: 750px) {
     .main-card-container-wrapper {
-        height: 165px;
+        height: 180px;
     }
 
     .main-card-container-wrapper {
-        height: 165px;
+        height: 180px;
     }
 
     .trip-card-information-container {
@@ -88,7 +88,7 @@
     }
 
     .trip-image-container {
-        height: 165px;
+        height: 180px;
         flex: 1;
     }
 
@@ -110,7 +110,7 @@
 
     .trip-card-image{
         width: 165px;
-        height: 165px;
+        height: 100%;
     }
 
     .trip-card-button {

@@ -39,7 +39,7 @@ public class TripService : ITripService
         var trip = _mapper.Map<Trip>(tripDto);
         trip.PhotoUri = imageUri;
 
-        var user = _appUserRepository.GetFirstOrDefaultAsync(t => t.Id == userId);
+        var user = await _appUserRepository.GetFirstOrDefaultAsync(t => t.Id == userId);
         if (user != null)
         {
             var traveller = new Traveller
