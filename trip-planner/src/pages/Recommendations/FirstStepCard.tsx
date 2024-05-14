@@ -45,7 +45,6 @@ const FirstStepCard = ({
         
         <GoogleAutocomplete
           onSelect={(place: any) => {
-            console.log(place);
             setGeometry({
               latitude: place?.geometry?.location?.lat(),
               longitude: place?.geometry?.location?.lng(),

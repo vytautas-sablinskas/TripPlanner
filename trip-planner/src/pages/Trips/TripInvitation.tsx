@@ -4,19 +4,19 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const TripInvitation = () => {
-    const { isAuthenticated } = useUser();
-    const navigate = useNavigate();
+  const { isAuthenticated } = useUser();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate(Paths.HOME);
-            return;
-        }
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(Paths.HOME);
+      return;
+    }
 
-        navigate(Paths.NOTIFICATIONS);
-    })
+    navigate(Paths.NOTIFICATIONS);
+  });
 
-    return null;
-}
+  return null;
+};
 
 export default TripInvitation;

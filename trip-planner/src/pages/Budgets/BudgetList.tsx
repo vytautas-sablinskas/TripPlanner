@@ -15,7 +15,11 @@ import { getTripBudgets } from "@/services/TripBudgetsService";
 const BudgetList = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, isAuthenticated } = useUser();
+  const {
+    changeUserInformationToLoggedOut,
+    changeUserInformationToLoggedIn,
+    isAuthenticated,
+  } = useUser();
   const [budgets, setBudgets] = useState([]);
 
   const getTripId = () => {
@@ -43,7 +47,7 @@ const BudgetList = () => {
         changeUserInformationToLoggedIn(
           result.data.accessToken,
           result.data.refreshToken,
-          result.data.id,
+          result.data.id
         );
       }
 
@@ -70,7 +74,7 @@ const BudgetList = () => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
@@ -91,7 +95,9 @@ const BudgetList = () => {
       <Separator className="mt-2" />
       <div className="budget-card-container-wrapper">
         {budgets.map((budget: any) => {
-          return <BudgetCard key={budget.id} budget={budget} setData={setBudgets}/>;
+          return (
+            <BudgetCard key={budget.id} budget={budget} setData={setBudgets} />
+          );
         })}
       </div>
     </div>

@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
 import Layout from "./components/MainLayoutExtra/Layout";
 import UserContextProvider from "./providers/user-provider/UserContextProvider";
-import { APIProvider } from '@vis.gl/react-google-maps';
+import { APIProvider } from "@vis.gl/react-google-maps";
 
 const App = () => {
   return (
@@ -13,7 +13,11 @@ const App = () => {
             <Routes>
               {AppRoutes.map((route: any, index: any) => {
                 return (
-                  <Route key={index} path={route.path} element={route.element} />
+                  <Route
+                    key={index}
+                    path={route.path}
+                    element={route.element}
+                  />
                 );
               })}
             </Routes>

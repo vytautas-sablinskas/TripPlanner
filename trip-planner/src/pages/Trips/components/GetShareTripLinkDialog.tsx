@@ -11,7 +11,7 @@ import { CirclePlus, CircleX, Copy } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const GetShareTripLinkDialog = ({ open, setOpen, link, setLink }: any) => {
   const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
@@ -21,7 +21,7 @@ const GetShareTripLinkDialog = ({ open, setOpen, link, setLink }: any) => {
   const [state, setState] = useState<any>({
     value: link ? link : "",
     copied: false,
-  })
+  });
 
   const getTripId = () => {
     const pathParts = location.pathname.split("/");
@@ -77,7 +77,7 @@ const GetShareTripLinkDialog = ({ open, setOpen, link, setLink }: any) => {
     toast.success("Link copied to clipboard", {
       position: "top-center",
     });
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={() => setOpen(!open)}>
@@ -105,8 +105,8 @@ const GetShareTripLinkDialog = ({ open, setOpen, link, setLink }: any) => {
           </Button>
           <CopyToClipboard text={link} onCopy={() => onCopy()}>
             <Button disabled={!link || link.length === 0}>
-                <Copy className="mr-2 h-4 w-4" />
-                Copy Link
+              <Copy className="mr-2 h-4 w-4" />
+              Copy Link
             </Button>
           </CopyToClipboard>
         </div>

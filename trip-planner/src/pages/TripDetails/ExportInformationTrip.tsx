@@ -20,8 +20,11 @@ import { useReactToPrint } from "react-to-print";
 
 const ExportInformationTrip = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
   const navigate = useNavigate();
   const [trips, setTrips] = useState<any>([]);
   const [days, setDays] = useState<any>([]);
@@ -118,7 +121,7 @@ const ExportInformationTrip = () => {
     content: () => pdfComponent.current,
     onAfterPrint: () => {
       setIsPrinting(false);
-    }
+    },
   });
 
   if (isLoading) {

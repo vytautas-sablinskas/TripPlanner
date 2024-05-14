@@ -1,217 +1,226 @@
-  import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-  } from "@/components/ui/dialog";
-  import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-  import { useEffect, useState } from "react";
-  import { AreaChart, BarChart } from "@tremor/react";
-  import { getUtcTimeWithoutChangingTime } from "@/utils/date";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
+import { AreaChart, BarChart } from "@tremor/react";
+import { getUtcTimeWithoutChangingTime } from "@/utils/date";
 
-  const TripBudgetBreakdownDialog = ({
-    open,
-    setOpen,
-    expenses,
-    tripStartDate,
-    tripEndDate,
-    mainCurrency,
-    totalBudget,
-    isUnlimited
-  }: any) => {
-    const budgetTypes = [
-      "Activity",
-      "Travel",
-      "Food",
-      "Lodging",
-      "Shopping",
-      "Other",
-    ];
-    const key = `Expenses By Category`;
-    const daysKey = `Expenses By Day`
-    const expectedSpendingKey = `Expected Spendings`;
-    const totalSpentToDateKey = `Total Spent To Date`;
+const TripBudgetBreakdownDialog = ({
+  open,
+  setOpen,
+  expenses,
+  tripStartDate,
+  tripEndDate,
+  mainCurrency,
+  totalBudget,
+  isUnlimited,
+}: any) => {
+  const budgetTypes = [
+    "Activity",
+    "Travel",
+    "Food",
+    "Lodging",
+    "Shopping",
+    "Other",
+  ];
+  const key = `Expenses By Category`;
+  const daysKey = `Expenses By Day`;
+  const expectedSpendingKey = `Expected Spendings`;
+  const totalSpentToDateKey = `Total Spent To Date`;
 
-    const getBudgetType = (type: any) => {
-      switch (type) {
-        case 0:
-          return "Activity";
-        case 1:
-          return "Travel";
-        case 2:
-          return "Food";
-        case 3:
-          return "Lodging";
-        case 4:
-          return "Shopping";
-        case 5:
-          return "Other";
-        default:
-          return "";
+  const getBudgetType = (type: any) => {
+    switch (type) {
+      case 0:
+        return "Activity";
+      case 1:
+        return "Travel";
+      case 2:
+        return "Food";
+      case 3:
+        return "Lodging";
+      case 4:
+        return "Shopping";
+      case 5:
+        return "Other";
+      default:
+        return "";
+    }
+  };
+
+  const budgetData = budgetTypes.map((budgetType) => {
+    const totalAmount = expenses
+      .filter((expense: any) => getBudgetType(expense.type) === budgetType)
+      .reduce(
+        (acc: any, expense: any) => acc + expense.amountInMainCurrency,
+        0
+      );
+    return { name: budgetType, [key]: totalAmount };
+  });
+
+  function getDates(startDate: any, endDate: any) {
+    const dates = [];
+    while (startDate <= endDate) {
+      const time = getUtcTimeWithoutChangingTime(startDate);
+      if (!time) {
+        continue;
       }
-    };
 
-    const budgetData = budgetTypes.map((budgetType) => {
-      const totalAmount = expenses
-        .filter((expense: any) => getBudgetType(expense.type) === budgetType)
-        .reduce(
-          (acc: any, expense: any) => acc + expense.amountInMainCurrency,
-          0
-        );
-      return { name: budgetType, [key]: totalAmount };
+      dates.push(time.split("T")[0]);
+      startDate.setDate(startDate.getDate() + 1);
+    }
+    return dates;
+  }
+
+  const startDate = new Date(tripStartDate);
+  const endDate = new Date(tripEndDate);
+  const allDates = getDates(startDate, endDate);
+
+  function calculateAmountSpentByDay(dates: any, trips: any) {
+    const amountSpentByDay: any = {};
+    const totalSpentByDay: any = {};
+    const averageSpendingByDay: any = {};
+    let totalSpent = 0;
+
+    dates.forEach((date: any) => {
+      amountSpentByDay[date] = 0;
+      totalSpentByDay[date] = 0;
     });
 
-    function getDates(startDate: any, endDate: any) {
-      const dates = [];
-      while (startDate <= endDate) {
-        const time = getUtcTimeWithoutChangingTime(startDate);
-        if (!time) {
-          continue;
-        }
+    trips.forEach((trip: any) => {
+      const tripDate = trip.date ? trip.date.split("T")[0] : null;
+      const amount = trip.amountInMainCurrency || 0;
 
-        dates.push(time.split("T")[0]);
-        startDate.setDate(startDate.getDate() + 1);
+      if (tripDate && amount && amount !== 0 && dates.includes(tripDate)) {
+        amountSpentByDay[tripDate] += amount;
+        totalSpent += amount;
       }
-      return dates;
-    }
+    });
 
-    const startDate = new Date(tripStartDate);
-    const endDate = new Date(tripEndDate);
-    const allDates = getDates(startDate, endDate);
+    const numDays = dates.length;
+    const budgetPerDay = totalBudget / numDays;
+    dates.forEach((date: any, index: number) => {
+      totalSpentByDay[date] = totalSpentByDay[dates[index - 1]] || 0;
+      totalSpentByDay[date] += amountSpentByDay[date];
+      averageSpendingByDay[date] = budgetPerDay * (index + 1);
+    });
 
-    function calculateAmountSpentByDay(dates: any, trips: any) {
-      const amountSpentByDay: any = {};
-      const totalSpentByDay: any = {};
-      const averageSpendingByDay: any = {};
-      let totalSpent = 0;
-    
-      dates.forEach((date: any) => {
-        amountSpentByDay[date] = 0;
-        totalSpentByDay[date] = 0;
-      });
-    
-      trips.forEach((trip: any) => {
-        const tripDate = trip.date ? trip.date.split("T")[0] : null;
-        const amount = trip.amountInMainCurrency || 0;
-    
-        if (tripDate && amount && amount !== 0 && dates.includes(tripDate)) {
-          amountSpentByDay[tripDate] += amount;
-          totalSpent += amount;
-        }
-      });
-    
-      const numDays = dates.length;
-      const budgetPerDay = totalBudget / numDays;
-      dates.forEach((date: any, index: number) => {
-        totalSpentByDay[date] = totalSpentByDay[dates[index - 1]] || 0;
-        totalSpentByDay[date] += amountSpentByDay[date];
-        averageSpendingByDay[date] = budgetPerDay * (index + 1);
-      });
-    
-      const result = Object.keys(amountSpentByDay).map((date) => {
-        const entry : any = {
-          date,
-          [daysKey]: amountSpentByDay[date].toFixed(2) || 0,
-          [totalSpentToDateKey]: totalSpentByDay[date].toFixed(2) || 0,
-        };
-      
-        if (!isUnlimited) {
-          entry[expectedSpendingKey] = averageSpendingByDay[date].toFixed(2) || 0;
-        }
-      
-        return entry;
-      });
-    
-      return result;
-    }
-    
+    const result = Object.keys(amountSpentByDay).map((date) => {
+      const entry: any = {
+        date,
+        [daysKey]: amountSpentByDay[date].toFixed(2) || 0,
+        [totalSpentToDateKey]: totalSpentByDay[date].toFixed(2) || 0,
+      };
 
-    const [allDateSpendings, setAllDateSpendings] = useState<any>(calculateAmountSpentByDay(allDates, expenses))
-    useEffect(() => {
-      setAllDateSpendings(calculateAmountSpentByDay(allDates, expenses));
-    }, [expenses]);
+      if (!isUnlimited) {
+        entry[expectedSpendingKey] = averageSpendingByDay[date].toFixed(2) || 0;
+      }
 
-    const [tabSelected, setTabSelected] = useState<any>("days");
+      return entry;
+    });
 
-    const dataFormatter = (number: number) => {
-      const numberFixed = Number(number.toFixed(2));
+    return result;
+  }
 
-      return Intl.NumberFormat("us").format(numberFixed) + ` ${mainCurrency}`;
-    };
+  const [allDateSpendings, setAllDateSpendings] = useState<any>(
+    calculateAmountSpentByDay(allDates, expenses)
+  );
+  useEffect(() => {
+    setAllDateSpendings(calculateAmountSpentByDay(allDates, expenses));
+  }, [expenses]);
 
-    const valueFormatterLineChart = function (number : any) {
-      return new Intl.NumberFormat('us').format(number).toString() + ` ${mainCurrency}`;
-    };
+  const [tabSelected, setTabSelected] = useState<any>("days");
 
-    const maxValue = allDateSpendings.reduce((max: number | null, day: any) => {
-      const expectedSpending = day[expectedSpendingKey] ? day[expectedSpendingKey] : 0;
+  const dataFormatter = (number: number) => {
+    const numberFixed = Number(number.toFixed(2));
 
-      const dayValue = Math.max(
-        parseFloat(day[daysKey]),
-        parseFloat(expectedSpending),
-        parseFloat(day[totalSpentToDateKey])
-      );
-    
-      return max === null ? dayValue : Math.max(max, dayValue);
-    }, null);
+    return Intl.NumberFormat("us").format(numberFixed) + ` ${mainCurrency}`;
+  };
 
-    console.log(maxValue);
-
-    const categoriesOfLineChart = !isUnlimited
-    ? [daysKey, expectedSpendingKey, totalSpentToDateKey]
-    : [daysKey, totalSpentToDateKey];
-    const colorOfSpendings = Number(allDateSpendings[allDateSpendings?.length - 1][totalSpentToDateKey]) > Number(allDateSpendings[allDateSpendings?.length - 1][expectedSpendingKey]) ? "red" : "green-600";
-    const colorsOfLineChart = !isUnlimited 
-    ? ["blue-700", "gray-400", colorOfSpendings] 
-    : ["blue-700", colorOfSpendings];
-
+  const valueFormatterLineChart = function (number: any) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[1000px]">
-          <DialogHeader>
-            <DialogTitle className="text-left">Budget Breakdown</DialogTitle>
-          </DialogHeader>
-          <Tabs
-            value={tabSelected}
-            onValueChange={setTabSelected}
-            className="w-full"
-          >
-            <TabsList className="w-full">
-              <TabsTrigger value="days" className="w-full">
-                Days
-              </TabsTrigger>
-              <TabsTrigger value="categories" className="w-full">
-                Categories
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-          {tabSelected === "days" && (
-            <AreaChart
-              data={allDateSpendings}
-              key={allDateSpendings.length}
-              index="date"
-              categories={categoriesOfLineChart}
-              colors={colorsOfLineChart}
-              maxValue={maxValue}
-              yAxisWidth={80}
-              valueFormatter={valueFormatterLineChart}
-              showAnimation
-            />
-          )}
-          {tabSelected === "categories" && (
-            <BarChart
-              data={budgetData}
-              index="name"
-              categories={[key]}
-              colors={["blue"]}
-              valueFormatter={dataFormatter}
-              yAxisWidth={80}
-              showAnimation
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      new Intl.NumberFormat("us").format(number).toString() + ` ${mainCurrency}`
     );
   };
 
-  export default TripBudgetBreakdownDialog;
+  const maxValue = allDateSpendings.reduce((max: number | null, day: any) => {
+    const expectedSpending = day[expectedSpendingKey]
+      ? day[expectedSpendingKey]
+      : 0;
+
+    const dayValue = Math.max(
+      parseFloat(day[daysKey]),
+      parseFloat(expectedSpending),
+      parseFloat(day[totalSpentToDateKey])
+    );
+
+    return max === null ? dayValue : Math.max(max, dayValue);
+  }, null);
+
+  const categoriesOfLineChart = !isUnlimited
+    ? [daysKey, expectedSpendingKey, totalSpentToDateKey]
+    : [daysKey, totalSpentToDateKey];
+  const colorOfSpendings =
+    Number(
+      allDateSpendings[allDateSpendings?.length - 1][totalSpentToDateKey]
+    ) >
+    Number(allDateSpendings[allDateSpendings?.length - 1][expectedSpendingKey])
+      ? "red"
+      : "green-600";
+  const colorsOfLineChart = !isUnlimited
+    ? ["blue-700", "gray-400", colorOfSpendings]
+    : ["blue-700", colorOfSpendings];
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-[1000px]">
+        <DialogHeader>
+          <DialogTitle className="text-left">Budget Breakdown</DialogTitle>
+        </DialogHeader>
+        <Tabs
+          value={tabSelected}
+          onValueChange={setTabSelected}
+          className="w-full"
+        >
+          <TabsList className="w-full">
+            <TabsTrigger value="days" className="w-full">
+              Days
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="w-full">
+              Categories
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        {tabSelected === "days" && (
+          <AreaChart
+            data={allDateSpendings}
+            key={allDateSpendings.length}
+            index="date"
+            categories={categoriesOfLineChart}
+            colors={colorsOfLineChart}
+            maxValue={maxValue}
+            yAxisWidth={80}
+            valueFormatter={valueFormatterLineChart}
+            showAnimation
+          />
+        )}
+        {tabSelected === "categories" && (
+          <BarChart
+            data={budgetData}
+            index="name"
+            categories={[key]}
+            colors={["blue"]}
+            valueFormatter={dataFormatter}
+            yAxisWidth={80}
+            showAnimation
+          />
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default TripBudgetBreakdownDialog;

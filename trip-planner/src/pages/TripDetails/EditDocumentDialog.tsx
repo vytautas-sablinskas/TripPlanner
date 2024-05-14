@@ -59,8 +59,11 @@ const EditDocumentDialog = ({
     },
   });
   const navigate = useNavigate();
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, id } =
-    useUser();
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    id,
+  } = useUser();
   const [selectedMembers, setSelectedMembers] = useState<any>([]);
   const [isLoadingMembers, setIsLoading] = useState<any>(false);
   const [isPrivateDocument, setIsPrivateDocument] = useState<any>(false);
@@ -116,26 +119,27 @@ const EditDocumentDialog = ({
       setSelectedMembers(
         members
           .filter((member: any) => data.memberIds.includes(member.id))
-          .map((member: any) => ({ label: `${member.fullName} - ${member.email}`, value: member.id }))
+          .map((member: any) => ({
+            label: `${member.fullName} - ${member.email}`,
+            value: member.id,
+          }))
       );
-      setIsPrivateDocument(data.isPrivate)
+      setIsPrivateDocument(data.isPrivate);
       setIsLoading(false);
     };
 
     tryFetchingMembers();
   }, [open]);
 
-  const onSubmit = (formValues : any) => {
+  const onSubmit = (formValues: any) => {
     const dto = {
       ...formValues,
       memberIds: selectedMembers.map((member: any) => member.value),
       isPrivate: isPrivateDocument,
     };
 
-    console.log(dto);
-
     onEdit(dto);
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={() => !isLoading && setOpen(!open)}>
@@ -180,53 +184,68 @@ const EditDocumentDialog = ({
                 </label>
               </div>
               {isPrivateDocument && (
-              <div className="mt-4">
-                <Label htmlFor="members">Assign Members To Document</Label>
-                <MultipleSelector
-                  value={selectedMembers}
-                  onChange={setSelectedMembers}
-                  defaultOptions={members.filter((member : any) => member.id !== id).map((traveller: any) => ({
-                    label: `${traveller.fullName} - ${traveller.email}`,
-                    value: traveller.id,
-                  }))}
-                  placeholder="Select members to add"
-                />
-                {selectedMembers.length > 0 && (
-                  <Card className="p-2 mt-2 max-h-[150px] overflow-y-scroll">
-                    {members
-                    .filter((traveller: any) => selectedMembers.some((member: any) => traveller.id === member.value))
-                    .map((traveller: any) => (  
-                      <div
-                        className="flex items-center space-x-4 mb-2 w-full"
-                        key={traveller.id}
-                      >
-                        <img
-                          alt="Avatar"
-                          className="traveller-element-image"
-                          height="40"
-                          src={traveller.photo}
-                          width="40"
-                        />
-                        <div className="space-y-1 w-full flex-grow">
-                          <h3 className="font-semibold">{traveller.email}</h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {traveller.fullName}
-                          </p>
-                        </div>
-                        <Button
-                          className="ml-auto trip-element-remove-button"
-                          size="sm"
-                          type="button"
-                          onClick={() => setSelectedMembers((prev: any) => prev.filter((member: any) => member.value !== traveller.id))}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    ))}
-                  </Card>
-                )}
-              </div>
-            )}
+                <div className="mt-4">
+                  <Label htmlFor="members">Assign Members To Document</Label>
+                  <MultipleSelector
+                    value={selectedMembers}
+                    onChange={setSelectedMembers}
+                    defaultOptions={members
+                      .filter((member: any) => member.id !== id)
+                      .map((traveller: any) => ({
+                        label: `${traveller.fullName} - ${traveller.email}`,
+                        value: traveller.id,
+                      }))}
+                    placeholder="Select members to add"
+                  />
+                  {selectedMembers.length > 0 && (
+                    <Card className="p-2 mt-2 max-h-[150px] overflow-y-scroll">
+                      {members
+                        .filter((traveller: any) =>
+                          selectedMembers.some(
+                            (member: any) => traveller.id === member.value
+                          )
+                        )
+                        .map((traveller: any) => (
+                          <div
+                            className="flex items-center space-x-4 mb-2 w-full"
+                            key={traveller.id}
+                          >
+                            <img
+                              alt="Avatar"
+                              className="traveller-element-image"
+                              height="40"
+                              src={traveller.photo}
+                              width="40"
+                            />
+                            <div className="space-y-1 w-full flex-grow">
+                              <h3 className="font-semibold">
+                                {traveller.email}
+                              </h3>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {traveller.fullName}
+                              </p>
+                            </div>
+                            <Button
+                              className="ml-auto trip-element-remove-button"
+                              size="sm"
+                              type="button"
+                              onClick={() =>
+                                setSelectedMembers((prev: any) =>
+                                  prev.filter(
+                                    (member: any) =>
+                                      member.value !== traveller.id
+                                  )
+                                )
+                              }
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        ))}
+                    </Card>
+                  )}
+                </div>
+              )}
               <DialogFooter className="flex flex-col mt-4">
                 <DialogClose>
                   <Button

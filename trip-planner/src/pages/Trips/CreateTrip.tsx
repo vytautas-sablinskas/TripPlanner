@@ -26,11 +26,7 @@ import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
 const MAX_FILE_SIZE = 2000000;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
 const formSchema = z.object({
   tripTitle: z.string().min(1, {
@@ -61,8 +57,11 @@ const formSchema = z.object({
 const CreateTrip = () => {
   const navigate = useNavigate();
   const [uploadedImage, setUploadedImage] = useState<any>("/default.jpg");
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -94,9 +93,14 @@ const CreateTrip = () => {
       toast.error("File is too large! 2MB Max.", { position: "top-center" });
       return;
     }
-    
-    if (!ACCEPTED_IMAGE_TYPES.some(acceptedType => acceptedType === file.type)) {
-      toast.error("Some files had invalid type. Only JPG and PNG files are allowed", { position: "top-center" });
+
+    if (
+      !ACCEPTED_IMAGE_TYPES.some((acceptedType) => acceptedType === file.type)
+    ) {
+      toast.error(
+        "Some files had invalid type. Only JPG and PNG files are allowed",
+        { position: "top-center" }
+      );
       return;
     }
 
@@ -183,7 +187,11 @@ const CreateTrip = () => {
                   <FormItem className="inputs mb-4">
                     <FormLabel required>Trip Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter trip name" className="w-full"/>
+                      <Input
+                        {...field}
+                        placeholder="Enter trip name"
+                        className="w-full"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -197,7 +205,7 @@ const CreateTrip = () => {
                     <FormLabel required>Destination</FormLabel>
                     <FormControl>
                       <GoogleAutocomplete
-                        onSelect={(place : any) => {
+                        onSelect={(place: any) => {
                           field.onChange(place.formatted_address);
                         }}
                         types={["geocode"]}
@@ -214,7 +222,9 @@ const CreateTrip = () => {
                 name="date"
                 render={({ field }) => (
                   <FormItem className="inputs">
-                    <FormLabel required className="mb-4">Trip Date Range</FormLabel>
+                    <FormLabel required className="mb-4">
+                      Trip Date Range
+                    </FormLabel>
                     <FormControl>
                       <DatePickerWithRange
                         field={field}
@@ -253,7 +263,11 @@ const CreateTrip = () => {
             </div>
           </div>
           <div className="submit-buttons-container">
-            <Button type="button" disabled={loading} onClick={() => navigate(Paths.TRIPS)}>
+            <Button
+              type="button"
+              disabled={loading}
+              onClick={() => navigate(Paths.TRIPS)}
+            >
               Cancel
             </Button>
             <CreateEditLoadingButton loading={loading} text="Submit" />

@@ -151,7 +151,11 @@ const Register = () => {
                 <FormItem>
                   <FormLabel required>Name</FormLabel>
                   <FormControl className="w-full mb-4">
-                    <Input placeholder="Enter Your Name" {...field} autoComplete="given-name"/>
+                    <Input
+                      placeholder="Enter Your Name"
+                      {...field}
+                      autoComplete="given-name"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -164,7 +168,11 @@ const Register = () => {
                 <FormItem>
                   <FormLabel required>Surname</FormLabel>
                   <FormControl className="w-full mb-4">
-                    <Input placeholder="Enter Your Surname" {...field} autoComplete="family-name"/>
+                    <Input
+                      placeholder="Enter Your Surname"
+                      {...field}
+                      autoComplete="family-name"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -177,7 +185,11 @@ const Register = () => {
                 <FormItem>
                   <FormLabel required>Email</FormLabel>
                   <FormControl className="w-full mb-4">
-                    <Input placeholder="Enter Your Email" {...field} autoComplete="email"/>
+                    <Input
+                      placeholder="Enter Your Email"
+                      {...field}
+                      autoComplete="email"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -202,7 +214,13 @@ const Register = () => {
             />
             <AuthButton loading={loading} text={"Register"} />
             <span className="wrong-section-text">
-              Already have an account?<strong className="sing-up-text" onClick={() => navigate(Paths.LOGIN)}>Log in</strong>
+              Already have an account?
+              <strong
+                className="sing-up-text"
+                onClick={() => navigate(Paths.LOGIN)}
+              >
+                Log in
+              </strong>
             </span>
           </CardContent>
         </Card>

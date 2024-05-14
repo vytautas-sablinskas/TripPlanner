@@ -23,7 +23,7 @@ import {
 } from "@/services/TripDetailService";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 import TripDetailViewDocument from "./TripDetailViewDocument";
-import AddDocumentDialog from "./TripDocuments/AddDocumentDialog";
+import AddDocumentDialog from "./AddDocumentDialog";
 import {
   addTripDocument,
   deleteTripDocument,
@@ -36,8 +36,12 @@ const TripDetailView = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, id: userId, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    id: userId,
+    isAuthenticated,
+  } = useUser();
   const [isAddDocumentDialogOpen, setIsAddDocumentDialogOpen] = useState(false);
   const [isAddDocumentSubmitting, setIsAddDocumentSubmitting] = useState(false);
   const [isEditDocumentSubmitting, setIsEditDocumentSubmitting] =
@@ -121,8 +125,12 @@ const TripDetailView = () => {
   }, []);
 
   function formatTime(time: any) {
-    const options : DateTimeFormatOptions = { hour: "numeric", minute: "2-digit", hour12: true };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const options: DateTimeFormatOptions = {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    };
+    const formatter = new Intl.DateTimeFormat("en-US", options);
     return formatter.format(time);
   }
 
@@ -208,7 +216,7 @@ const TripDetailView = () => {
     setIsAddDocumentSubmitting(false);
     setIsAddDocumentDialogOpen(false);
     toast.success("Document added successfully", { position: "top-center" });
-    setActiveDocumentCount((prev : any) => prev + 1);
+    setActiveDocumentCount((prev: any) => prev + 1);
   };
 
   const handleDeleteDocument = async (id: any) => {
@@ -250,7 +258,7 @@ const TripDetailView = () => {
     setDocuments(documents.filter((document: any) => document.id !== id));
     toast.success("Document deleted successfully", { position: "top-center" });
     setIsDeleteDocumentDeleting(false);
-    setActiveDocumentCount((prev : any) => prev - 1);
+    setActiveDocumentCount((prev: any) => prev - 1);
   };
 
   const handleEditDocument = async (formValues: any) => {
@@ -310,8 +318,10 @@ const TripDetailView = () => {
   const getHref = () => {
     if (!tripDetail.website) return null;
 
-    return websiteUrl.startsWith('http://') || websiteUrl.startsWith('https://') ? websiteUrl : 'https://' + websiteUrl;
-  }
+    return websiteUrl.startsWith("http://") || websiteUrl.startsWith("https://")
+      ? websiteUrl
+      : "https://" + websiteUrl;
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -328,40 +338,39 @@ const TripDetailView = () => {
       </span>
       <span className="trip-first-row">
         <h1 className="trip-name-title">{tripDetail.name}</h1>
-        {(tripDetail.permissions === 1 || tripDetail.permissions === 2) &&
+        {(tripDetail.permissions === 1 || tripDetail.permissions === 2) && (
           <span className="change-info-buttons">
-              <Button
-                className="mr-3"
-                variant="ghost"
-                onClick={() =>
-                  navigate(
-                    Paths.TRIP_DETAILS_EDIT.replace(":tripId", getTripId()).replace(
-                      ":planId",
-                      getTripDetailId()
-                    )
-                  )
-                }
-              >
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit Plan
-              </Button>
-              <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(true)}>
-                <CircleX className="mr-2 h-4 w-4" />
-                Delete Plan
-              </Button>
-              <DeleteDialog
-                open={isDeleteDialogOpen}
-                title="Delete Plan"
-                description="Are you sure you want to delete this plan? This will permanently delete this plan and its contents. You and all trip participants will not be able to access the plan or any documents related to this plan anymore."
-                dialogButtonText="Delete Plan"
-                onDelete={handleDelete}
-                isLoading={isLoading}
-                onClose={() => setIsDeleteDialogOpen(false)}
-                setOpen={setIsDeleteDialogOpen}
-              />
-            </span>
-
-        }
+            <Button
+              className="mr-3"
+              variant="ghost"
+              onClick={() =>
+                navigate(
+                  Paths.TRIP_DETAILS_EDIT.replace(
+                    ":tripId",
+                    getTripId()
+                  ).replace(":planId", getTripDetailId())
+                )
+              }
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit Plan
+            </Button>
+            <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(true)}>
+              <CircleX className="mr-2 h-4 w-4" />
+              Delete Plan
+            </Button>
+            <DeleteDialog
+              open={isDeleteDialogOpen}
+              title="Delete Plan"
+              description="Are you sure you want to delete this plan? This will permanently delete this plan and its contents. You and all trip participants will not be able to access the plan or any documents related to this plan anymore."
+              dialogButtonText="Delete Plan"
+              onDelete={handleDelete}
+              isLoading={isLoading}
+              onClose={() => setIsDeleteDialogOpen(false)}
+              setOpen={setIsDeleteDialogOpen}
+            />
+          </span>
+        )}
       </span>
       <Card className="trip-detail-view-information-container">
         <CardContent>
@@ -372,7 +381,9 @@ const TripDetailView = () => {
                 <p className="font-medium text-lg">
                   Starts {formatDateToString(tripDetail.startTime) || undefined}
                 </p>
-                <p className="font-bold text-xl">{formatTime(new Date(tripDetail.startTime))}</p>
+                <p className="font-bold text-xl">
+                  {formatTime(new Date(tripDetail.startTime))}
+                </p>
               </div>
             )}
 
@@ -381,7 +392,9 @@ const TripDetailView = () => {
                 <p className="font-medium text-lg">
                   Ends {formatDateToString(tripDetail.endTime || undefined)}
                 </p>
-                <p className="font-bold text-xl">{formatTime(new Date(tripDetail.endTime))}</p>
+                <p className="font-bold text-xl">
+                  {formatTime(new Date(tripDetail.endTime))}
+                </p>
               </div>
             )}
           </div>

@@ -20,7 +20,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, CircleEllipsis, CircleX, File, Pencil, Printer, Share2, Users, Wallet } from "lucide-react";
+import {
+  ChevronDown,
+  CircleEllipsis,
+  CircleX,
+  File,
+  Pencil,
+  Printer,
+  Share2,
+  Users,
+  Wallet,
+} from "lucide-react";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
 
 const TripCard = ({ trip, onDelete }: any) => {
@@ -98,12 +108,18 @@ const TripCard = ({ trip, onDelete }: any) => {
               {getFormattedDateRange(trip.startDate, trip.endDate)}
             </p>
             <div className="trip-card-buttons">
-              {trip.isCreator && 
-                <Button className="trip-card-button" variant="ghost" onClick={() => navigate(Paths.EDIT_TRIP.replace(":id", trip.id))}>
+              {trip.isCreator && (
+                <Button
+                  className="trip-card-button"
+                  variant="ghost"
+                  onClick={() =>
+                    navigate(Paths.EDIT_TRIP.replace(":id", trip.id))
+                  }
+                >
                   <Pencil className="mr-2 h-4 w-4" />
                   <span>Edit Trip Information</span>
                 </Button>
-              }
+              )}
               <DropdownMenu
                 open={isMenuOpen}
                 onOpenChange={(isOpen) => setIsMenuOpen(isOpen)}
@@ -114,26 +130,50 @@ const TripCard = ({ trip, onDelete }: any) => {
                     <CircleEllipsis className="mr-2 h-4 w-4" />
                     More Options
                     <ChevronDown
-                      className={`ml-2 w-4 h-4 transition-transform duration-200 ease-in-out ${isMenuOpen ? "rotate-180" : ""}`}
+                      className={`ml-2 w-4 h-4 transition-transform duration-200 ease-in-out ${
+                        isMenuOpen ? "rotate-180" : ""
+                      }`}
                     />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   <DropdownMenuLabel>Options</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.TRIP_TRAVELLERS_VIEW.replace(":tripId", trip.id))}>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                      navigate(
+                        Paths.TRIP_TRAVELLERS_VIEW.replace(":tripId", trip.id)
+                      )
+                    }
+                  >
                     <Users className="mr-2 h-4 w-4" />
                     Trip Participants
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.BUDGETS.replace(":tripId", trip.id))}>
-                    <Wallet className="mr-2 h-4 w-4"/>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                      navigate(Paths.BUDGETS.replace(":tripId", trip.id))
+                    }
+                  >
+                    <Wallet className="mr-2 h-4 w-4" />
                     Trip Budgets
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.EXPORT_TRIP.replace(":tripId", trip.id))}>
-                    <Printer className="mr-2 h-4 w-4"/>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                      navigate(Paths.EXPORT_TRIP.replace(":tripId", trip.id))
+                    }
+                  >
+                    <Printer className="mr-2 h-4 w-4" />
                     Print Trip
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(Paths.SHARE_TRIP.replace(":tripId", trip.id))}>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                      navigate(Paths.SHARE_TRIP.replace(":tripId", trip.id))
+                    }
+                  >
                     <Share2 className="mr-2 h-4 w-4" />
                     Share Trip
                   </DropdownMenuItem>
@@ -147,7 +187,13 @@ const TripCard = ({ trip, onDelete }: any) => {
                   </DropdownMenuItem>
                   <DeleteDialog
                     title={trip.isCreator ? "Delete Trip" : "Leave Trip"}
-                    description={`Are you sure you want to ${trip.isCreator ? "delete" : "leave"} this trip?${trip.isCreator ? " This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans." : ""}`}
+                    description={`Are you sure you want to ${
+                      trip.isCreator ? "delete" : "leave"
+                    } this trip?${
+                      trip.isCreator
+                        ? " This will permanently delete this trip and its contents. You and all trip participants will not be able to access the trip or any trip plans."
+                        : ""
+                    }`}
                     dialogButtonText={trip.isCreator ? "Delete" : "Leave"}
                     onDelete={handleDelete}
                     isLoading={loading}

@@ -128,8 +128,6 @@ const RecommendationCategories = ({
     return "";
   };
 
-  console.log(enabled);
-
   return (
     <div className="sm:max-w-[700px] min-w-[300px] p-8 flex-wrap">
       <Label className="ml-2 text-xl font-bold">

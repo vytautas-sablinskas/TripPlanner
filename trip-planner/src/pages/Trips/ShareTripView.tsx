@@ -34,7 +34,6 @@ const ShareTripView = () => {
       }
 
       const data = await response.json();
-      console.log(data);
 
       const tripDetailsByDay = data.tripDetails.reduce(
         (acc: any, detail: any) => {
@@ -88,31 +87,37 @@ const ShareTripView = () => {
       <div className="export-information-main-container">
         <div className="mb-16">
           {(sharedInformation.title?.length > 0 ||
-            (sharedInformation.descriptionInHtml?.length > 0 && sharedInformation.descriptionInHtml !== "<p><br></p>") ||
+            (sharedInformation.descriptionInHtml?.length > 0 &&
+              sharedInformation.descriptionInHtml !== "<p><br></p>") ||
             (sharedInformation.photos &&
               sharedInformation.photos.length > 0)) && (
             <p className="text-3xl font-bold mb-4">
               Trip Review From {userName}
             </p>
           )}
-          {(sharedInformation.title != "null" && sharedInformation.descriptionInHtml != "null") && (sharedInformation.title?.length > 0 || (sharedInformation.descriptionInHtml?.length > 0 && sharedInformation.descriptionInHtml !== "<p><br></p>")) && (
-            <Card className="mt-6">
-              <CardContent className="py-8 px-4">
-                {sharedInformation.title && (
-                  <p className="text-2xl font-bold px-[15px]">
-                    {sharedInformation.title}
-                  </p>
-                )}
-                {(sharedInformation.descriptionInHtml && sharedInformation.descriptionInHtml !== "<p><br></p>") && (
-                  <ReactQuill
-                    value={sharedInformation.descriptionInHtml}
-                    theme="bubble"
-                    readOnly
-                  />
-                )}
-              </CardContent>
-            </Card>
-          )}
+          {sharedInformation.title != "null" &&
+            sharedInformation.descriptionInHtml != "null" &&
+            (sharedInformation.title?.length > 0 ||
+              (sharedInformation.descriptionInHtml?.length > 0 &&
+                sharedInformation.descriptionInHtml !== "<p><br></p>")) && (
+              <Card className="mt-6">
+                <CardContent className="py-8 px-4">
+                  {sharedInformation.title && (
+                    <p className="text-2xl font-bold px-[15px]">
+                      {sharedInformation.title}
+                    </p>
+                  )}
+                  {sharedInformation.descriptionInHtml &&
+                    sharedInformation.descriptionInHtml !== "<p><br></p>" && (
+                      <ReactQuill
+                        value={sharedInformation.descriptionInHtml}
+                        theme="bubble"
+                        readOnly
+                      />
+                    )}
+                </CardContent>
+              </Card>
+            )}
 
           {sharedInformation.photos && sharedInformation.photos.length > 0 && (
             <div className="h-[450px] my-8 w-full">

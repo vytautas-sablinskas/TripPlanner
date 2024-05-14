@@ -16,7 +16,12 @@ interface DateTimePickerProps {
   endDate: Date | undefined;
 }
 
-export function DateTimePicker({ date, setDate, startDate, endDate }: DateTimePickerProps) {
+export function DateTimePicker({
+  date,
+  setDate,
+  startDate,
+  endDate,
+}: DateTimePickerProps) {
   const [selectedDateTime, setSelectedDateTime] =
     React.useState<DateTime | null>(date ? DateTime.fromJSDate(date) : null);
 
@@ -74,7 +79,8 @@ export function DateTimePicker({ date, setDate, startDate, endDate }: DateTimePi
           selected={selectedDateTime ? selectedDateTime.toJSDate() : undefined}
           onSelect={handleSelect}
           disabled={(date) =>
-            (endDate && date > new Date(endDate)) || (startDate && date < new Date(startDate))
+            (endDate && date > new Date(endDate)) ||
+            (startDate && date < new Date(startDate))
               ? true
               : false
           }

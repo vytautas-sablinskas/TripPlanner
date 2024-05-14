@@ -10,8 +10,23 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
 import { getTripDetails } from "@/services/TripDetailService";
-import { getFormattedDateRange, getLocalDate, getUtcTimeWithoutChangingTime } from "@/utils/date";
-import { Backpack, BarChart4, BedDouble, CircleHelp, CirclePlus, CircleX, Pencil, PersonStanding, ShoppingCart, Utensils } from "lucide-react";
+import {
+  getFormattedDateRange,
+  getLocalDate,
+  getUtcTimeWithoutChangingTime,
+} from "@/utils/date";
+import {
+  Backpack,
+  BarChart4,
+  BedDouble,
+  CircleHelp,
+  CirclePlus,
+  CircleX,
+  Pencil,
+  PersonStanding,
+  ShoppingCart,
+  Utensils,
+} from "lucide-react";
 import { ValueSelector } from "@/components/Extra/ValueSelector";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -31,8 +46,11 @@ import TripBudgetBreakdownDialog from "./TripBudgetBreakdownDialog";
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const [budgetIds, setBudgetIds] = useState<any>([]);
@@ -106,22 +124,28 @@ const TripDetails = () => {
       return new Date(dateA).getTime() - new Date(dateB).getTime();
     });
 
-    const sortedTripDetailsByDay = tripDetailsByDayArray.reduce((acc : any, [date, details] : any) => {
-      acc[date] = details;
-      return acc;
-    }, {});
+    const sortedTripDetailsByDay = tripDetailsByDayArray.reduce(
+      (acc: any, [date, details]: any) => {
+        acc[date] = details;
+        return acc;
+      },
+      {}
+    );
 
-    const tripMapInformation: Record<string, { lat: number; lng: number }[]> = {};
+    const tripMapInformation: Record<string, { lat: number; lng: number }[]> =
+      {};
 
     Object.keys(sortedTripDetailsByDay).forEach((day: string) => {
       const detailsForDay = sortedTripDetailsByDay[day];
       const latLngArray = detailsForDay
-        .filter((detail: any) => detail.latitude !== null && detail.longitude !== null)
+        .filter(
+          (detail: any) => detail.latitude !== null && detail.longitude !== null
+        )
         .map((detail: any) => ({
           lat: detail.latitude,
           lng: detail.longitude,
           title: detail.name,
-          info: detail.description
+          info: detail.description,
         }));
 
       tripMapInformation[day] = latLngArray;
@@ -132,9 +156,9 @@ const TripDetails = () => {
     const tripDetails = {
       tripInformation: data.tripInformation,
       data: tripDetailsByDay,
-      permissions: data.tripPermissions
+      permissions: data.tripPermissions,
     };
-  
+
     setIsLoading(false);
     setTripDetails(tripDetails);
 
@@ -191,13 +215,15 @@ const TripDetails = () => {
     tryFetchingTripDetails();
   }, []);
 
-  const handleDelete = async (id : any) => {
+  const handleDelete = async (id: any) => {
     setTripDetails({
       ...tripDetails,
-      data: Object.keys(tripDetails.data).reduce((acc : any, date : any) => {
-        acc[date] = tripDetails.data[date].filter((detail : any) => detail.id !== id);
+      data: Object.keys(tripDetails.data).reduce((acc: any, date: any) => {
+        acc[date] = tripDetails.data[date].filter(
+          (detail: any) => detail.id !== id
+        );
         return acc;
-      }, {})
+      }, {}),
     });
   };
 
@@ -214,11 +240,11 @@ const TripDetails = () => {
       case 2:
         return "Food";
       case 3:
-        return "Lodging"
+        return "Lodging";
       case 4:
-        return "Shopping"
+        return "Shopping";
       case 5:
-        return "Other"
+        return "Other";
       default:
         return "";
     }
@@ -227,7 +253,7 @@ const TripDetails = () => {
   const getBudgetPhoto = (type: any) => {
     switch (type) {
       case 0:
-        return <PersonStanding className="w-4 h-4"/>;
+        return <PersonStanding className="w-4 h-4" />;
       case 1:
         return <Backpack className="w-4 h-4" />;
       case 2:
@@ -287,9 +313,7 @@ const TripDetails = () => {
 
     const data = await response.json();
 
-    const newExpenses = budget.expenses.filter(
-      (e: any) => e.id !== openId
-    );
+    const newExpenses = budget.expenses.filter((e: any) => e.id !== openId);
     setBudget({
       ...budget,
       spentAmount: data.amount,
@@ -299,7 +323,7 @@ const TripDetails = () => {
     setOpenDeleteExpenseDialog(false);
   };
 
-  const handeEditSubmit = (formValues: any, response : any) => {
+  const handeEditSubmit = (formValues: any, response: any) => {
     setBudget({
       ...budget,
       spentAmount: response.amount,
@@ -317,7 +341,7 @@ const TripDetails = () => {
         }
         return e;
       }),
-    })
+    });
     setOpenEditExpenseDialog(false);
   };
 
@@ -347,8 +371,6 @@ const TripDetails = () => {
     });
   };
 
-  console.log(budget);
-
   return isLoading ? (
     <div>Loading</div>
   ) : (
@@ -375,24 +397,24 @@ const TripDetails = () => {
         />
       </div>
       <div className="map-container">
-        <GoogleMapExtension mapLocations={mapInformation}/>
+        <GoogleMapExtension mapLocations={mapInformation} />
       </div>
 
       <div className="trip-details-main-container">
         <div className="trip-details-information">
           <p className="trip-details-itinerary">Itinerary</p>
-          {(tripDetails.permissions === 1 || tripDetails.permissions === 2) &&
-              <Button
-                onClick={() =>
-                  navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))
-                }
-                className="rounded-xl"
-                variant="ghost"
-              >
-                <CirclePlus className="mr-2" />
-                Add New Plan
+          {(tripDetails.permissions === 1 || tripDetails.permissions === 2) && (
+            <Button
+              onClick={() =>
+                navigate(Paths.TRIP_DETAILS_CREATE.replace(":id", getTripId()))
+              }
+              className="rounded-xl"
+              variant="ghost"
+            >
+              <CirclePlus className="mr-2" />
+              Add New Plan
             </Button>
-          }
+          )}
         </div>
         <Separator className="my-4" />
       </div>
@@ -433,7 +455,11 @@ const TripDetails = () => {
                   {budget.spentAmount.toFixed(2).toLocaleString()}
                 </p>
                 <p className="total-budget-amount">
-                  {budget.unlimitedBudget ? "Unlimited Budget" : `Budget: ${budget.currency} ${budget.budgetAmount.toFixed(2).toLocaleString()}`}
+                  {budget.unlimitedBudget
+                    ? "Unlimited Budget"
+                    : `Budget: ${budget.currency} ${budget.budgetAmount
+                        .toFixed(2)
+                        .toLocaleString()}`}
                 </p>
               </div>
               <Progress value={getSpentAmountPercentage()} className="h-2" />
@@ -441,7 +467,11 @@ const TripDetails = () => {
             <div className="right-side-budget">
               <Separator orientation="vertical" className="separator-budget" />
               <div className="">
-                <Button variant="ghost" className="breakdown-button ml-2" onClick={() => setIsBreakdownOpen(true)}>
+                <Button
+                  variant="ghost"
+                  className="breakdown-button ml-2"
+                  onClick={() => setIsBreakdownOpen(true)}
+                >
                   <BarChart4 className="mr-2 text-sm" />
                   View Breakdown
                 </Button>
@@ -519,7 +549,7 @@ const TripDetails = () => {
             budgetId={selectedBudget}
             tripTime={{
               startDate: tripDetails.tripInformation.startDate,
-              endDate: tripDetails.tripInformation.endDate
+              endDate: tripDetails.tripInformation.endDate,
             }}
           />
           <DeleteDialog
@@ -549,14 +579,13 @@ const TripDetails = () => {
             budgetId={selectedBudget}
             tripTime={{
               startDate: tripDetails.tripInformation.startDate,
-              endDate: tripDetails.tripInformation.endDate
+              endDate: tripDetails.tripInformation.endDate,
             }}
-            currentDate={budget.expenses
-              .find((e : any) => e.id === openId)
-              ?.date
+            currentDate={
+              budget.expenses.find((e: any) => e.id === openId)?.date
             }
           />
-          <TripBudgetBreakdownDialog 
+          <TripBudgetBreakdownDialog
             open={isBreakdownOpen}
             setOpen={setIsBreakdownOpen}
             expenses={budget.expenses}

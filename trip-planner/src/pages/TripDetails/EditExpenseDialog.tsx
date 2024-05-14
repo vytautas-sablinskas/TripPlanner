@@ -54,7 +54,7 @@ const EditExpenseDialog = ({
   budgetId,
   expenseId,
   tripTime,
-  currentDate
+  currentDate,
 }: any) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,8 +66,6 @@ const EditExpenseDialog = ({
       date: currentDate ? new Date(currentDate) : undefined,
     },
   });
-
-  console.log(currentDate);
 
   const getTripId = () => {
     const paths = location.pathname.split("/");
@@ -123,9 +121,14 @@ const EditExpenseDialog = ({
       type: Number(formValues.eventType),
       name: formValues.name,
       amount: Number(formValues.amount),
-      date: getUtcTimeWithoutChangingTime(formValues.date)
-    }
-    const response = await editExpense(getTripId(), budgetId, expenseId, newDto);
+      date: getUtcTimeWithoutChangingTime(formValues.date),
+    };
+    const response = await editExpense(
+      getTripId(),
+      budgetId,
+      expenseId,
+      newDto
+    );
     if (!response.ok) {
       toast.error("Failed to edit expense", {
         position: "top-center",
@@ -224,23 +227,23 @@ const EditExpenseDialog = ({
               )}
             />
             <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel>Date</FormLabel>
-                    <FormControl className="w-full mb-4">
-                      <DatePicker
-                        date={field.value}
-                        setDate={field.onChange}
-                        startDate={tripTime.startDate}
-                        endDate={tripTime.endDate}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="mt-4">
+                  <FormLabel>Date</FormLabel>
+                  <FormControl className="w-full mb-4">
+                    <DatePicker
+                      date={field.value}
+                      setDate={field.onChange}
+                      startDate={tripTime.startDate}
+                      endDate={tripTime.endDate}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="name"

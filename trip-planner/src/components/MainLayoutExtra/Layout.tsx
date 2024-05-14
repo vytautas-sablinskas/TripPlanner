@@ -10,20 +10,29 @@ const Layout = ({ children }: any) => {
   const [homePage, setHomePage] = useState(false);
 
   useEffect(() => {
-    setHomePage(location.pathname === "/")
-  }, [location.pathname])
+    setHomePage(location.pathname === "/");
+  }, [location.pathname]);
 
   return (
-    <div className={`${homePage ? "main-body-full homepage-background" : "main-body"}`}>
+    <div
+      className={`${
+        homePage ? "main-body-full homepage-background" : "main-body"
+      }`}
+    >
       <div className="w-full flex justify-center">
-        <Header isHomePage={homePage}/>
+        <Header isHomePage={homePage} />
       </div>
-      <main style={{ flex: 1, display: "flex", width: homePage ? "1110px" : "100%", justifyContent: homePage ? "center" : "normal" }}>
+      <main
+        style={{
+          flex: 1,
+          display: "flex",
+          width: homePage ? "1110px" : "100%",
+          justifyContent: homePage ? "center" : "normal",
+        }}
+      >
         {children}
       </main>
-      {!homePage && (
-        <Footer />
-      )}
+      {!homePage && <Footer />}
       <Toaster richColors closeButton />
     </div>
   );

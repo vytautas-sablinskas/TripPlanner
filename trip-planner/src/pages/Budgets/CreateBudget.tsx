@@ -34,7 +34,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { addTripBudget, getTripTravellersForBudget } from "@/services/TripBudgetsService";
+import {
+  addTripBudget,
+  getTripTravellersForBudget,
+} from "@/services/TripBudgetsService";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
@@ -65,8 +68,11 @@ const CreateBudget = () => {
   const [selectedMemberBudgets, setSelectedMemberBudgets] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
   const navigate = useNavigate();
   const [travellers, setTravellers] = useState<any>([]);
 
@@ -462,7 +468,11 @@ const CreateBudget = () => {
               />
             )}
             {getSelectedTypeInputs()}
-            <CreateEditLoadingButton className="mt-4 w-full" text="Create Budget" loading={isSubmitting}/>
+            <CreateEditLoadingButton
+              className="mt-4 w-full"
+              text="Create Budget"
+              loading={isSubmitting}
+            />
           </CardContent>
         </Card>
       </form>

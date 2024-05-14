@@ -29,108 +29,108 @@ const AppRoutes = [
   {
     index: true,
     path: Paths.HOME,
-    element: <Home />
+    element: <Home />,
   },
   {
     path: Paths.LOGIN,
-    element: <Login />
+    element: <Login />,
   },
   {
     path: Paths.REGISTER,
-    element: <Register />
+    element: <Register />,
   },
   {
-    path: '*',
-    element: <Home />
+    path: "*",
+    element: <Home />,
   },
   {
     path: Paths.TRIPS,
-    element: <TripList />
+    element: <TripList />,
   },
   {
     path: Paths.CREATE_TRIP,
-    element: <CreateTrip />
+    element: <CreateTrip />,
   },
   {
     path: Paths.EDIT_TRIP,
-    element: <EditTrip />
+    element: <EditTrip />,
   },
   {
     path: Paths.TRIP_DETAILS,
-    element: <TripDetails />
-  }, 
+    element: <TripDetails />,
+  },
   {
     path: Paths.TRIP_DETAILS_CREATE,
-    element: <TripDetailCreate />
+    element: <TripDetailCreate />,
   },
   {
     path: Paths.TRIP_DETAILS_EDIT,
-    element: <TripDetailEdit />
+    element: <TripDetailEdit />,
   },
   {
     path: Paths.TRIP_DETAILS_VIEW,
-    element: <TripDetailView />
+    element: <TripDetailView />,
   },
   {
     path: Paths.TRIP_TRAVELLERS_VIEW,
-    element: <TripTravellersView />
+    element: <TripTravellersView />,
   },
   {
     path: Paths.TRIP_TRAVELLERS_CREATE,
-    element: <TripAddTraveller />
+    element: <TripAddTraveller />,
   },
   {
     path: Paths.NOTIFICATIONS,
-    element: <Notifications />
+    element: <Notifications />,
   },
   {
     path: Paths.BUDGETS,
-    element: <BudgetList />
+    element: <BudgetList />,
   },
   {
     path: Paths.CREATE_BUDGET,
-    element: <CreateBudget />
+    element: <CreateBudget />,
   },
   {
     path: Paths.EDIT_BUDGET,
-    element: <EditBudget />
+    element: <EditBudget />,
   },
   {
     path: Paths.PROFILE,
-    element: <Profile />
+    element: <Profile />,
   },
   {
     path: Paths.EXPORT_TRIP,
-    element: <ExportInformationTrip />
+    element: <ExportInformationTrip />,
   },
   {
     path: Paths.RECOMMENDATIONS,
-    element: <Recommendations />
+    element: <Recommendations />,
   },
   {
     path: Paths.SHARE_TRIP,
-    element: <ShareTrip />
+    element: <ShareTrip />,
   },
   {
     path: Paths.SHARE_TRIP_VIEW,
-    element: <ShareTripView />
+    element: <ShareTripView />,
   },
   {
     path: Paths.UNSELECTED_PLANS,
-    element: <UnselectedTripDetails />
+    element: <UnselectedTripDetails />,
   },
   {
     path: Paths.USER_DOCUMENTS,
-    element: <UserDocuments />
+    element: <UserDocuments />,
   },
   {
     path: Paths.TRIP_INVITATION,
-    element: <TripInvitation />
+    element: <TripInvitation />,
   },
   {
     path: Paths.RECOMMENDATION_WEIGHTS,
-    element: <RecommendationWeightsAdmin />
-  }
+    element: <RecommendationWeightsAdmin />,
+  },
 ];
 
 export default AppRoutes;

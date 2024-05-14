@@ -1,5 +1,8 @@
 import { refreshAccessToken } from "@/services/AuthenticationService";
-import { getTripShareInformation, updateTripShareInformation } from "@/services/TripService";
+import {
+  getTripShareInformation,
+  updateTripShareInformation,
+} from "@/services/TripService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/providers/user-provider/UserContext";
@@ -63,11 +66,7 @@ const ShareTrip = () => {
     "font",
   ];
 
-  const ACCEPTED_IMAGE_TYPES = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-  ];
+  const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
   useEffect(() => {
     const fetchSharedInformation = async () => {
@@ -120,7 +119,10 @@ const ShareTrip = () => {
   const updateInformation = async () => {
     const formData = new FormData();
     formData.append("title", title === "null" ? "" : title);
-    formData.append("descriptionInHtml", descriptionInHtml === "null" ? "" : descriptionInHtml);
+    formData.append(
+      "descriptionInHtml",
+      descriptionInHtml === "null" ? "" : descriptionInHtml
+    );
     Array.from(selectedPhotos).forEach((photo: any) => {
       if (typeof photo === "string") formData.append("existingPhotos", photo);
       else formData.append("photos", photo);
@@ -128,48 +130,45 @@ const ShareTrip = () => {
 
     const accessToken = localStorage.getItem("accessToken");
 
-      if (!checkTokenValidity(accessToken || "")) {
-        const result = await refreshAccessToken();
-        if (!result.success) {
-          toast.error("Session has expired. Login again!", {
-            position: "top-center",
-          });
-
-          changeUserInformationToLoggedOut();
-          navigate(Paths.LOGIN);
-          return;
-        }
-
-        changeUserInformationToLoggedIn(
-          result.data.accessToken,
-          result.data.refreshToken,
-          result.data.id
-        );
-      }
-
-      for (const [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
-      setIsSubmitting(true);
-      try {
-        const response = await updateTripShareInformation(getTripId(), formData);
-        if (!response.ok) {
-          toast.error("Failed to update information", {
-            position: "top-center",
-          });
-          return;
-        }
-    
-        toast.success("Information updated successfully", {
+    if (!checkTokenValidity(accessToken || "")) {
+      const result = await refreshAccessToken();
+      if (!result.success) {
+        toast.error("Session has expired. Login again!", {
           position: "top-center",
         });
-        setIsSubmitting(false);
-      } catch {
-        setIsSubmitting(false);
+
+        changeUserInformationToLoggedOut();
+        navigate(Paths.LOGIN);
+        return;
+      }
+
+      changeUserInformationToLoggedIn(
+        result.data.accessToken,
+        result.data.refreshToken,
+        result.data.id
+      );
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await updateTripShareInformation(getTripId(), formData);
+      if (!response.ok) {
         toast.error("Failed to update information", {
           position: "top-center",
         });
+        return;
       }
+
+      toast.success("Information updated successfully", {
+        position: "top-center",
+      });
+      setIsSubmitting(false);
+    } catch {
+      setIsSubmitting(false);
+      toast.error("Failed to update information", {
+        position: "top-center",
+      });
+    }
   };
 
   const removePhoto = (index: any) => {
@@ -183,7 +182,9 @@ const ShareTrip = () => {
     if (!files) return;
 
     const maxSize = 2 * 1024 * 1024;
-    const oversizedFiles = Array.from(files).filter((file : any) => file.size > maxSize);
+    const oversizedFiles = Array.from(files).filter(
+      (file: any) => file.size > maxSize
+    );
 
     if (oversizedFiles.length > 0) {
       toast.error("Some files exceed the maximum size of 2 MB", {
@@ -199,9 +200,14 @@ const ShareTrip = () => {
       return;
     }
 
-    const hasInvalidType = Array.from(files).filter((file : any) => !ACCEPTED_IMAGE_TYPES.includes(file.type));
+    const hasInvalidType = Array.from(files).filter(
+      (file: any) => !ACCEPTED_IMAGE_TYPES.includes(file.type)
+    );
     if (hasInvalidType.length > 0) {
-      toast.error("Some files had invalid types. Only JPG and PNG files are allowed", { position: "top-center" });
+      toast.error(
+        "Some files had invalid types. Only JPG and PNG files are allowed",
+        { position: "top-center" }
+      );
       return;
     }
 
@@ -218,8 +224,14 @@ const ShareTrip = () => {
       <Card className="p-4 sm:max-w-full w-full">
         <CardContent>
           <Label>Title</Label>
-          <Input type="text" className="mb-10" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)}/>
-          <Label>Description</Label> 
+          <Input
+            type="text"
+            className="mb-10"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <Label>Description</Label>
           <ReactQuill
             theme="snow"
             value={descriptionInHtml}
@@ -250,9 +262,7 @@ const ShareTrip = () => {
                     className="!p-0 sm:w-[300px] h-[200px] w-full relative"
                   >
                     <CardContent className="!p-0">
-                      <div
-                        className="h-[198px] w-full"
-                      >
+                      <div className="h-[198px] w-full">
                         {typeof photo === "string" ? (
                           <img
                             src={photo}
@@ -266,32 +276,39 @@ const ShareTrip = () => {
                             className="h-full w-full rounded"
                           />
                         )}
-                                              <Button
-                        className="absolute bottom-2 flex left-2 right-2"
-                        onClick={() => removePhoto(index)}
-                        variant="outline"
-                      >
-                        <CircleX className="h-4 w-4 mr-2" />
-                        Remove Photo
-                      </Button>
+                        <Button
+                          className="absolute bottom-2 flex left-2 right-2"
+                          onClick={() => removePhoto(index)}
+                          variant="outline"
+                        >
+                          <CircleX className="h-4 w-4 mr-2" />
+                          Remove Photo
+                        </Button>
                       </div>
-
                     </CardContent>
                   </Card>
                 ))}
             </div>
             <div className="mt-10 flex items-end flex-wrap">
-              <Button className="mr-6" onClick={updateInformation} disabled={isSubmitting}>
-                <UpdateIcon className="mr-2 w-4 h-4"/>
+              <Button
+                className="mr-6"
+                onClick={updateInformation}
+                disabled={isSubmitting}
+              >
+                <UpdateIcon className="mr-2 w-4 h-4" />
                 Update Information
               </Button>
-              <Button variant="outline" className="mt-2" onClick={() => setIsGetLinkOpen(true)}>
+              <Button
+                variant="outline"
+                className="mt-2"
+                onClick={() => setIsGetLinkOpen(true)}
+              >
                 <Share className="h-4 w-4 mr-2" />
                 Get Share Link
               </Button>
             </div>
           </div>
-          <GetShareTripLinkDialog 
+          <GetShareTripLinkDialog
             open={isGetLinkOpen}
             setOpen={setIsGetLinkOpen}
             link={link}

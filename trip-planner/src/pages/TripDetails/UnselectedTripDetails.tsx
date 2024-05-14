@@ -11,82 +11,89 @@ import { getUnselectedTrips } from "@/services/TripDetailService";
 import { getAllUserTrips } from "@/services/TripService";
 
 const UnselectedTripDetails = () => {
-    const navigate = useNavigate();
-    const [plans, setPlans] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } = useUser();
-    const [availableTrips, setAvailableTrips] = useState<any>([]);
+  const navigate = useNavigate();
+  const [plans, setPlans] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
+  const [availableTrips, setAvailableTrips] = useState<any>([]);
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate(Paths.LOGIN);
-        }
-
-        const validateAccessToken = async () => {
-            const accessToken = localStorage.getItem("accessToken");
-
-            if (!checkTokenValidity(accessToken || "")) {
-                const result = await refreshAccessToken();
-                if (!result.success) {
-                    toast.error("Session has expired. Login again!", {
-                    position: "top-center",
-                    });
-
-                    changeUserInformationToLoggedOut();
-                    navigate(Paths.LOGIN);
-                    return;
-                }
-
-                changeUserInformationToLoggedIn(
-                    result.data.accessToken,
-                    result.data.refreshToken,
-                    result.data.id
-                );
-            }
-        }
-
-        const tryFetchingPlans = async () => {
-            await validateAccessToken();
-            setIsLoading(true);
-
-            const response = await getUnselectedTrips();
-            const plansResponse = await getAllUserTrips();
-            if (!response.ok || !plansResponse.ok) {
-                toast.error("Unexpected error. Try again later", {
-                    position: "top-center",
-                });
-
-                return;
-            }
-
-            const data = await response.json();
-            const plansData = await plansResponse.json();
-
-            console.log(plansData);
-            setPlans(data);
-            setAvailableTrips(plansData);
-            setIsLoading(false);
-        }
-
-        tryFetchingPlans();
-    }, []);
-
-    const onPlanChange = (index : any) => {
-        const dataCopy = [...plans];
-
-        dataCopy.splice(index, 1);
-        setPlans(dataCopy);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
     }
 
-    if (isLoading) {
-        return <div>Loading...</div>
-    }
+    const validateAccessToken = async () => {
+      const accessToken = localStorage.getItem("accessToken");
 
-    return (
-        <div className="notifications-main-container">
-            <UnselectedTripDetailsList data={plans} availableTrips={availableTrips} onPlanChange={onPlanChange}/>
-        </div>
-    )
-}
+      if (!checkTokenValidity(accessToken || "")) {
+        const result = await refreshAccessToken();
+        if (!result.success) {
+          toast.error("Session has expired. Login again!", {
+            position: "top-center",
+          });
+
+          changeUserInformationToLoggedOut();
+          navigate(Paths.LOGIN);
+          return;
+        }
+
+        changeUserInformationToLoggedIn(
+          result.data.accessToken,
+          result.data.refreshToken,
+          result.data.id
+        );
+      }
+    };
+
+    const tryFetchingPlans = async () => {
+      await validateAccessToken();
+      setIsLoading(true);
+
+      const response = await getUnselectedTrips();
+      const plansResponse = await getAllUserTrips();
+      if (!response.ok || !plansResponse.ok) {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
+        });
+
+        return;
+      }
+
+      const data = await response.json();
+      const plansData = await plansResponse.json();
+
+      setPlans(data);
+      setAvailableTrips(plansData);
+      setIsLoading(false);
+    };
+
+    tryFetchingPlans();
+  }, []);
+
+  const onPlanChange = (index: any) => {
+    const dataCopy = [...plans];
+
+    dataCopy.splice(index, 1);
+    setPlans(dataCopy);
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="notifications-main-container">
+      <UnselectedTripDetailsList
+        data={plans}
+        availableTrips={availableTrips}
+        onPlanChange={onPlanChange}
+      />
+    </div>
+  );
+};
 
 export default UnselectedTripDetails;

@@ -19,7 +19,7 @@ export function DeleteDialogButton({
   onDelete,
   isLoading,
   open,
-  setOpen
+  setOpen,
 }: any) {
   return (
     <Dialog open={open} onOpenChange={() => setOpen(!open)}>
@@ -41,10 +41,7 @@ export function DeleteDialogButton({
         </DialogHeader>
         <DialogFooter className="flex flex-col">
           <DialogClose>
-            <Button
-              className="w-full mb-2"
-              disabled={isLoading}
-            >
+            <Button className="w-full mb-2" disabled={isLoading}>
               Cancel
             </Button>
           </DialogClose>

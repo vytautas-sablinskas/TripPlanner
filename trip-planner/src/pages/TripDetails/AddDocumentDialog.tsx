@@ -56,7 +56,7 @@ const AddDocumentDialog = ({
   open,
   setOpen,
   travellers,
-  activeDocumentCount
+  activeDocumentCount,
 }: any) => {
   const [uploadedImage, setUploadedImage] = useState<any>(
     "/document-placeholder.png"
@@ -98,16 +98,18 @@ const AddDocumentDialog = ({
     }
   };
 
-  const onSubmit = (formValues : any) => {
+  const onSubmit = (formValues: any) => {
     if (!formValues.file) {
       form.setError("file", {
-        message: "File is required."
+        message: "File is required.",
       });
       return;
     }
 
     if (activeDocumentCount === 10) {
-      toast.error("You can only have 10 active documents at a time!", { position: "top-center" });
+      toast.error("You can only have 10 active documents at a time!", {
+        position: "top-center",
+      });
       return;
     }
 
@@ -118,7 +120,7 @@ const AddDocumentDialog = ({
     };
 
     onAdd(dto);
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={() => !isLoading && setOpen(!open)}>
@@ -190,51 +192,67 @@ const AddDocumentDialog = ({
                 <MultipleSelector
                   value={selectedMembers}
                   onChange={setSelectedMembers}
-                  defaultOptions={travellers.filter((member : any) => member.id !== id).map((traveller: any) => ({
-                    label: `${traveller.fullName} - ${traveller.email}`,
-                    value: traveller.id,
-                  }))}
+                  defaultOptions={travellers
+                    .filter((member: any) => member.id !== id)
+                    .map((traveller: any) => ({
+                      label: `${traveller.fullName} - ${traveller.email}`,
+                      value: traveller.id,
+                    }))}
                   placeholder="Select members to add"
                 />
                 {selectedMembers.length > 0 && (
                   <Card className="p-2 mt-2 max-h-[150px] overflow-y-scroll">
                     {travellers
-                    .filter((traveller: any) => selectedMembers.some((member: any) => traveller.id === member.value))
-                    .map((traveller: any) => (
-                      <div
-                        className="flex items-center space-x-4 mb-2 w-full"
-                        key={traveller.id}
-                      >
-                        <img
-                          alt="Avatar"
-                          className="traveller-element-image"
-                          height="40"
-                          src={traveller.photo}
-                          width="40"
-                        />
-                        <div className="space-y-1 w-full flex-grow">
-                          <h3 className="font-semibold">{traveller.email}</h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {traveller.fullName}
-                          </p>
-                        </div>
-                        <Button
-                          className="ml-auto trip-element-remove-button"
-                          size="sm"
-                          type="button"
-                          onClick={() => setSelectedMembers((prev: any) => prev.filter((member: any) => member.value !== traveller.id))}
+                      .filter((traveller: any) =>
+                        selectedMembers.some(
+                          (member: any) => traveller.id === member.value
+                        )
+                      )
+                      .map((traveller: any) => (
+                        <div
+                          className="flex items-center space-x-4 mb-2 w-full"
+                          key={traveller.id}
                         >
-                          Remove
-                        </Button>
-                      </div>
-                    ))}
+                          <img
+                            alt="Avatar"
+                            className="traveller-element-image"
+                            height="40"
+                            src={traveller.photo}
+                            width="40"
+                          />
+                          <div className="space-y-1 w-full flex-grow">
+                            <h3 className="font-semibold">{traveller.email}</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {traveller.fullName}
+                            </p>
+                          </div>
+                          <Button
+                            className="ml-auto trip-element-remove-button"
+                            size="sm"
+                            type="button"
+                            onClick={() =>
+                              setSelectedMembers((prev: any) =>
+                                prev.filter(
+                                  (member: any) => member.value !== traveller.id
+                                )
+                              )
+                            }
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
                   </Card>
                 )}
               </div>
             )}
             <DialogFooter className="flex flex-col mt-4">
               <DialogClose>
-                <Button className="w-full mb-4" type="button" disabled={isLoading}>
+                <Button
+                  className="w-full mb-4"
+                  type="button"
+                  disabled={isLoading}
+                >
                   Cancel
                 </Button>
               </DialogClose>

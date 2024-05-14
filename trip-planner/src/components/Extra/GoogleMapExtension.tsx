@@ -25,7 +25,7 @@ const center = {
   lng: -38.523,
 };
 
-function MyComponent({ mapLocations } : any) {
+function MyComponent({ mapLocations }: any) {
   const map = useMap();
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [selectedDay, setSelectedDay] = useState<any>(
@@ -37,7 +37,7 @@ function MyComponent({ mapLocations } : any) {
   const [distance, setDistance] = useState<any>(null);
   const [duration, setDuration] = useState<any>(null);
   const [isZoomedIn, setIsZoomedIn] = useState<any>(false);
- 
+
   const handleMarkerClick = (marker: any) => {
     const newPosition = { lat: marker.lat, lng: marker.lng };
     setIsZoomedIn(false);
@@ -53,7 +53,14 @@ function MyComponent({ mapLocations } : any) {
   const getBounds = () => {
     const defaultValues = { east: 0, north: 0, south: 0, west: 0 };
 
-    if (!window.google || !window.google.maps || !window.google.maps.LatLngBounds || !selectedDay || !mapLocations || !mapLocations[selectedDay]) {
+    if (
+      !window.google ||
+      !window.google.maps ||
+      !window.google.maps.LatLngBounds ||
+      !selectedDay ||
+      !mapLocations ||
+      !mapLocations[selectedDay]
+    ) {
       return defaultValues;
     }
 
@@ -81,7 +88,7 @@ function MyComponent({ mapLocations } : any) {
     if (cnt >= max) {
       setTimeout(() => {
         setIsZoomedIn(true);
-      }, 200)
+      }, 200);
     } else {
       const z = google.maps.event.addListener(
         map,
@@ -107,25 +114,29 @@ function MyComponent({ mapLocations } : any) {
     }
   }, [selectedDay, map]);
 
-
   const bounds = getBounds() || { east: 0, north: 0, south: 0, west: 0 };
 
-  function formatMode(mode : any) {
+  function formatMode(mode: any) {
     switch (mode) {
-      case 'DRIVING':
-        return 'Driving';
-      case 'WALKING':
-        return 'Walking';
+      case "DRIVING":
+        return "Driving";
+      case "WALKING":
+        return "Walking";
       default:
         return mode;
     }
   }
 
   const onGetDirections = () => {
-    if (!selectedDay || !mapLocations[selectedDay] || mapLocations[selectedDay].length <= 1) return;
+    if (
+      !selectedDay ||
+      !mapLocations[selectedDay] ||
+      mapLocations[selectedDay].length <= 1
+    )
+      return;
 
     setShouldRender(true);
-  }
+  };
 
   return (
     <div>
@@ -140,7 +151,12 @@ function MyComponent({ mapLocations } : any) {
                 <SelectLabel>Travel Mode</SelectLabel>
                 {Object.keys(google.maps.TravelMode)
                   .reverse()
-                  .filter(mode => mode !== "TWO_WHEELER" && mode !== "TRANSIT" && mode !== "BICYCLING")
+                  .filter(
+                    (mode) =>
+                      mode !== "TWO_WHEELER" &&
+                      mode !== "TRANSIT" &&
+                      mode !== "BICYCLING"
+                  )
                   .map((mode: any) => (
                     <SelectItem value={mode} key={mode}>
                       {formatMode(mode)}
@@ -149,7 +165,11 @@ function MyComponent({ mapLocations } : any) {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button className="ml-2 mb-2" onClick={() => onGetDirections()} disabled={isGetRoutesDisabled}>
+          <Button
+            className="ml-2 mb-2"
+            onClick={() => onGetDirections()}
+            disabled={isGetRoutesDisabled}
+          >
             <Route className="h-4 w-4 mr-2" />
             Get Directions
           </Button>
@@ -173,7 +193,6 @@ function MyComponent({ mapLocations } : any) {
             </SelectGroup>
           </SelectContent>
         </Select>
-
       </div>
       <Map
         defaultCenter={center}
@@ -182,33 +201,34 @@ function MyComponent({ mapLocations } : any) {
         scrollwheel={true}
         fullscreenControl={true}
         defaultBounds={{
-          ...bounds
+          ...bounds,
         }}
       >
-        <Directions 
-        mapLocations={mapLocations} 
-        selectedDay={selectedDay} 
-        shouldRender={shouldRender} 
-        setShouldRender={setShouldRender}
-        zoomToPlace={getBounds}
-        setIsGetRoutesDisabled={setIsGetRoutesDisabled}
-        travelMode={travelMode}
-        selectedMarker={selectedMarker}
-        setDistance={setDistance}
-        setDuration={setDuration}
+        <Directions
+          mapLocations={mapLocations}
+          selectedDay={selectedDay}
+          shouldRender={shouldRender}
+          setShouldRender={setShouldRender}
+          zoomToPlace={getBounds}
+          setIsGetRoutesDisabled={setIsGetRoutesDisabled}
+          travelMode={travelMode}
+          selectedMarker={selectedMarker}
+          setDistance={setDistance}
+          setDuration={setDuration}
         />
-        {mapLocations[selectedDay] && mapLocations[selectedDay].map((location: any, index: any) => {
-          return (
-            <Marker
-              key={index}
-              position={{ lat: location.lat, lng: location.lng }}
-              title={location.title}
-              onClick={() => handleMarkerClick(location)}
-              label={(index + 1).toString()}
-            />
-          );
-        })}
-        {(selectedMarker && isZoomedIn) && (
+        {mapLocations[selectedDay] &&
+          mapLocations[selectedDay].map((location: any, index: any) => {
+            return (
+              <Marker
+                key={index}
+                position={{ lat: location.lat, lng: location.lng }}
+                title={location.title}
+                onClick={() => handleMarkerClick(location)}
+                label={(index + 1).toString()}
+              />
+            );
+          })}
+        {selectedMarker && isZoomedIn && (
           <InfoWindow
             position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
             onCloseClick={handleCloseInfoWindow}
@@ -216,9 +236,11 @@ function MyComponent({ mapLocations } : any) {
           >
             <div>
               <h2>{selectedMarker.title}</h2>
-              {(duration && distance) &&
-                <p>{duration}, {distance}</p>
-              }
+              {duration && distance && (
+                <p>
+                  {duration}, {distance}
+                </p>
+              )}
             </div>
           </InfoWindow>
         )}
@@ -227,7 +249,18 @@ function MyComponent({ mapLocations } : any) {
   );
 }
 
-function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, zoomToPlace, setIsGetRoutesDisabled, travelMode, selectedMarker, setDistance, setDuration } : any) {
+function Directions({
+  mapLocations,
+  selectedDay,
+  shouldRender,
+  setShouldRender,
+  zoomToPlace,
+  setIsGetRoutesDisabled,
+  travelMode,
+  selectedMarker,
+  setDistance,
+  setDuration,
+}: any) {
   const map = useMap();
   const routesLibrary = useMapsLibrary("routes");
   const [directionsRenderer, setDirectionsRenderer] = useState<any>(null);
@@ -246,7 +279,13 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
   }, [selectedMarker, travelMode]);
 
   useEffect(() => {
-    if (route || mapLocations[selectedDay]?.findIndex((location: any) => location === selectedMarker) === mapLocations[selectedDay]?.length - 1) {
+    if (
+      route ||
+      mapLocations[selectedDay]?.findIndex(
+        (location: any) => location === selectedMarker
+      ) ===
+        mapLocations[selectedDay]?.length - 1
+    ) {
       setShouldRender(false);
       return;
     }
@@ -254,7 +293,10 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
     if (!routesLibrary || !map || !shouldRender || !selectedMarker) return;
 
     const origin = selectedMarker;
-    const destinationIndex = mapLocations[selectedDay].findIndex((location: any) => location === selectedMarker) + 1;
+    const destinationIndex =
+      mapLocations[selectedDay].findIndex(
+        (location: any) => location === selectedMarker
+      ) + 1;
 
     const destination = mapLocations[selectedDay][destinationIndex];
 
@@ -280,7 +322,11 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
             directionsRenderer.setMap(null);
           }
 
-          const newDirectionsRenderer = new routesLibrary.DirectionsRenderer({ map, suppressMarkers: true, preserveViewport: true });
+          const newDirectionsRenderer = new routesLibrary.DirectionsRenderer({
+            map,
+            suppressMarkers: true,
+            preserveViewport: true,
+          });
           newDirectionsRenderer.setDirections(response);
           setDirectionsRenderer(newDirectionsRenderer);
 
@@ -294,6 +340,5 @@ function Directions({ mapLocations, selectedDay, shouldRender, setShouldRender, 
 
   return null;
 }
-
 
 export default React.memo(MyComponent);

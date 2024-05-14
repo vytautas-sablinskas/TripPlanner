@@ -168,8 +168,6 @@ const RecommendationWeightsAdmin = () => {
         });
         return updatedWeights;
     });
-
-    console.log(weights);
   };
 
   function splitWordsByUpperCase(word : any) {

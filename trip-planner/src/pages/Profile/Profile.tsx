@@ -20,7 +20,11 @@ import { useNavigate } from "react-router-dom";
 import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/services/AuthenticationService";
 import Paths from "@/routes/Paths";
-import { changePassword, changeProfileInformation, getUserProfile } from "@/services/ProfileService";
+import {
+  changePassword,
+  changeProfileInformation,
+  getUserProfile,
+} from "@/services/ProfileService";
 import PasswordInput from "@/components/Extra/PasswordInput";
 import { Separator } from "@/components/ui/separator";
 
@@ -70,8 +74,11 @@ const Profile = () => {
     },
   });
 
-  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedOut,
+    changeUserInformationToLoggedIn,
+    isAuthenticated,
+  } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<any>("https://via.placeholder.com/100");
@@ -152,7 +159,6 @@ const Profile = () => {
 
     profileForm.setValue("image", file);
     setImage(URL.createObjectURL(file));
-    console.log("here");
   };
 
   const onChangePersonalInfromation = async (formValues: any) => {
@@ -195,10 +201,9 @@ const Profile = () => {
 
     toast.success("Personal information changed successfully", {
       position: "top-center",
-    }
-    )
+    });
     setIsSubmitting(false);
-  }
+  };
 
   const onChangePassword = async (formValues: any) => {
     const isValidPassword = (password: string) => {
@@ -273,9 +278,7 @@ const Profile = () => {
   };
 
   if (isLoading) {
-    return (
-      <p>Loading...</p>
-    )
+    return <p>Loading...</p>;
   }
 
   return (
@@ -286,8 +289,10 @@ const Profile = () => {
             <FormLabel className="font-bold text-2xl">
               Personal Information
             </FormLabel>
-            <form onSubmit={profileForm.handleSubmit(onChangePersonalInfromation)}>
-            <div>
+            <form
+              onSubmit={profileForm.handleSubmit(onChangePersonalInfromation)}
+            >
+              <div>
                 <div className="flex flex-col items-center">
                   <img
                     src={image}

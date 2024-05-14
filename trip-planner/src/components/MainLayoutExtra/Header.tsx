@@ -2,7 +2,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./styles/header.css";
 import Paths from "../../routes/Paths";
 import { useUser } from "../../providers/user-provider/UserContext";
-import { logout, refreshAccessToken } from "../../services/AuthenticationService";
+import {
+  logout,
+  refreshAccessToken,
+} from "../../services/AuthenticationService";
 import { BellDot, File, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { checkTokenValidity } from "@/utils/jwtUtils";
@@ -28,12 +31,9 @@ const Header = ({ isHomePage }: any) => {
   } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");   
+  const [photo, setPhoto] = useState<any>("/avatar-placeholder.png");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const isAdmin = useRef(false);
-
-  console.log(role);
-  console.log(isAdmin);
 
   useEffect(() => {
     if (!role) {

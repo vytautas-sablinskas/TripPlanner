@@ -10,76 +10,80 @@ import { UserDocumentsList } from "./UserDocumentsList";
 import { getUserDocuments } from "@/services/TripDocumentService";
 
 const UserDocuments = () => {
-    const navigate = useNavigate();
-    const [documents, setDocuments] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } = useUser();
+  const navigate = useNavigate();
+  const [documents, setDocuments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
 
-    useEffect(() => {
-        const validateAccessToken = async () => {
-            const accessToken = localStorage.getItem("accessToken");
+  useEffect(() => {
+    const validateAccessToken = async () => {
+      const accessToken = localStorage.getItem("accessToken");
 
-            if (!checkTokenValidity(accessToken || "")) {
-                const result = await refreshAccessToken();
-                if (!result.success) {
-                    toast.error("Session has expired. Login again!", {
-                    position: "top-center",
-                    });
+      if (!checkTokenValidity(accessToken || "")) {
+        const result = await refreshAccessToken();
+        if (!result.success) {
+          toast.error("Session has expired. Login again!", {
+            position: "top-center",
+          });
 
-                    changeUserInformationToLoggedOut();
-                    navigate(Paths.LOGIN);
-                    return;
-                }
-
-                changeUserInformationToLoggedIn(
-                    result.data.accessToken,
-                    result.data.refreshToken,
-                    result.data.id
-                );
-            }
+          changeUserInformationToLoggedOut();
+          navigate(Paths.LOGIN);
+          return;
         }
 
-        const tryFetchingDocuments = async () => {
-            await validateAccessToken();
-            setIsLoading(true);
+        changeUserInformationToLoggedIn(
+          result.data.accessToken,
+          result.data.refreshToken,
+          result.data.id
+        );
+      }
+    };
 
-            const response = await getUserDocuments();
-            if (!response.ok) {
-                toast.error("Unexpected error. Try again later", {
-                    position: "top-center",
-                });
-            }
+    const tryFetchingDocuments = async () => {
+      await validateAccessToken();
+      setIsLoading(true);
 
-            const data = await response.json();
-            setDocuments(data);
-            setIsLoading(false);
-        }
-        
-        if (!isAuthenticated) {
-            navigate(Paths.LOGIN);
-            return;
-        }
+      const response = await getUserDocuments();
+      if (!response.ok) {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
+        });
+      }
 
-        tryFetchingDocuments();
-    }, []);
+      const data = await response.json();
+      setDocuments(data);
+      setIsLoading(false);
+    };
 
-    const onStatusChange = (index : any) => {
-        const dataCopy = [...documents];
-
-        dataCopy.splice(index, 1);
-        setDocuments(dataCopy);
+    if (!isAuthenticated) {
+      navigate(Paths.LOGIN);
+      return;
     }
 
-    if (isLoading) {
-        return <div>Loading...</div>
-    }
+    tryFetchingDocuments();
+  }, []);
 
-    return (
-        <div className="notifications-main-container">
-            <h1 className="my-4 font-bold text-4xl">Your Documents</h1>
-            <UserDocumentsList data={documents} onStatusChange={onStatusChange}/>
-        </div>
-    )
-}
+  const onStatusChange = (index: any) => {
+    const dataCopy = [...documents];
+
+    dataCopy.splice(index, 1);
+    setDocuments(dataCopy);
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="notifications-main-container">
+      <h1 className="my-4 font-bold text-4xl">Your Documents</h1>
+      <UserDocumentsList data={documents} onStatusChange={onStatusChange} />
+    </div>
+  );
+};
 
 export default UserDocuments;

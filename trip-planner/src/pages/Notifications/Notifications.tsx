@@ -7,84 +7,91 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Paths from "@/routes/Paths";
-import { getNotifications, markNotificationsAsRead } from "@/services/NotificationService";
+import {
+  getNotifications,
+  markNotificationsAsRead,
+} from "@/services/NotificationService";
 
 const Notifications = () => {
-    const navigate = useNavigate();
-    const [notifications, setNotifications] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, changeHasNotifications } = useUser();
+  const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    changeHasNotifications,
+  } = useUser();
 
-    useEffect(() => {
-        const validateAccessToken = async () => {
-            const accessToken = localStorage.getItem("accessToken");
+  useEffect(() => {
+    const validateAccessToken = async () => {
+      const accessToken = localStorage.getItem("accessToken");
 
-            if (!checkTokenValidity(accessToken || "")) {
-                const result = await refreshAccessToken();
-                if (!result.success) {
-                    changeUserInformationToLoggedOut();
-                    navigate(Paths.LOGIN);
-                    return false;
-                }
-
-                changeUserInformationToLoggedIn(
-                    result.data.accessToken,
-                    result.data.refreshToken,
-                    result.data.id
-                );
-            }
-
-            return true;
+      if (!checkTokenValidity(accessToken || "")) {
+        const result = await refreshAccessToken();
+        if (!result.success) {
+          changeUserInformationToLoggedOut();
+          navigate(Paths.LOGIN);
+          return false;
         }
 
-        const tryFetchingNotifications = async () => {
-            setIsLoading(true);
-            const isValid = await validateAccessToken();
-            if (!isValid) {
-                return;
-            }
+        changeUserInformationToLoggedIn(
+          result.data.accessToken,
+          result.data.refreshToken,
+          result.data.id
+        );
+      }
 
-            const response = await getNotifications();
-            if (!response.ok) {
-                toast.error("Unexpected error. Try again later", {
-                    position: "top-center",
-                });
-            }
+      return true;
+    };
 
-            const data = await response.json();
-            setNotifications(data);
-            setIsLoading(false);
-        }
+    const tryFetchingNotifications = async () => {
+      setIsLoading(true);
+      const isValid = await validateAccessToken();
+      if (!isValid) {
+        return;
+      }
 
-        const tryMakingNotificationsAsRead = async () => {
-            await validateAccessToken();
-            const response = await markNotificationsAsRead();
-            if (response.ok) {
-                changeHasNotifications(false);
-            }
-        }
+      const response = await getNotifications();
+      if (!response.ok) {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
+        });
+      }
 
-        tryFetchingNotifications();
-        tryMakingNotificationsAsRead();
-    }, []);
+      const data = await response.json();
+      setNotifications(data);
+      setIsLoading(false);
+    };
 
-    const onStatusChange = (index : any) => {
-        const dataCopy = [...notifications];
+    const tryMakingNotificationsAsRead = async () => {
+      await validateAccessToken();
+      const response = await markNotificationsAsRead();
+      if (response.ok) {
+        changeHasNotifications(false);
+      }
+    };
 
-        dataCopy.splice(index, 1);
-        setNotifications(dataCopy);
-    }
+    tryFetchingNotifications();
+    tryMakingNotificationsAsRead();
+  }, []);
 
-    if (isLoading) {
-        return <div>Loading...</div>
-    }
+  const onStatusChange = (index: any) => {
+    const dataCopy = [...notifications];
 
-    return (
-        <div className="notifications-main-container">
-            <h1 className="my-4 font-bold text-4xl">Notifications</h1>
-            <NotificationList data={notifications} onStatusChange={onStatusChange}/>
-        </div>
-    )
-}
+    dataCopy.splice(index, 1);
+    setNotifications(dataCopy);
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="notifications-main-container">
+      <h1 className="my-4 font-bold text-4xl">Notifications</h1>
+      <NotificationList data={notifications} onStatusChange={onStatusChange} />
+    </div>
+  );
+};
 
 export default Notifications;

@@ -8,7 +8,14 @@ import { AuthButton } from "@/pages/Auth/AuthButton";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import "./styles/login.css";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,7 +23,7 @@ import PasswordInput from "@/components/Extra/PasswordInput";
 
 const formSchema = z.object({
   email: z.string(),
-  password: z.string()
+  password: z.string(),
 });
 
 const Login = () => {
@@ -32,12 +39,12 @@ const Login = () => {
     },
   });
 
-  const isValidForm = (formValues : any) => {
+  const isValidForm = (formValues: any) => {
     const isValidEmail = (email: string) => {
       const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
       return re.test(String(email).toLowerCase());
     };
-    
+
     const isValidPassword = (password: string) => {
       const minLength = 6;
       const hasUppercase = /[A-Z]/.test(password);
@@ -66,19 +73,20 @@ const Login = () => {
     if (!isValidPassword(formValues.password)) {
       form.setError("password", {
         type: "manual",
-        message: "Password must have at least one lowercase, one uppercase letter, one number, one symbol and at least 6 characters.",
+        message:
+          "Password must have at least one lowercase, one uppercase letter, one number, one symbol and at least 6 characters.",
       });
       isError = true;
     }
 
     return !isError;
-  }
+  };
 
-  const handleSignIn = async (formValues : any) => {
+  const handleSignIn = async (formValues: any) => {
     if (!isValidForm(formValues)) {
       return;
     }
-    
+
     setLoading(true);
     const response: any = await login(form.getValues());
     const data = response === null ? response : await response.json();
@@ -92,7 +100,11 @@ const Login = () => {
       return;
     }
 
-    changeUserInformationToLoggedIn(data.accessToken, data.refreshToken, data.id);
+    changeUserInformationToLoggedIn(
+      data.accessToken,
+      data.refreshToken,
+      data.id
+    );
     navigate(Paths.HOME);
     toast.success("Successfully signed in!", {
       position: "top-center",
@@ -101,53 +113,65 @@ const Login = () => {
 
   return (
     <Form {...form}>
-      <form className="login-container-wrapper" onSubmit={form.handleSubmit(handleSignIn)}>
+      <form
+        className="login-container-wrapper"
+        onSubmit={form.handleSubmit(handleSignIn)}
+      >
         <Card>
           <CardContent className="login-container">
             <div className="login-image-container">
-              <img 
-                src="/logo.png" 
-                alt="Logo" 
-                height={72} 
+              <img
+                src="/logo.png"
+                alt="Logo"
+                height={72}
                 width={150}
                 className="h-[150px]"
               />
             </div>
             <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel required>Email</FormLabel>
-                    <FormControl className="w-full mb-4">
-                      <Input placeholder="Enter Your Email" {...field} autoComplete="email"/>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel required>Password</FormLabel>
-                    <FormControl className="w-full">
-                      <PasswordInput
-                        value={field.value}
-                        onChange={(e : any) => field.onChange(e.target.value)}
-                        autoComplete="current-password"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <AuthButton
-                loading={loading}
-                text={"Login"}
-              />
-              <span className="wrong-section-text">Don't have an account yet?<strong className="sing-up-text" onClick={() => navigate(Paths.REGISTER)}>Sign Up</strong></span>
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel required>Email</FormLabel>
+                  <FormControl className="w-full mb-4">
+                    <Input
+                      placeholder="Enter Your Email"
+                      {...field}
+                      autoComplete="email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel required>Password</FormLabel>
+                  <FormControl className="w-full">
+                    <PasswordInput
+                      value={field.value}
+                      onChange={(e: any) => field.onChange(e.target.value)}
+                      autoComplete="current-password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <AuthButton loading={loading} text={"Login"} />
+            <span className="wrong-section-text">
+              Don't have an account yet?
+              <strong
+                className="sing-up-text"
+                onClick={() => navigate(Paths.REGISTER)}
+              >
+                Sign Up
+              </strong>
+            </span>
           </CardContent>
         </Card>
       </form>

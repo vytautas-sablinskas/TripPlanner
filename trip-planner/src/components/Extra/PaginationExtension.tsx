@@ -13,8 +13,6 @@ export function PaginationExtension({ totalPages, page, setCurrentPage }: any) {
     setCurrentPage(value);
   };
 
-  console.log(page);
-
   const generatePaginationItems = () => {
     const items = [];
     const maxVisiblePages = 4;
@@ -88,13 +86,15 @@ export function PaginationExtension({ totalPages, page, setCurrentPage }: any) {
   };
 
   return (
-    <Pagination className='flex justify-end'>
+    <Pagination className="flex justify-end">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
             href="#"
             className={
-                page === 1 || totalPages === 0 ? "pointer-events-none opacity-50" : undefined
+              page === 1 || totalPages === 0
+                ? "pointer-events-none opacity-50"
+                : undefined
             }
             onClick={(event) => handlePageChange(event, page - 1)}
           />
@@ -104,7 +104,9 @@ export function PaginationExtension({ totalPages, page, setCurrentPage }: any) {
           <PaginationNext
             href="#"
             className={
-                page === totalPages || totalPages === 0 ? "pointer-events-none opacity-50" : undefined
+              page === totalPages || totalPages === 0
+                ? "pointer-events-none opacity-50"
+                : undefined
             }
             onClick={(event) => handlePageChange(event, page + 1)}
           />

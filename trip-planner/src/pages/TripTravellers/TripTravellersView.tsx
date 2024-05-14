@@ -10,86 +10,91 @@ import Paths from "@/routes/Paths";
 import { getTripTravellers } from "@/services/TripTravellersService";
 
 const TripTravellersView = () => {
-    const [travellers, setTravellers] = useState([]);
-    const [userPermissions, setUserPermissions] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
-    const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } = useUser();
-    const navigate = useNavigate();
-    const location = useLocation();
-    
-    const getTripId = () => {
-        const path = location.pathname.split("/");
-        return path[path.length - 2];
-    };
+  const [travellers, setTravellers] = useState([]);
+  const [userPermissions, setUserPermissions] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut } =
+    useUser();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    useEffect(() => {
-        const fetchTravellers = async () => {
-            setIsLoading(true);
-            const accessToken = localStorage.getItem("accessToken");
+  const getTripId = () => {
+    const path = location.pathname.split("/");
+    return path[path.length - 2];
+  };
 
-            if (!checkTokenValidity(accessToken || "")) {
-                const result = await refreshAccessToken();
-                if (!result.success) {
-                    toast.error("Session has expired. Login again!", {
-                    position: "top-center",
-                    });
+  useEffect(() => {
+    const fetchTravellers = async () => {
+      setIsLoading(true);
+      const accessToken = localStorage.getItem("accessToken");
 
-                    changeUserInformationToLoggedOut();
-                    navigate(Paths.LOGIN);
-                    return;
-                }
+      if (!checkTokenValidity(accessToken || "")) {
+        const result = await refreshAccessToken();
+        if (!result.success) {
+          toast.error("Session has expired. Login again!", {
+            position: "top-center",
+          });
 
-                changeUserInformationToLoggedIn(
-                    result.data.accessToken,
-                    result.data.refreshToken,
-                    result.data.id
-                );
-            }
-
-            const response = await getTripTravellers(getTripId());
-            if (!response.ok) {
-                toast.error("Unexpected error. Try again later", {
-                    position: "top-center",
-                });
-                setIsLoading(false);
-                return;
-            }
-
-            const data = await response.json();
-            setUserPermissions(data.requesterPermissions);
-            setTravellers(data.travellers);
-            setIsLoading(false);
+          changeUserInformationToLoggedOut();
+          navigate(Paths.LOGIN);
+          return;
         }
 
-        fetchTravellers();
-    }, [])
+        changeUserInformationToLoggedIn(
+          result.data.accessToken,
+          result.data.refreshToken,
+          result.data.id
+        );
+      }
 
-    const handleEdit = (index : any, newPermission : any) => {
-        console.log(newPermission);
-        setTravellers((prevTravellers : any) => {
-            return prevTravellers.map((traveller : any, i : any) => {
-                if (i === index) {
-                    return { ...traveller, permissions: Number(newPermission) };
-                } else {
-                    return traveller;
-                }
-            });
+      const response = await getTripTravellers(getTripId());
+      if (!response.ok) {
+        toast.error("Unexpected error. Try again later", {
+          position: "top-center",
         });
-    };    
+        setIsLoading(false);
+        return;
+      }
 
-    const handleDelete = (indexToDelete : any) => {
-        const dataCopy = [...travellers];
+      const data = await response.json();
+      setUserPermissions(data.requesterPermissions);
+      setTravellers(data.travellers);
+      setIsLoading(false);
+    };
 
-        dataCopy.splice(indexToDelete, 1);
-        setTravellers(dataCopy);
-    }
+    fetchTravellers();
+  }, []);
 
-    return (
-        <div className="trip-travellers-view-main-container">
-            <h1 className="my-4 font-bold text-4xl">Trip Participants</h1>
-            <TripTravellerList data={travellers} onDelete={handleDelete} onEdit={handleEdit} userPermissions={userPermissions}/>
-        </div>
-    );
-}
+  const handleEdit = (index: any, newPermission: any) => {
+    setTravellers((prevTravellers: any) => {
+      return prevTravellers.map((traveller: any, i: any) => {
+        if (i === index) {
+          return { ...traveller, permissions: Number(newPermission) };
+        } else {
+          return traveller;
+        }
+      });
+    });
+  };
+
+  const handleDelete = (indexToDelete: any) => {
+    const dataCopy = [...travellers];
+
+    dataCopy.splice(indexToDelete, 1);
+    setTravellers(dataCopy);
+  };
+
+  return (
+    <div className="trip-travellers-view-main-container">
+      <h1 className="my-4 font-bold text-4xl">Trip Participants</h1>
+      <TripTravellerList
+        data={travellers}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        userPermissions={userPermissions}
+      />
+    </div>
+  );
+};
 
 export default TripTravellersView;

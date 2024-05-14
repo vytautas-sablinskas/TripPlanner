@@ -23,8 +23,11 @@ const TripList = () => {
   const totalTripsCount = useRef(0);
   const [loading, setLoading] = useState(true);
   const [trips, setTrips] = useState([]);
-  const { changeUserInformationToLoggedOut, changeUserInformationToLoggedIn, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedOut,
+    changeUserInformationToLoggedIn,
+    isAuthenticated,
+  } = useUser();
   const navigate = useNavigate();
 
   const tryFetchingTrips = async () => {
@@ -73,7 +76,7 @@ const TripList = () => {
     } else {
       await tryFetchingTrips();
     }
-  }
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -84,13 +87,12 @@ const TripList = () => {
     tryFetchingTrips();
   }, [page, tabSelected]);
 
-
   useEffect(() => {
     setCurrentPage(1);
   }, [tabSelected]);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
 
   return (
@@ -112,7 +114,7 @@ const TripList = () => {
           </TabsList>
         </Tabs>
       </span>
-      <Separator className="mb-4"/>
+      <Separator className="mb-4" />
       {loading ? (
         <>
           <Skeleton
@@ -132,11 +134,13 @@ const TripList = () => {
           />
         </>
       ) : (
-        trips.map((trip: any) => <TripCard trip={trip} key={trip.id} onDelete={onDelete}/>)
+        trips.map((trip: any) => (
+          <TripCard trip={trip} key={trip.id} onDelete={onDelete} />
+        ))
       )}
       {!loading && totalPages !== 0 && (
         <div className="pagination">
-          <PaginationExtension 
+          <PaginationExtension
             page={page}
             totalPages={totalPages}
             setCurrentPage={setCurrentPage}

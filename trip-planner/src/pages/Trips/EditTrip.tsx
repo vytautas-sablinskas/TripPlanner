@@ -26,11 +26,7 @@ import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
 import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
 const MAX_FILE_SIZE = 2000000;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
 const formSchema = z.object({
   tripTitle: z.string().min(1, {
@@ -62,8 +58,11 @@ const EditTrip = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [uploadedImage, setUploadedImage] = useState<any>("/default.jpg");
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
 
@@ -158,8 +157,13 @@ const EditTrip = () => {
       return;
     }
 
-    if (!ACCEPTED_IMAGE_TYPES.some(acceptedType => acceptedType === file.type)) {
-      toast.error("Some files had invalid type. Only JPG and PNG files are allowed", { position: "top-center" });
+    if (
+      !ACCEPTED_IMAGE_TYPES.some((acceptedType) => acceptedType === file.type)
+    ) {
+      toast.error(
+        "Some files had invalid type. Only JPG and PNG files are allowed",
+        { position: "top-center" }
+      );
       return;
     }
 

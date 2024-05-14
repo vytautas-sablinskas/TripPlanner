@@ -27,9 +27,20 @@ import { useUser } from "@/providers/user-provider/UserContext";
 import { getTripTime } from "@/services/TripService";
 import { addTripDetails } from "@/services/TripDetailService";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
-import { getLocalTimeISOFromDate, getLocalTimeISOFromString, getUtcTimeWithoutChangingTime } from "@/utils/date";
+import {
+  getLocalTimeISOFromDate,
+  getLocalTimeISOFromString,
+  getUtcTimeWithoutChangingTime,
+} from "@/utils/date";
 import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -61,10 +72,14 @@ const formSchema = z.object({
 const TripDetailCreate = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [autocompleteSearchType, setAutocompleteSearchType] = useState<any>("address");
+  const [autocompleteSearchType, setAutocompleteSearchType] =
+    useState<any>("address");
   const [isDataSubmitting, setIsDataSubmitting] = useState(false);
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
-    useUser();
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
   const location = useLocation();
   const [tripTime, setTripTime] = useState<any>(null);
   const [geometry, setGeometry] = useState<any>(null);
@@ -72,7 +87,7 @@ const TripDetailCreate = () => {
   const getTripId = () => {
     const path = location.pathname.split("/");
     return path[path.length - 2];
-  }
+  };
 
   useEffect(() => {
     const tryFetchingTripTime = async () => {
@@ -140,7 +155,6 @@ const TripDetailCreate = () => {
     const startDateIso = getLocalTimeISOFromDate(data.dates.startDate);
     let isError = false;
 
-    console.log(startDateIso, tripTime.startDate, tripTime.endDate);
     if (startDateIso < tripTime.startDate || startDateIso > tripTime.endDate) {
       form.setError("dates.startDate", {
         message: "Start date can't exceed set trip times.",
@@ -198,7 +212,7 @@ const TripDetailCreate = () => {
         result.data.id
       );
     }
-    
+
     const tripId = getTripId();
     const dto = {
       name: data.name,
@@ -212,7 +226,7 @@ const TripDetailCreate = () => {
       longitude: geometry?.longitude,
       latitude: geometry?.latitude,
       tripId,
-    }
+    };
 
     const response = await addTripDetails(dto);
     if (!response || !response.ok) {
@@ -226,10 +240,9 @@ const TripDetailCreate = () => {
     navigate(Paths.TRIP_DETAILS.replace(":id", tripId));
   };
 
-  return (
-    isLoading ? (
-      <div>Loading...</div>
-    ) : (
+  return isLoading ? (
+    <div>Loading...</div>
+  ) : (
     <Form {...form}>
       <div className="w-full">
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -312,14 +325,21 @@ const TripDetailCreate = () => {
                     <div className="flex justify-between items-end">
                       <FormLabel className="mb-2">Destination</FormLabel>
                       <div className="flex space-x-2">
-                        <Select onValueChange={setAutocompleteSearchType} value={autocompleteSearchType}>
+                        <Select
+                          onValueChange={setAutocompleteSearchType}
+                          value={autocompleteSearchType}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Destination Type" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectItem value="address">By Address</SelectItem>
-                              <SelectItem value="establishment">By Popular Places</SelectItem>
+                              <SelectItem value="address">
+                                By Address
+                              </SelectItem>
+                              <SelectItem value="establishment">
+                                By Popular Places
+                              </SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -327,16 +347,24 @@ const TripDetailCreate = () => {
                     </div>
                     <FormControl>
                       <GoogleAutocomplete
-                        onSelect={(place : any) => {
+                        onSelect={(place: any) => {
                           setGeometry({
                             latitude: place?.geometry?.location?.lat(),
                             longitude: place?.geometry?.location?.lng(),
-                          })
+                          });
                           field.onChange(place.formatted_address);
                           form.setValue("website", place.website);
-                          form.setValue("phoneNumber", place.international_phone_number);
+                          form.setValue(
+                            "phoneNumber",
+                            place.international_phone_number
+                          );
                         }}
-                        fields={["formatted_address", "website", "international_phone_number", "geometry.location"]}
+                        fields={[
+                          "formatted_address",
+                          "website",
+                          "international_phone_number",
+                          "geometry.location",
+                        ]}
                         types={[autocompleteSearchType]}
                         className="w-full"
                       />
@@ -391,18 +419,23 @@ const TripDetailCreate = () => {
             <div className="create-trip-details-submit-buttons">
               <Button
                 disabled={isDataSubmitting}
-                onClick={() => navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()))}
+                onClick={() =>
+                  navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()))
+                }
                 type="button"
               >
                 Cancel
               </Button>
-              <CreateEditLoadingButton loading={isDataSubmitting} text="Create Plan" />
+              <CreateEditLoadingButton
+                loading={isDataSubmitting}
+                text="Create Plan"
+              />
             </div>
           </div>
         </form>
       </div>
     </Form>
-  ));
+  );
 };
 
 export default TripDetailCreate;

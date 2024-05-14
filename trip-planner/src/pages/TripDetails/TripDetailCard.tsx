@@ -87,7 +87,6 @@ const TripDetailCard = ({
   };
 
   const getActivityImage = (type: any) => {
-    console.log(type);
     switch (type) {
       case 0:
         return <PersonStanding className="w-4 h-4" />;

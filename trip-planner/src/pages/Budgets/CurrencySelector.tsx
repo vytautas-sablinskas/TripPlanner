@@ -1,30 +1,40 @@
-import * as React from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
+import * as React from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { CommandList } from "cmdk"
-import { supportedCurrencies } from "./currencies"
+} from "@/components/ui/popover";
+import { CommandList } from "cmdk";
+import { supportedCurrencies } from "./currencies";
 
-export function CurrencySelector({ value, setValue, searchTerm, setSearchTerm, modal } : any) {
+export function CurrencySelector({
+  value,
+  setValue,
+  searchTerm,
+  setSearchTerm,
+  modal,
+}: any) {
   const [open, setOpen] = React.useState(false);
-  const currencies = supportedCurrencies.map(([code, name]) => ({ code, name }));
+  const currencies = supportedCurrencies.map(([code, name]) => ({
+    code,
+    name,
+  }));
 
-  const filteredCurrencies = currencies.filter(currency =>
-    currency.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    currency.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCurrencies = currencies.filter(
+    (currency) =>
+      currency.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      currency.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -45,7 +55,7 @@ export function CurrencySelector({ value, setValue, searchTerm, setSearchTerm, m
       <PopoverContent className="w-full p-0" align="start">
         <Command>
           <CommandList>
-            <CommandInput 
+            <CommandInput
               placeholder="Search currency..."
               onValueChange={setSearchTerm}
             />
@@ -74,5 +84,5 @@ export function CurrencySelector({ value, setValue, searchTerm, setSearchTerm, m
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

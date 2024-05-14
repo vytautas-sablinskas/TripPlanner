@@ -3,7 +3,7 @@ import "./styles/trip-detail-view-document.css";
 import { CircleX, Pencil } from "lucide-react";
 import { useState } from "react";
 import DeleteDialog from "@/components/Extra/DeleteDialog";
-import EditDocumentDialog from "./TripDocuments/EditDocumentDialog";
+import EditDocumentDialog from "./EditDocumentDialog";
 
 const TripDetailViewDocument = ({
   document,
@@ -22,7 +22,7 @@ const TripDetailViewDocument = ({
     await onEdit({ id: document.id, ...editedDocument });
     setIsEditDialogOpen(false);
   };
-  
+
   return (
     <div className="document-card-container">
       <img
@@ -39,7 +39,9 @@ const TripDetailViewDocument = ({
       <a className="document-card-text" href={document.linkToFile}>
         {document.name}
       </a>
-      {(permissions === 1 || permissions === 2 || userId === document.userId) && (
+      {(permissions === 1 ||
+        permissions === 2 ||
+        userId === document.userId) && (
         <div className="flex-1 flex items-start">
           <Button
             variant="ghost"

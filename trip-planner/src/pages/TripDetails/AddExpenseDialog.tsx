@@ -107,12 +107,12 @@ const AddExpenseDialog = ({
 
     setIsLoading(true);
     const dto = {
-        currency: formValues.currency,
-        type: Number(formValues.eventType),
-        name: formValues.name,
-        amount: Number(formValues.amount),
-        date: getUtcTimeWithoutChangingTime(formValues.date)
-    }
+      currency: formValues.currency,
+      type: Number(formValues.eventType),
+      name: formValues.name,
+      amount: Number(formValues.amount),
+      date: getUtcTimeWithoutChangingTime(formValues.date),
+    };
 
     const response = await createExpense(getTripId(), budgetId, dto);
     if (!response.ok) {
@@ -226,23 +226,23 @@ const AddExpenseDialog = ({
               )}
             />
             <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col mt-4">
-                    <FormLabel>Date</FormLabel>
-                    <FormControl className="w-full mb-4">
-                      <DatePicker
-                        date={field.value}
-                        setDate={field.onChange}
-                        startDate={tripTime.startDate}
-                        endDate={tripTime.endDate}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col mt-4">
+                  <FormLabel>Date</FormLabel>
+                  <FormControl className="w-full mb-4">
+                    <DatePicker
+                      date={field.value}
+                      setDate={field.onChange}
+                      startDate={tripTime.startDate}
+                      endDate={tripTime.endDate}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="name"

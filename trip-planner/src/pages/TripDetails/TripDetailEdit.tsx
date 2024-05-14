@@ -24,10 +24,23 @@ import { checkTokenValidity } from "@/utils/jwtUtils";
 import { refreshAccessToken } from "@/services/AuthenticationService";
 import { toast } from "sonner";
 import { useUser } from "@/providers/user-provider/UserContext";
-import { editTripDetails, getTripDetailById } from "@/services/TripDetailService";
+import {
+  editTripDetails,
+  getTripDetailById,
+} from "@/services/TripDetailService";
 import { CreateEditLoadingButton } from "../../components/Extra/LoadingButton";
-import { getLocalTimeISOFromDate, getUtcTimeWithoutChangingTime } from "@/utils/date";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  getLocalTimeISOFromDate,
+  getUtcTimeWithoutChangingTime,
+} from "@/utils/date";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import GoogleAutocomplete from "@/components/Extra/GoogleAutocomplete";
 
 const formSchema = z.object({
@@ -63,9 +76,13 @@ const TripDetailEdit = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isDataSubmitting, setIsDataSubmitting] = useState(false);
-  const [autocompleteSearchType, setAutocompleteSearchType] = useState<any>("address");
-  const { changeUserInformationToLoggedIn, changeUserInformationToLoggedOut, isAuthenticated } =
-    useUser();
+  const [autocompleteSearchType, setAutocompleteSearchType] =
+    useState<any>("address");
+  const {
+    changeUserInformationToLoggedIn,
+    changeUserInformationToLoggedOut,
+    isAuthenticated,
+  } = useUser();
   const location = useLocation();
   const [tripTime, setTripTime] = useState<any>();
   const [geometry, setGeometry] = useState<any>(null);
@@ -73,12 +90,12 @@ const TripDetailEdit = () => {
   const getTripDetailsId = () => {
     const path = location.pathname.split("/");
     return path[path.length - 1];
-  }
+  };
 
   const getTripId = () => {
     const path = location.pathname.split("/");
     return path[path.length - 3];
-  }
+  };
 
   useEffect(() => {
     const tryFetchingTripTime = async () => {
@@ -112,7 +129,6 @@ const TripDetailEdit = () => {
       }
 
       const data = await response.json();
-      console.log(data);
       const startDate = new Date(data.startTime);
       const endDate = data.endTime ? new Date(data.endTime) : undefined;
       form.reset({
@@ -221,8 +237,10 @@ const TripDetailEdit = () => {
       );
     }
 
-    const longitude = (geometry && geometry.longitude) || data.longitude || null;
-    const latitude = (geometry && geometry.latitude) || (data && data.latitude) || null;
+    const longitude =
+      (geometry && geometry.longitude) || data.longitude || null;
+    const latitude =
+      (geometry && geometry.latitude) || (data && data.latitude) || null;
 
     const response = await editTripDetails({
       name: data.name,
@@ -248,10 +266,9 @@ const TripDetailEdit = () => {
     navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()));
   };
 
-  return (
-    isLoading ? (
-      <div>Loading...</div>
-    ) : (
+  return isLoading ? (
+    <div>Loading...</div>
+  ) : (
     <Form {...form}>
       <div className="w-full">
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -334,14 +351,21 @@ const TripDetailEdit = () => {
                     <div className="flex justify-between items-end">
                       <FormLabel className="mb-2">Destination</FormLabel>
                       <div className="flex space-x-2">
-                        <Select onValueChange={setAutocompleteSearchType} value={autocompleteSearchType}>
+                        <Select
+                          onValueChange={setAutocompleteSearchType}
+                          value={autocompleteSearchType}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Destination Type" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectItem value="address">By Address</SelectItem>
-                              <SelectItem value="establishment">By Popular Places</SelectItem>
+                              <SelectItem value="address">
+                                By Address
+                              </SelectItem>
+                              <SelectItem value="establishment">
+                                By Popular Places
+                              </SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -349,17 +373,26 @@ const TripDetailEdit = () => {
                     </div>
                     <FormControl>
                       <GoogleAutocomplete
-                        onSelect={(place : any) => {
+                        onSelect={(place: any) => {
                           setGeometry({
                             latitude: place?.geometry?.location?.lat(),
                             longitude: place?.geometry?.location?.lng(),
-                          })
+                          });
                           field.onChange(place.formatted_address);
                           form.setValue("website", place.website);
-                          form.setValue("phoneNumber", place.international_phone_number);
+                          form.setValue(
+                            "phoneNumber",
+                            place.international_phone_number
+                          );
                         }}
                         value={field.value}
-                        fields={["place_id", "formatted_address", "website", "international_phone_number", "geometry.location"]}
+                        fields={[
+                          "place_id",
+                          "formatted_address",
+                          "website",
+                          "international_phone_number",
+                          "geometry.location",
+                        ]}
                         types={[autocompleteSearchType]}
                         className="w-full"
                       />
@@ -414,18 +447,23 @@ const TripDetailEdit = () => {
             <div className="create-trip-details-submit-buttons">
               <Button
                 disabled={isDataSubmitting}
-                onClick={() => navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()))}
+                onClick={() =>
+                  navigate(Paths.TRIP_DETAILS.replace(":id", getTripId()))
+                }
                 type="button"
               >
                 Cancel
               </Button>
-              <CreateEditLoadingButton loading={isDataSubmitting} text="Edit Plan" />
+              <CreateEditLoadingButton
+                loading={isDataSubmitting}
+                text="Edit Plan"
+              />
             </div>
           </div>
         </form>
       </div>
     </Form>
-  ));
+  );
 };
 
 export default TripDetailEdit;

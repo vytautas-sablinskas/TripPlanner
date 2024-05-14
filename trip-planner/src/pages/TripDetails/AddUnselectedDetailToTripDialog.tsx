@@ -61,7 +61,7 @@ const AddUnselectedDetailToTripDialog = ({
 
   useEffect(() => {
     setSelectedTrip(trips.length > 0 ? trips[0] : "");
-  }, [trips])
+  }, [trips]);
 
   const onAdd = () => {
     if (!selectedTrip) return;
@@ -71,17 +71,21 @@ const AddUnselectedDetailToTripDialog = ({
 
     const formattedStartDate = getUtcTimeWithoutChangingTime(date);
     if (formattedStartDate === null) return;
-    
+
     const startDateUtc = new Date(selectedTrip.startDate + "Z");
     const endDateUtc = new Date(selectedTrip.endDate + "Z");
     const dateForComparison = new Date(formattedStartDate);
-    
-    if (!dateForComparison || dateForComparison < startDateUtc || dateForComparison > endDateUtc) {
-        form.setError("startDate", {
-            type: "manual",
-            message: "Selected date is not within the trip start and end date",
-        });
-        return;
+
+    if (
+      !dateForComparison ||
+      dateForComparison < startDateUtc ||
+      dateForComparison > endDateUtc
+    ) {
+      form.setError("startDate", {
+        type: "manual",
+        message: "Selected date is not within the trip start and end date",
+      });
+      return;
     }
 
     form.clearErrors("startDate");
